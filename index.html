@@ -206,6 +206,13 @@
   .reply-row .sv { grid-area: sv; padding: 10px 22px; font-size: 15px; }
   .reply-label { grid-area: rp; display: none; }
   .report .msg { font-size: 17px; }
+  .notify { margin-top: 14px; border: 1px solid var(--edge); border-radius: 12px; padding: 12px 14px; background: rgba(5,13,23,.5); }
+  .notify .nhead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .notify .nhead label { margin: 0; display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; }
+  .notify .nhead input { width: 18px; height: 18px; accent-color: var(--orange); }
+  .notify .nbody { margin-top: 12px; display: grid; gap: 8px; }
+  .notify .nbody textarea { min-height: 170px; font-size: 15px; line-height: 1.55; }
+  .notify .sent { color: #5ED79A; font-size: 13px; }
   .saved { color: var(--green); font-size: 13px; align-self: center; }
   .empty { text-align: center; color: var(--ink-3); padding: 48px 16px; background: var(--card); border: 1px dashed var(--edge); border-radius: 14px; }
 
@@ -392,7 +399,7 @@ async function check() {
   route();
 }
 function showLogin(msg = '') {
-  me = null; cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {} };
+  me = null; notified = null; cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {} };
   $('#app').classList.add('hidden');
   $('#pw').classList.add('hidden');
   $('#login').classList.remove('hidden');
@@ -721,7 +728,7 @@ async function aero(tab) {
     </div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
   try {
-    const f = await loadFeedback();
+    const [f] = await Promise.all([loadFeedback(), loadNotified().catch(() => [])]);
     $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
     aeroOpen = f.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
     if (tab === 'people') return people(await loadPeople());
@@ -770,6 +777,7 @@ function reportCard(r) {
       <textarea class="rp" maxlength="1000" placeholder="Reply the pilot will see under “Your reports”">${esc(r.reply || '')}</textarea>
       <button class="btn btn-primary btn-small sv">Save</button>
     </div>
+    ${notifyBlock('aero', r, !!r.email)}
   </article>`;
 }
 
@@ -777,6 +785,8 @@ const grow = (t) => { t.style.height = 'auto'; t.style.height = Math.max(130, t.
 function wireReport(el) {
   const id = Number(el.dataset.id);
   const ta = $('.rp', el); grow(ta); ta.addEventListener('input', () => grow(ta));
+  const rec = (cache.feedback || []).find((x) => x.id === id);
+  const sendNote = rec ? wireNotify(el, 'aero', rec) : null;
   $('.sv', el).onclick = async (e) => {
     const b = e.currentTarget; b.disabled = true;
     const status = $('.st', el).value, reply = $('.rp', el).value;
@@ -787,8 +797,9 @@ function wireReport(el) {
     Object.assign(r, { status, reply: reply.trim() || null, updated_at: new Date().toISOString() });
     const [, label, color] = statusOf(status);
     const s = $('.status', el); s.textContent = label; s.style.setProperty('--c', color);
-    $('#n-bugs').textContent = cache.feedback.filter((x) => OPEN.has(x.status)).length;
+    const nb = $('#n-bugs'); if (nb) nb.textContent = cache.feedback.filter((x) => OPEN.has(x.status)).length;
     toast(`Report #${id} saved`);
+    if (sendNote) await sendNote();
   };
 }
 
@@ -1068,7 +1079,7 @@ async function supportPage() {
       <div class="seg">${[['all', 'Both apps'], ['aero', 'Orvix Aero'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-app="${k}" class="${supApp === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
   $('#view').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
-  const [f, g] = await Promise.all([loadFeedback().catch(() => []), supApp === 'aero' ? Promise.resolve(null) : loadGrid()]);
+  const [f, g] = await Promise.all([loadFeedback().catch(() => []), supApp === 'aero' ? Promise.resolve(null) : loadGrid(), loadNotified().catch(() => [])]);
   if (!$('#pane')) return;
   const aero = supApp === 'grid' ? [] : f;
   const grid = g && g.connected && supApp !== 'aero' ? g.reports : [];
@@ -1114,10 +1125,13 @@ function gridFeedbackCard(r) {
       <select class="st">${STATUSES.map(([v, l]) => `<option value="${v}" ${v === r.status ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <textarea class="rp" maxlength="1000" placeholder="${r.signed_in ? 'Reply the player will see under “Your reports”' : 'Not signed in: they won’t see a reply in the app' + (r.email ? '. Email them at ' + esc(r.email) : '')}">${esc(r.reply || '')}</textarea>
       <button class="btn btn-primary btn-small sv">Save</button>
-    </div></article>`;
+    </div>
+    ${notifyBlock('grid', r, r.signed_in)}</article>`;
 }
 function wireGridReport(el) {
   const id = Number(el.dataset.gid), ta = $('.rp', el); grow(ta); ta.addEventListener('input', () => grow(ta));
+  const rec = (cache.grid?.feedback || []).find((x) => x.id === id);
+  const sendNote = rec ? wireNotify(el, 'grid', rec) : null;
   $('.sv', el).onclick = async (e) => {
     const b = e.currentTarget; b.disabled = true;
     const status = $('.st', el).value, reply = ta.value;
@@ -1127,6 +1141,73 @@ function wireGridReport(el) {
     const r = (cache.grid?.feedback || []).find((x) => x.id === id); if (r) Object.assign(r, { status, reply: reply.trim() || null });
     const [, label, color] = statusOf(status); const st = $('.status', el); st.textContent = label; st.style.setProperty('--c', color);
     toast(`Orvix Grid report #${id} saved`);
+    if (sendNote) await sendNote();
+  };
+}
+
+// ---------- "Let them know": a note to the reporter (email, plus a push on Orvix Aero) ----------
+let notified = null;
+async function loadNotified(force) {
+  if (notified && !force) return notified;
+  const { data } = await sb.rpc('hub_notified');
+  notified = data || [];
+  return notified;
+}
+const sentFor = (app, id) => (notified || []).filter((n) => n.app === app && Number(n.report_id) === Number(id));
+const KIND_LABEL = { fixed: 'it’s fixed', thanks: 'thanks for the idea', reply: 'your reply' };
+function notifyBlock(app, r, hasAccount) {
+  if (!hasAccount) return `<div class="notify"><span class="muted">Sent without an account, so there’s no one to message${r.email ? '' : ''}.</span></div>`;
+  const sent = sentFor(app, r.id).map((n) => `<span class="sent">✓ Sent “${KIND_LABEL[n.kind] || n.kind}” note ${esc(ago(n.sent_at))} (${esc((n.channels || []).join(' + '))})</span>`).join(' ');
+  return `<div class="notify" data-app="${app}">
+    <div class="nhead"><label><input type="checkbox" class="nchk"> Let them know</label><span class="muted nwhat"></span><span class="spacer"></span>${sent}</div>
+    <div class="nbody hidden"><input type="text" class="nsub" maxlength="140" placeholder="Subject"><textarea class="nmsg" maxlength="3000"></textarea>
+      <div class="muted" style="font-size:13px">${app === 'aero' ? 'Email to ' + esc(r.email || 'their account') + ', plus a notification on their phone if the app has them.' : 'Email to ' + esc(r.email || 'their account') + '. They’ll also see your reply in the app under “Your reports”.'} Sent when you click Save.</div></div>
+  </div>`;
+}
+function noteFor(app, r, kind, reply) {
+  const A = app === 'aero' ? 'Orvix Aero' : 'Orvix Grid';
+  const quote = '“' + String(r.message || '').trim().replace(/\s+/g, ' ').slice(0, 220) + (String(r.message || '').length > 220 ? '…' : '') + '”';
+  const rep = String(reply || '').trim();
+  if (kind === 'fixed') return { subject: `Fixed: your ${A} bug report`, push: 'The bug you reported is fixed. Thanks for helping!',
+    message: `Hi,\n\nThanks for reporting this in ${A}:\n${quote}\n\nGood news: it’s fixed.${rep ? '\n\n' + rep : ''}\n\nIf you still see it after updating the app, send another report from Settings → Send feedback.\n\nThanks for helping make ${A} better,\nThe ${A} team` };
+  if (kind === 'thanks') return { subject: `Thanks for your idea for ${A}`, push: 'Thanks for your idea! We replied in the app.',
+    message: `Hi,\n\nThanks for sending us this idea:\n${quote}\n\n${rep || 'We read every idea, and this one is on our list.'}\n\nKeep them coming,\nThe ${A} team` };
+  return { subject: `About your ${A} report`, push: 'We replied to your report.',
+    message: `Hi,\n\nYou sent us this in ${A}:\n${quote}\n\n${rep || '…'}\n\nThe ${A} team` };
+}
+function wireNotify(el, app, r) {
+  const box = $('.notify[data-app]', el); if (!box) return null;
+  const chk = $('.nchk', box), body = $('.nbody', box), sub = $('.nsub', box), msg = $('.nmsg', box), what = $('.nwhat', box);
+  const st = $('.st', el), rp = $('.rp', el);
+  let edited = false, kind = 'reply';
+  const already = (k) => sentFor(app, r.id).some((n) => n.kind === k);
+  const pick = () => (st.value === 'fixed' && r.kind === 'bug') ? 'fixed' : r.kind === 'idea' ? 'thanks' : 'reply';
+  const fill = () => {
+    kind = pick(); what.textContent = '· ' + KIND_LABEL[kind];
+    if (!edited) { const n = noteFor(app, r, kind, rp.value); sub.value = n.subject; msg.value = n.message; box.dataset.push = n.push; grow(msg); }
+  };
+  const auto = () => {
+    const k = pick();
+    if (!already(k) && ((k === 'fixed') || (k === 'thanks' && rp.value.trim() && !r.reply))) { chk.checked = true; body.classList.remove('hidden'); grow(msg); }
+  };
+  chk.onchange = () => { body.classList.toggle('hidden', !chk.checked); fill(); grow(msg); };
+  st.addEventListener('change', () => { fill(); auto(); });
+  rp.addEventListener('input', () => { fill(); if (pick() === 'thanks') auto(); });
+  msg.addEventListener('input', () => { edited = true; grow(msg); });
+  sub.addEventListener('input', () => { edited = true; });
+  fill();
+  return async () => {
+    if (!chk.checked) return;
+    if (already(kind)) return toast(`Already sent a “${KIND_LABEL[kind]}” note for this report.`);
+    const { data, error } = await sb.functions.invoke('hub-notify', { body: { app, id: r.id, kind, subject: sub.value, message: msg.value, push: box.dataset.push } });
+    if (error || data?.error) {
+      let m = data?.error; if (!m && error?.context) { try { m = (await error.context.json()).error; } catch {} }
+      return toast('Saved, but the note didn’t go out: ' + (m || 'hub-notify isn’t set up yet'));
+    }
+    toast(`Note sent to ${data.to} (${data.channels.join(' + ')})${data.problems?.length ? ' · ' + data.problems.join(' · ') : ''}`);
+    await loadNotified(true);
+    chk.checked = false; body.classList.add('hidden');
+    $('.nhead .spacer', box).insertAdjacentHTML('afterend', `<span class="sent">✓ Sent “${KIND_LABEL[kind]}” note just now</span>`);
   };
 }
 
@@ -1135,10 +1216,11 @@ const ACTIONS = {
   'report.update': 'Updated a report', 'tester.add': 'Added a tester', 'tester.remove': 'Removed a tester',
   'admin.add': 'Added an admin', 'admin.remove': 'Removed an admin', 'android.on_play': 'Marked as on the Play list',
   'android.off_play': 'Unmarked from the Play list', 'access.give': 'Gave free access', 'access.remove': 'Removed free access',
-  'admin.password_changed': 'Changed their hub password', 'grid_report.update': 'Updated an Orvix Grid report', 'launch.open_paywall': 'Opened the paywall (launch)', 'launch.close_paywall': 'Closed the paywall',
+  'admin.password_changed': 'Changed their hub password', 'grid_report.update': 'Updated an Orvix Grid report', 'notify.fixed': 'Told them it’s fixed', 'notify.thanks': 'Thanked them for an idea', 'notify.reply': 'Sent them the reply', 'launch.open_paywall': 'Opened the paywall (launch)', 'launch.close_paywall': 'Closed the paywall',
 };
 function auditDetail(a) {
   const d = a.detail || {};
+  if (a.action.startsWith('notify.')) return `to ${esc(d.to || '')} · ${esc((d.channels || []).join(' + '))}`;
   if (a.action === 'grid_report.update') return `${esc(statusOf(d.to)[1])}${d.replied ? ' · with a reply' : ''}`;
   if (a.action === 'report.update') return `${d.from && d.from !== d.to ? `${esc(statusOf(d.from)[1])} → ` : ''}${esc(statusOf(d.to)[1])}${d.replied ? ' · with a reply' : ''}`;
   if (a.action === 'access.give') return d.months ? `${d.months} month${d.months > 1 ? 's' : ''}` : 'for good';
@@ -1209,7 +1291,7 @@ async function grid() {
   $('#view').innerHTML = `
     <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-grid.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Orvix Grid</h1><div class="muted">Read-only view of Orvix Grid’s own backend</div></div></div><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">View site ↗</a></div>
     <div id="gpane"><div class="muted">Loading…</div></div>`;
-  const g = await loadGrid();
+  const [g] = await Promise.all([loadGrid(), loadNotified().catch(() => [])]);
   const pane = $('#gpane'); if (!pane) return;
   if (!g.connected) {
     pane.innerHTML = `<div class="soon"><h2>Not connected yet</h2><p>${esc(g.reason || '')}</p>
