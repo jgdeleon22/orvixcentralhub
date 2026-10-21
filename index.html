@@ -954,6 +954,7 @@ async function usersPage(app) {
   if (app === 'grid') return usersGrid();
   try {
     if (!cache.users) { const { data, error } = await sb.rpc('hub_users'); if (error) throw error; cache.users = data; }
+    if (!cache.invited) { const { data } = await sb.rpc('hub_invited'); cache.invited = data || []; }
     renderAeroUsers();
   } catch (e) { $('#upane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
 }
@@ -966,10 +967,31 @@ function accessBadges(u) {
   if (!b.length) b.push('<span class="b gray">No access</span>');
   return b.join('');
 }
+function inviteBadges(i) {
+  if (i.access === 'admin') return '<span class="b orange">Admin</span>';
+  if (i.access === 'tester') return '<span class="b blue">Tester</span>';
+  return `<span class="b violet">Free ${i.months ? i.months + ' mo' : 'for good'} · on sign-up</span>`;
+}
+let addUserOpen = false;
+async function sendInvite(email) {
+  const { data, error } = await sb.functions.invoke('hub-invite', { body: { email } });
+  if (error) {
+    const c = error.context; const m = c && typeof c.json === 'function' ? (await c.json().catch(() => null))?.error : null;
+    throw new Error(m || 'The invite email didn’t send');
+  }
+  return data;
+}
+async function reloadUsers() {
+  const [u, i] = await Promise.all([sb.rpc('hub_users'), sb.rpc('hub_invited')]);
+  cache.users = u.data || cache.users; cache.invited = i.data || []; cache.people = null; cache.overview = null; renderAeroUsers();
+}
 function renderAeroUsers() {
   const all = cache.users, q = userQ.toLowerCase();
   const F = { all: () => true, testers: (u) => u.tester, admins: (u) => u.admin, free: (u) => !!u.gift, paying: (u) => !!u.plan, none: (u) => !u.tester && !u.admin && !u.gift && !u.plan };
   const list = all.filter((u) => F[userFilter](u) && (!q || u.email.includes(q)));
+  // People added who haven't signed up yet (shown under Everyone, Testers, Admins and Free access).
+  const IF = { all: () => true, testers: (i) => i.access === 'tester', admins: (i) => i.access === 'admin', free: (i) => i.access === 'free', paying: () => false, none: () => false };
+  const invitedList = (cache.invited || []).filter((i) => IF[userFilter](i) && (!q || i.email.includes(q)));
   const cnt = (k) => all.filter(F[k]).length;
   $('#upane').innerHTML = `
     <div class="tiles">
@@ -981,7 +1003,29 @@ function renderAeroUsers() {
     <div class="filters">
       ${[['all', 'Everyone'], ['testers', 'Testers'], ['admins', 'Admins'], ['free', 'Free access'], ['paying', 'Paying'], ['none', 'No access']].map(([k, l]) => `<button class="pill ${userFilter === k ? 'on' : ''}" data-uf="${k}">${l} <span class="muted">${cnt(k)}</span></button>`).join('')}
       <span class="spacer"></span><input type="text" id="uq" placeholder="Search email" value="${esc(userQ)}">
+      <button class="btn btn-primary btn-small" id="add-user-open">+ Add user</button>
     </div>
+    <form class="panel" id="add-user" style="display:${addUserOpen ? 'block' : 'none'};margin-bottom:16px">
+      <h3 style="margin-bottom:4px">Add a user</h3>
+      <div class="sub" style="margin-bottom:14px">They create their own account with this email and pick their own password. Testers and admins can get in right away; free access starts when they sign up (or now, if they already have an account).</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <input type="email" id="au-email" placeholder="Their email" required style="flex:2 1 240px">
+        <select id="au-access" style="flex:1 1 200px">
+          <option value="tester">Tester (use the app before launch)</option>
+          <option value="free-1">Free Pro: 1 month</option><option value="free-3">Free Pro: 3 months</option>
+          <option value="free-6">Free Pro: 6 months</option><option value="free-12">Free Pro: 12 months</option>
+          <option value="free-0">Free Pro: for good</option>
+          <option value="admin">Admin (Central Hub and admin tools)</option>
+        </select>
+        <input type="text" id="au-note" placeholder="Note (optional, goes in the email)" maxlength="100" style="flex:2 1 240px">
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:14px">
+        <label class="toggle"><input type="checkbox" id="au-send" checked> Email them an invite</label>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost btn-small" id="add-user-cancel">Cancel</button>
+        <button class="btn btn-primary btn-small" id="au-go">Add user</button>
+      </div>
+    </form>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>Signed up</th><th>Last in</th><th>Flights</th><th>Access</th><th></th></tr></thead><tbody>
       ${list.map((u) => `<tr><td class="em" title="${esc(u.email)}">${esc(u.email)}${u.email === me.email.toLowerCase() ? ' <span class="muted">(you)</span>' : ''}${u.confirmed ? '' : ' <span class="b gray">unconfirmed</span>'}</td>
         <td class="muted">${esc(day(u.created_at))}</td><td class="muted">${u.last_sign_in_at ? esc(ago(u.last_sign_in_at)) : 'Never'}</td><td>${u.flights}</td><td>${accessBadges(u)}</td>
@@ -991,7 +1035,14 @@ function renderAeroUsers() {
           <option value="gift-1">Free access: 1 month</option><option value="gift-3">Free access: 3 months</option><option value="gift-12">Free access: 12 months</option><option value="gift-0">Free access: for good</option>
           ${u.gift ? '<option value="gift-off">Remove free access</option>' : ''}
           ${u.admin ? (u.email === me.email.toLowerCase() ? '' : '<option value="admin-off">Remove admin</option>') : '<option value="admin-on">Make admin</option>'}
-        </select></td></tr>`).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">No one matches.</td></tr>'}
+        </select></td></tr>`).join('')}
+      ${invitedList.map((i) => `<tr><td class="em" title="${esc(i.email)}">${esc(i.email)} <span class="b gray">invited</span></td>
+        <td class="muted">Not yet</td><td class="muted">${i.emailed_at ? 'Emailed ' + esc(ago(i.emailed_at)) : 'Not emailed'}</td><td class="muted">–</td>
+        <td>${inviteBadges(i)}</td>
+        <td><select class="ui" data-email="${esc(i.email)}" style="width:auto;padding:6px 10px;font-size:13px">
+          <option value="">Change…</option><option value="send">${i.emailed_at ? 'Send the invite again' : 'Send the invite email'}</option><option value="cancel">Cancel invite</option>
+        </select></td></tr>`).join('')}
+      ${list.length || invitedList.length ? '' : '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">No one matches.</td></tr>'}
     </tbody></table></div>
     <div class="sec" style="margin-top:30px"><h2>Testers, admins &amp; sign-ups</h2></div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
@@ -1009,6 +1060,34 @@ function renderAeroUsers() {
     if (r.error) { sel.value = ''; return toast(r.error.message); }
     toast(`${label}: done for ${email}`);
     const { data } = await sb.rpc('hub_users'); cache.users = data; cache.people = null; cache.overview = null; renderAeroUsers();
+  });
+  $('#add-user-open').onclick = () => { addUserOpen = !addUserOpen; $('#add-user').style.display = addUserOpen ? 'block' : 'none'; if (addUserOpen) $('#au-email').focus(); };
+  $('#add-user-cancel').onclick = () => { addUserOpen = false; $('#add-user').style.display = 'none'; };
+  $('#add-user').onsubmit = async (e) => {
+    e.preventDefault();
+    const email = $('#au-email').value.trim().toLowerCase(), v = $('#au-access').value, note = $('#au-note').value.trim();
+    const access = v.startsWith('free') ? 'free' : v, months = v.startsWith('free') ? (+v.split('-')[1] || null) : null;
+    const go = $('#au-go'); go.disabled = true; go.textContent = 'Adding…';
+    try {
+      const { data, error } = await sb.rpc('hub_add_user', { p_email: email, p_access: access, p_months: months, p_note: note });
+      if (error) throw error;
+      let msg = data.has_account ? `${email} already had an account: access given now.` : `${email} added. They’ll get it when they sign up.`;
+      if ($('#au-send').checked) {
+        try { await sendInvite(email); msg += ' Invite emailed.'; } catch (err) { msg += ` But the email didn’t send: ${err.message}`; }
+      }
+      toast(msg); addUserOpen = false; await reloadUsers();
+    } catch (err) { toast(err.message || 'Couldn’t add them'); go.disabled = false; go.textContent = 'Add user'; }
+  };
+  $('#upane').querySelectorAll('.ui').forEach((sel) => sel.onchange = async () => {
+    const v = sel.value, email = sel.dataset.email; if (!v) return;
+    try {
+      if (v === 'send') { await sendInvite(email); toast(`Invite emailed to ${email}`); }
+      else if (v === 'cancel') {
+        if (!confirm(`Cancel the invite for ${email}? Their tester or admin spot from it is removed too.`)) { sel.value = ''; return; }
+        const { error } = await sb.rpc('hub_cancel_invite', { p_email: email }); if (error) throw error; toast(`Invite cancelled for ${email}`);
+      }
+      await reloadUsers();
+    } catch (err) { sel.value = ''; toast(err.message || 'That didn’t work'); }
   });
   loadPeople().then(people).catch((e) => { const p2 = $('#pane'); if (p2) p2.innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; });
 }
