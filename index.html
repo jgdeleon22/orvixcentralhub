@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Orvix Central Hub</title>
+<link rel="icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #050D17; --card: #0F1D2E; --card-2: #13253A; --edge: #1C3048; --edge-2: #2A4562;
+    --ink: #F2F6FA; --ink-2: #A3B6C8; --ink-3: #6F879B;
+    --orange: #F76E19; --orange-2: #FF8A3D; --navy: #06101C;
+    --green: #2DB46E; --amber: #E8B04A; --red: #E5484D; --blue: #4F8FE0; --violet: #9A7BF0;
+    --display: "Barlow Condensed", "Arial Narrow", sans-serif; --text: "Barlow", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--night); color: var(--ink); font: 16px/1.5 var(--text); }
+  body { min-height: 100vh; background: radial-gradient(1200px 600px at 80% -10%, rgba(247,110,25,.10), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(79,143,224,.08), transparent 60%), var(--night); }
+  a { color: var(--orange-2); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: .01em; margin: 0; }
+  .hidden { display: none !important; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* Sign in */
+  #login { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+  .login-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--edge); border-radius: 18px; padding: 32px 28px; }
+  .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .brand img { width: 44px; height: 44px; object-fit: contain; }
+  .brand b { font-family: var(--display); font-size: 26px; display: block; line-height: 1; }
+  .brand span { color: var(--ink-3); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+  label { display: block; font-size: 13px; color: var(--ink-2); margin: 14px 0 6px; }
+  input[type=email], input[type=password], input[type=text], textarea, select {
+    width: 100%; background: var(--navy); border: 1px solid var(--edge); border-radius: 10px; padding: 11px 12px; outline: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--orange); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; padding: 11px 18px; cursor: pointer; font-weight: 600; }
+  .btn-primary { background: var(--orange); color: var(--navy); }
+  .btn-primary:hover { background: var(--orange-2); }
+  .btn-ghost { background: transparent; border: 1px solid var(--edge-2); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--ink-3); }
+  .btn-small { padding: 6px 12px; font-size: 14px; border-radius: 8px; }
+  .btn-danger { background: transparent; border: 1px solid rgba(229,72,77,.5); color: #FF8A8D; }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .full { width: 100%; }
+  .or { display: flex; align-items: center; gap: 10px; color: var(--ink-3); font-size: 13px; margin: 18px 0; }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--edge); }
+  .err { color: #FF8A8D; font-size: 14px; margin-top: 12px; min-height: 1em; }
+  .muted { color: var(--ink-3); font-size: 14px; }
+
+  /* Shell */
+  header.top { position: sticky; top: 0; z-index: 5; background: rgba(5,13,23,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--edge); }
+  header.top .wrap { display: flex; align-items: center; gap: 14px; height: 64px; }
+  header.top .brand { margin: 0; cursor: pointer; }
+  header.top .brand img { width: 34px; height: 34px; }
+  header.top .brand b { font-size: 21px; }
+  .crumb { color: var(--ink-3); font-family: var(--display); font-size: 20px; }
+  .crumb b { color: var(--ink); font-weight: 600; }
+  .spacer { flex: 1; }
+  .who { color: var(--ink-2); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
+  main.wrap { padding-top: 32px; padding-bottom: 64px; }
+  .btn { white-space: nowrap; }
+  .page-title { display: flex; align-items: end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .page-title h1 { font-size: 34px; }
+
+  /* Hub home */
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+  .project { position: relative; text-align: left; background: var(--card); border: 1px solid var(--edge); border-radius: 18px; padding: 26px; cursor: pointer; overflow: hidden; transition: border-color .15s, transform .15s; }
+  .project:hover { border-color: var(--edge-2); transform: translateY(-2px); }
+  .project::after { content: ""; position: absolute; inset: auto -40px -60px auto; width: 200px; height: 200px; border-radius: 50%; background: var(--glow); opacity: .14; filter: blur(30px); }
+  .project h2 { font-size: 30px; margin: 14px 0 4px; }
+  .project p { color: var(--ink-2); margin: 0 0 18px; }
+  .project .icon { width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--card-2); border: 1px solid var(--edge); }
+  .project .icon svg { width: 26px; height: 26px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 13px; color: var(--ink-2); background: var(--navy); border: 1px solid var(--edge); border-radius: 999px; padding: 4px 10px; }
+  .chip b { color: var(--ink); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--edge); margin-bottom: 22px; overflow-x: auto; }
+  .tab { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 14px; color: var(--ink-2); cursor: pointer; font-weight: 600; white-space: nowrap; }
+  .tab.on { color: var(--ink); border-color: var(--orange); }
+  .tab .n { display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 6px; border-radius: 999px; background: var(--card-2); font-size: 12px; color: var(--ink-2); }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .pill { background: var(--card); border: 1px solid var(--edge); color: var(--ink-2); border-radius: 999px; padding: 6px 14px; cursor: pointer; font-size: 14px; }
+  .pill.on { background: var(--ink); color: var(--navy); border-color: var(--ink); }
+  .filters input[type=text] { max-width: 260px; padding: 7px 12px; border-radius: 999px; }
+
+  /* Reports */
+  .reports { display: grid; gap: 12px; }
+  .report { background: var(--card); border: 1px solid var(--edge); border-radius: 14px; padding: 18px; }
+  .report-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
+  .tag { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-radius: 6px; padding: 2px 8px; }
+  .tag.bug { background: rgba(229,72,77,.14); color: #FF8A8D; }
+  .tag.idea { background: rgba(154,123,240,.15); color: #C3B0FF; }
+  .tag.other { background: rgba(163,182,200,.12); color: var(--ink-2); }
+  .status { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--ink-3)); }
+  .report .msg { white-space: pre-wrap; word-break: break-word; margin: 0 0 12px; }
+  .meta { color: var(--ink-3); font-size: 13px; }
+  .shots { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 14px; }
+  .shots a { display: block; width: 92px; height: 140px; border-radius: 10px; overflow: hidden; border: 1px solid var(--edge); background: var(--navy); }
+  .shots img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .reply-row { display: grid; grid-template-columns: 180px 1fr auto; gap: 10px; align-items: start; border-top: 1px solid var(--edge); padding-top: 14px; }
+  .reply-row textarea { min-height: 44px; resize: vertical; }
+  .saved { color: var(--green); font-size: 13px; align-self: center; }
+  .empty { text-align: center; color: var(--ink-3); padding: 48px 16px; background: var(--card); border: 1px dashed var(--edge); border-radius: 14px; }
+
+  /* People */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 18px; }
+  .panel { background: var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 20px; min-width: 0; }
+  .panel h3 { font-size: 22px; display: flex; align-items: center; gap: 10px; }
+  .panel .sub { color: var(--ink-3); font-size: 14px; margin: 2px 0 14px; }
+  .count { font-family: var(--text); font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--card-2); border-radius: 999px; padding: 1px 9px; }
+  .progress { height: 6px; background: var(--navy); border-radius: 999px; overflow: hidden; margin: 6px 0 14px; }
+  .progress i { display: block; height: 100%; background: var(--green); border-radius: 999px; }
+  .rows { display: grid; }
+  .row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--edge); }
+  .row:first-child { border-top: 0; }
+  .row .main { flex: 1; min-width: 0; }
+  .row .main b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .main span { color: var(--ink-3); font-size: 13px; }
+  .add { display: flex; gap: 8px; margin-top: 14px; }
+  .add input { flex: 1; min-width: 0; padding: 8px 12px; }
+  .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+  .toggle input { accent-color: var(--green); width: 16px; height: 16px; }
+  .badge { font-size: 12px; color: var(--ink-3); border: 1px solid var(--edge); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+
+  .soon { background: var(--card); border: 1px solid var(--edge); border-radius: 18px; padding: 40px 28px; text-align: center; }
+  .soon h2 { font-size: 28px; margin-bottom: 6px; }
+  .soon p { color: var(--ink-2); max-width: 520px; margin: 0 auto 18px; }
+
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--card-2); border: 1px solid var(--edge-2); border-radius: 10px; padding: 10px 16px; font-size: 14px; z-index: 20; max-width: calc(100% - 32px); }
+
+  @media (max-width: 640px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .reply-row { grid-template-columns: 1fr; }
+    .who { display: none; }
+    header.top .brand b { display: none; }
+    header.top .wrap { gap: 8px; }
+    .page-title h1 { font-size: 28px; }
+    .crumb { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sign in: the only thing anyone sees until they're a confirmed admin. -->
+<section id="login" class="hidden">
+  <div class="login-card">
+    <div class="brand"><img src="logo.png" alt=""><div><b>Orvix Central Hub</b><span>Admins only</span></div></div>
+    <button class="btn btn-ghost full" id="google">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      Continue with Google
+    </button>
+    <div class="or">or</div>
+    <form id="login-form">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button class="btn btn-primary full" style="margin-top:20px" type="submit" id="login-btn">Sign in</button>
+    </form>
+    <div class="err" id="login-err"></div>
+  </div>
+</section>
+
+<section id="app" class="hidden">
+  <header class="top">
+    <div class="wrap">
+      <div class="brand" data-go="#/"><img src="logo.png" alt=""><b>Orvix Central Hub</b></div>
+      <div class="crumb" id="crumb"></div>
+      <div class="spacer"></div>
+      <div class="who" id="who"></div>
+      <button class="btn btn-ghost btn-small" id="signout">Sign out</button>
+    </div>
+  </header>
+  <main class="wrap" id="view"></main>
+</section>
+
+<div class="toast hidden" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+// Orvix Aero's Supabase project. The publishable key is public by design;
+// everything this page reads goes through hub_* functions that refuse
+// anyone who isn't on the admins list.
+const sb = supabase.createClient('https://uxnjglagrrprnsliyaed.supabase.co', 'sb_publishable_8vrxn8kJD8_lXdJ-a6_eqg_EtHNC4B8', {
+  auth: { flowType: 'pkce', persistSession: true, detectSessionInUrl: true },
+});
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const when = (t) => t ? new Date(t).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+const day = (t) => t ? new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.add('hidden'), 3200);
+}
+
+const STATUSES = [
+  ['new', 'New', 'var(--orange)'], ['working', 'Working on it', 'var(--blue)'], ['needs-info', 'Needs info', 'var(--amber)'],
+  ['fixed', 'Fixed', 'var(--green)'], ['not-a-bug', 'Not a bug', 'var(--ink-3)'], ['seen', 'Seen', 'var(--ink-3)'], ['done', 'Done', 'var(--green)'],
+];
+const OPEN = new Set(['new', 'working', 'needs-info']);
+const statusOf = (s) => STATUSES.find((x) => x[0] === s) || [s, s, 'var(--ink-3)'];
+
+let me = null;
+let cache = { feedback: null, people: null };
+
+// ---------- Sign in ----------
+async function check() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return showLogin();
+  const { data: admin, error } = await sb.rpc('is_admin');
+  if (error || !admin) {
+    await sb.auth.signOut();
+    return showLogin('This account isn’t an admin.');
+  }
+  me = session.user;
+  $('#login').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  $('#who').textContent = me.email;
+  route();
+}
+function showLogin(msg = '') {
+  me = null; cache = { feedback: null, people: null };
+  $('#app').classList.add('hidden');
+  $('#login').classList.remove('hidden');
+  $('#login-err').textContent = msg;
+}
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const b = $('#login-btn'); b.disabled = true; $('#login-err').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value });
+  b.disabled = false;
+  if (error) { $('#login-err').textContent = error.message; return; }
+  $('#password').value = '';
+  check();
+});
+$('#google').addEventListener('click', () => {
+  sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/' } });
+});
+$('#signout').addEventListener('click', async () => { await sb.auth.signOut(); location.hash = ''; showLogin(); });
+document.addEventListener('click', (e) => { const g = e.target.closest('[data-go]'); if (g) location.hash = g.dataset.go; });
+sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') showLogin(); });
+
+// ---------- Routing ----------
+window.addEventListener('hashchange', () => me && route());
+function route() {
+  const h = location.hash || '#/';
+  window.scrollTo(0, 0);
+  if (h.startsWith('#/aero')) return aero(h.split('/')[2] || 'bugs');
+  if (h.startsWith('#/grid')) return grid();
+  return home();
+}
+const crumb = (html) => { $('#crumb').innerHTML = html ? '<span style="margin:0 6px">/</span>' + html : ''; };
+
+// ---------- Home ----------
+const PLANE = '<svg viewBox="0 0 24 24" fill="none" stroke="#F76E19" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>';
+const GRID = '<svg viewBox="0 0 24 24" fill="none" stroke="#7FB4E6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>';
+async function home() {
+  crumb('');
+  $('#view').innerHTML = `
+    <div class="page-title"><div><h1>Your projects</h1><div class="muted">Pick one to manage.</div></div></div>
+    <div class="projects">
+      <button class="project" style="--glow: var(--orange)" data-go="#/aero/bugs">
+        <div class="icon">${PLANE}</div>
+        <h2>Orvix Aero</h2>
+        <p>Pilot logbook and schedule app. Bug reports, testers and admins.</p>
+        <div class="chips" id="aero-chips"><span class="chip">Loading…</span></div>
+      </button>
+      <button class="project" style="--glow: var(--blue)" data-go="#/grid">
+        <div class="icon">${GRID}</div>
+        <h2>Orvix Grid</h2>
+        <p>Star Citizen companion app and its community.</p>
+        <div class="chips"><span class="chip">Not connected yet</span></div>
+      </button>
+    </div>`;
+  try {
+    const [f, p] = await Promise.all([loadFeedback(), loadPeople()]);
+    const open = f.filter((r) => OPEN.has(r.status));
+    $('#aero-chips').innerHTML = `
+      <span class="chip"><b>${open.filter((r) => r.kind === 'bug').length}</b> open bugs</span>
+      <span class="chip"><b>${open.filter((r) => r.kind !== 'bug').length}</b> open ideas</span>
+      <span class="chip"><b>${p.members.length}</b> testers</span>
+      <span class="chip"><b>${p.android.length}</b>/12 Android</span>`;
+  } catch (e) { $('#aero-chips').innerHTML = `<span class="chip">${esc(failMsg(e))}</span>`; }
+}
+function failMsg(e) {
+  const m = e?.message || String(e);
+  return /hub_|function|schema cache/i.test(m) ? 'Database update not applied yet' : m;
+}
+
+// ---------- Data ----------
+async function loadFeedback(force) {
+  if (cache.feedback && !force) return cache.feedback;
+  const { data, error } = await sb.rpc('hub_feedback', { p_limit: 500 });
+  if (error) throw error;
+  return (cache.feedback = data);
+}
+async function loadPeople(force) {
+  if (cache.people && !force) return cache.people;
+  const { data, error } = await sb.rpc('hub_people');
+  if (error) throw error;
+  return (cache.people = data);
+}
+
+// ---------- Orvix Aero ----------
+let bugFilter = { show: 'open', kind: 'all', q: '' };
+async function aero(tab) {
+  crumb('<b>Orvix Aero</b>');
+  $('#view').innerHTML = `
+    <div class="page-title"><h1>Orvix Aero</h1>
+      <button class="btn btn-ghost btn-small" id="refresh">Refresh</button></div>
+    <div class="tabs">
+      <button class="tab ${tab === 'bugs' ? 'on' : ''}" data-go="#/aero/bugs">Bug reports <span class="n" id="n-bugs">·</span></button>
+      <button class="tab ${tab === 'people' ? 'on' : ''}" data-go="#/aero/people">Testers &amp; admins</button>
+    </div>
+    <div id="pane"><div class="muted">Loading…</div></div>`;
+  $('#refresh').onclick = async () => { cache = { feedback: null, people: null }; aero(tab); };
+  try {
+    const f = await loadFeedback();
+    $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
+    if (tab === 'people') return people(await loadPeople());
+    bugs(f);
+  } catch (e) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
+}
+
+function bugs(all) {
+  const pane = $('#pane');
+  const pills = (key, opts) => opts.map(([v, l]) => `<button class="pill ${bugFilter[key] === v ? 'on' : ''}" data-f="${key}" data-v="${v}">${l}</button>`).join('');
+  const q = bugFilter.q.toLowerCase();
+  const list = all.filter((r) =>
+    (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
+    (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
+    (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
+  pane.innerHTML = `
+    <div class="filters">
+      ${pills('show', [['open', 'Open'], ['closed', 'Closed'], ['all', 'All']])}
+      <span style="width:8px"></span>
+      ${pills('kind', [['all', 'Everything'], ['bug', 'Bugs'], ['idea', 'Ideas'], ['other', 'Other']])}
+      <span class="spacer"></span>
+      <input type="text" id="q" placeholder="Search reports" value="${esc(bugFilter.q)}">
+    </div>
+    <div class="reports">${list.length ? list.map(reportCard).join('') : '<div class="empty">Nothing here. Nice.</div>'}</div>`;
+  pane.querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { bugFilter[b.dataset.f] = b.dataset.v; bugs(all); });
+  const qi = $('#q'); qi.oninput = () => { bugFilter.q = qi.value; clearTimeout(bugs.t); bugs.t = setTimeout(() => { bugs(all); const n = $('#q'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 250); };
+  pane.querySelectorAll('.report').forEach(wireReport);
+  loadShots(pane);
+}
+
+function reportCard(r) {
+  const [, label, color] = statusOf(r.status);
+  const shots = (r.screenshots || []).map((p) => `<a target="_blank" rel="noopener" data-shot="${esc(p)}"><img alt="Screenshot"></a>`).join('');
+  return `<article class="report" data-id="${r.id}">
+    <div class="report-head">
+      <span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
+      <span class="status" style="--c:${color}">${esc(label)}</span>
+      <span class="meta">#${r.id} · ${esc(when(r.created_at))}</span>
+      <span class="spacer"></span>
+      <span class="meta">${esc(r.email || 'deleted account')}${r.platform ? ' · ' + esc(r.platform) : ''}${r.app_version ? ' ' + esc(r.app_version) : ''}</span>
+    </div>
+    <p class="msg">${esc(r.message)}</p>
+    ${shots ? `<div class="shots">${shots}</div>` : ''}
+    <div class="reply-row">
+      <select class="st">${STATUSES.map(([v, l]) => `<option value="${v}" ${v === r.status ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <textarea class="rp" maxlength="1000" placeholder="Reply the pilot will see under “Your reports”">${esc(r.reply || '')}</textarea>
+      <button class="btn btn-primary btn-small sv">Save</button>
+    </div>
+  </article>`;
+}
+
+function wireReport(el) {
+  const id = Number(el.dataset.id);
+  $('.sv', el).onclick = async (e) => {
+    const b = e.currentTarget; b.disabled = true;
+    const status = $('.st', el).value, reply = $('.rp', el).value;
+    const { error } = await sb.rpc('hub_update_feedback', { p_id: id, p_status: status, p_reply: reply });
+    b.disabled = false;
+    if (error) return toast(error.message);
+    const r = cache.feedback.find((x) => x.id === id);
+    Object.assign(r, { status, reply: reply.trim() || null, updated_at: new Date().toISOString() });
+    const [, label, color] = statusOf(status);
+    const s = $('.status', el); s.textContent = label; s.style.setProperty('--c', color);
+    $('#n-bugs').textContent = cache.feedback.filter((x) => OPEN.has(x.status)).length;
+    toast(`Report #${id} saved`);
+  };
+}
+
+// Screenshots live in the private feedback-shots bucket; admins get
+// short-lived signed links.
+async function loadShots(root) {
+  const links = [...root.querySelectorAll('[data-shot]')];
+  if (!links.length) return;
+  const { data, error } = await sb.storage.from('feedback-shots').createSignedUrls(links.map((a) => a.dataset.shot), 3600);
+  if (error) return;
+  data.forEach((d, i) => { if (d.signedUrl) { links[i].href = d.signedUrl; $('img', links[i]).src = d.signedUrl; } });
+}
+
+function people(p) {
+  const pane = $('#pane');
+  const added = p.android.filter((t) => t.added_to_play).length;
+  pane.innerHTML = `
+    <div class="grid2">
+      <section class="panel">
+        <h3>Admins <span class="count">${p.admins.length}</span></h3>
+        <div class="sub">Can sign in here and use admin tools in the app (gift codes).</div>
+        <div class="rows">${p.admins.map((a) => `
+          <div class="row"><div class="main"><b>${esc(a.email)}</b><span>${a.has_account ? 'Has an account' : 'No account yet'}${a.email === me.email.toLowerCase() ? ' · you' : ''}</span></div>
+          ${a.email === me.email.toLowerCase() ? '' : `<button class="btn btn-danger btn-small" data-rm-admin="${esc(a.email)}">Remove</button>`}</div>`).join('')}</div>
+        <form class="add" id="add-admin"><input type="email" placeholder="Email to make admin" required><button class="btn btn-ghost btn-small">Add admin</button></form>
+      </section>
+
+      <section class="panel">
+        <h3>Testers <span class="count">${p.members.length}</span></h3>
+        <div class="sub">Emails let into the app before launch (iPhone, web and Windows).</div>
+        <div class="rows">${p.members.map((m) => `
+          <div class="row"><div class="main"><b>${esc(m.email)}</b><span>${esc(m.note || '—')} · added ${esc(day(m.added_at))}${m.last_sign_in ? ' · last in ' + esc(day(m.last_sign_in)) : ' · never signed in'}</span></div>
+          <button class="btn btn-danger btn-small" data-rm-member="${esc(m.email)}">Remove</button></div>`).join('') || '<div class="muted">No testers yet.</div>'}</div>
+        <form class="add" id="add-member"><input type="email" placeholder="Tester's email" required style="flex:1.4"><input type="text" placeholder="Note (optional)" maxlength="100"><button class="btn btn-ghost btn-small">Add</button></form>
+      </section>
+
+      <section class="panel">
+        <h3>Android sign-ups <span class="count">${p.android.length}</span></h3>
+        <div class="sub">From orvixaero.com/android. Google Play needs 12 testers opted in for 14 days. ${added} of ${p.android.length} added to Play.</div>
+        <div class="progress"><i style="width:${Math.min(100, p.android.length / 12 * 100)}%"></i></div>
+        <div class="rows">${p.android.map((t) => `
+          <div class="row"><div class="main"><b>${esc(t.first_name ? t.first_name + ' · ' : '')}${esc(t.email)}</b><span>${esc(t.flying || '—')} · ${esc(day(t.created_at))}</span></div>
+          <label class="toggle"><input type="checkbox" data-play="${esc(t.email)}" ${t.added_to_play ? 'checked' : ''}> On Play list</label></div>`).join('') || '<div class="muted">No sign-ups yet.</div>'}</div>
+      </section>
+
+      <section class="panel">
+        <h3>Paywall preview <span class="count">${p.preview.length}</span></h3>
+        <div class="sub">See the subscription screen before launch (App Review and purchase tests).</div>
+        <div class="rows">${p.preview.map((x) => `
+          <div class="row"><div class="main"><b>${esc(x.email)}</b><span>${esc(x.note || '')}</span></div><span class="badge">Preview</span></div>`).join('') || '<div class="muted">None.</div>'}</div>
+      </section>
+    </div>`;
+
+  const after = async (error, msg) => {
+    if (error) return toast(error.message);
+    toast(msg); people(await loadPeople(true));
+  };
+  $('#add-admin').onsubmit = async (e) => {
+    e.preventDefault(); const email = $('input', e.target).value;
+    const { error } = await sb.rpc('hub_set_admin', { p_email: email, p_on: true });
+    after(error, `${email} is now an admin`);
+  };
+  $('#add-member').onsubmit = async (e) => {
+    e.preventDefault(); const [em, note] = e.target.querySelectorAll('input');
+    const { error } = await sb.rpc('hub_set_member', { p_email: em.value, p_note: note.value, p_on: true });
+    after(error, `${em.value} added`);
+  };
+  pane.querySelectorAll('[data-rm-admin]').forEach((b) => b.onclick = async () => {
+    if (!confirm(`Remove ${b.dataset.rmAdmin} as admin?`)) return;
+    const { error } = await sb.rpc('hub_set_admin', { p_email: b.dataset.rmAdmin, p_on: false });
+    after(error, 'Admin removed');
+  });
+  pane.querySelectorAll('[data-rm-member]').forEach((b) => b.onclick = async () => {
+    if (!confirm(`Remove ${b.dataset.rmMember}? They'll see “invite-only” in the app.`)) return;
+    const { error } = await sb.rpc('hub_set_member', { p_email: b.dataset.rmMember, p_note: null, p_on: false });
+    after(error, 'Tester removed');
+  });
+  pane.querySelectorAll('[data-play]').forEach((c) => c.onchange = async () => {
+    const { error } = await sb.rpc('hub_set_android', { p_email: c.dataset.play, p_added: c.checked });
+    if (error) { c.checked = !c.checked; return toast(error.message); }
+    cache.people.android.find((t) => t.email === c.dataset.play).added_to_play = c.checked;
+    toast(c.checked ? 'Marked as on the Play list' : 'Unmarked');
+  });
+}
+
+// ---------- Orvix Grid ----------
+function grid() {
+  crumb('<b>Orvix Grid</b>');
+  $('#view').innerHTML = `
+    <div class="page-title"><h1>Orvix Grid</h1></div>
+    <div class="soon">
+      <h2>Not connected yet</h2>
+      <p>Orvix Grid runs on its own backend. Once it’s connected, its reports, users and admins will show up here the same way Orvix Aero’s do.</p>
+      <button class="btn btn-ghost" data-go="#/">Back to projects</button>
+    </div>`;
+}
+
+check();
+</script>
+</body>
+</html>
