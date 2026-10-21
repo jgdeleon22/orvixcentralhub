@@ -527,6 +527,8 @@ const IC = {
   globe: SV('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'),
 };
 
+let aeroOpen = 0, gridOpen = 0;
+const setBadge = () => { const n = aeroOpen + gridOpen; const el = $('#nav-bugs'); if (el) el.textContent = n || ''; };
 async function loadGrid(force) {
   if (cache.grid && !force) return cache.grid;
   const { data, error } = await sb.functions.invoke('hub-grid', { body: {} });
@@ -594,7 +596,7 @@ async function home() {
         <div class="prod-foot">
           <div class="stat"><span>Accounts</span><b id="pg-acc">–</b></div>
           <div class="stat"><span>Crews</span><b id="pg-crews">–</b></div>
-          <div class="stat"><span>Player reports (7 days)</span><b id="pg-rep">–</b></div>
+          <div class="stat"><span>Open bugs</span><b id="pg-bug">–</b></div>
           <div class="acts"><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">View site ↗</a></div>
         </div>
       </article>
@@ -610,7 +612,8 @@ async function home() {
     const st = $('#grid-status'); if (!st) return;
     if (!g.connected) { st.className = 'pillst off'; st.textContent = 'Not connected'; $('#grid-desc').textContent = 'Not connected yet: ' + (g.reason || ''); return; }
     st.className = 'pillst'; st.textContent = 'Connected';
-    $('#pg-acc').textContent = g.accounts.toLocaleString(); $('#pg-crews').textContent = g.crews; $('#pg-rep').textContent = g.reports_7d;
+    $('#pg-acc').textContent = g.accounts.toLocaleString(); $('#pg-crews').textContent = g.crews; $('#pg-bug').textContent = g.feedback_ready ? g.open_bugs : '–';
+    gridOpen = g.open_bugs || 0; setBadge();
   });
   health().then((rs) => {
     $('#hl') && ($('#hl').innerHTML = healthRows(rs));
@@ -620,7 +623,7 @@ async function home() {
   try {
     const o = await loadOverview();
     if (!$('#tiles')) return;
-    $('#nav-bugs').textContent = o.open_bugs || '';
+    aeroOpen = o.open_bugs || 0; setBadge();
     const tile = (icon, c, label, value, sub, href) => `<${href ? `a href="${href}"` : 'div'} class="tile" style="--c:${c}"><div class="ti">${icon}</div><div style="min-width:0"><div class="tl">${label}</div><div class="tv">${value}</div><div class="ts">${sub}</div></div></${href ? 'a' : 'div'}>`;
     $('#tiles').innerHTML =
       tile(IC.users, 'var(--blue)', 'Orvix Aero accounts', o.accounts.toLocaleString(), `+${o.accounts_7d} this week`, '#/aero/people') +
@@ -720,7 +723,7 @@ async function aero(tab) {
   try {
     const f = await loadFeedback();
     $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
-    $('#nav-bugs').textContent = f.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length || '';
+    aeroOpen = f.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
     if (tab === 'people') return people(await loadPeople());
     bugs(f);
   } catch (e) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
@@ -1061,7 +1064,7 @@ let supApp = 'all';
 async function supportPage() {
   crumb('<b>Support</b>'); setNav('support');
   $('#view').innerHTML = `
-    <div class="page-title"><div><h1>Support</h1><div class="muted">Bug reports and ideas from Orvix Aero, player reports from Orvix Grid.</div></div>
+    <div class="page-title"><div><h1>Support</h1><div class="muted">Bug reports and ideas from both apps, plus Orvix Grid’s player reports.</div></div>
       <div class="seg">${[['all', 'Both apps'], ['aero', 'Orvix Aero'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-app="${k}" class="${supApp === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
   $('#view').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
@@ -1077,7 +1080,12 @@ async function supportPage() {
     (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
   const gList = (bugFilter.show === 'closed' || !['all', 'other'].includes(bugFilter.kind)) ? [] :
     grid.filter((r) => !q || `${r.reason} ${r.crew} ${r.reporter} ${r.target}`.toLowerCase().includes(q));
-  const items = [...aList.map((r) => ({ at: r.created_at, html: reportCard(r).replace('<span class="tag ', '<span class="b orange" style="margin-right:2px">Orvix Aero</span><span class="tag ') })),
+  const gfb = g && g.connected && supApp !== 'aero' ? (g.feedback || []) : [];
+  const gfList = gfb.filter((r) =>
+    (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
+    (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
+    (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
+  const items = [...gfList.map((r) => ({ at: r.created_at, html: gridFeedbackCard(r) })), ...aList.map((r) => ({ at: r.created_at, html: reportCard(r).replace('<span class="tag ', '<span class="b orange" style="margin-right:2px">Orvix Aero</span><span class="tag ') })),
     ...gList.map((r) => ({ at: r.created_at, html: `<article class="report"><div class="report-head"><span class="b blue">Orvix Grid</span><span class="tag other">${esc(r.what)}</span><span class="meta">${esc(r.crew)} · ${esc(when(r.created_at))}</span><span class="spacer"></span><span class="meta">from ${esc(r.reporter || 'unknown')}${r.target ? ' · about ' + esc(r.target) : ''}</span></div><p class="msg" style="margin:0">${esc(r.reason || 'No reason given')}</p></article>` }))]
     .sort((a, b) => (a.at < b.at ? 1 : -1));
   $('#pane').innerHTML = `
@@ -1086,11 +1094,40 @@ async function supportPage() {
       <span class="spacer"></span><input type="text" id="q" placeholder="Search reports" value="${esc(bugFilter.q)}"></div>
     <div class="reports">${items.map((x) => x.html).join('') || '<div class="empty">Nothing here. Nice.</div>'}</div>
     ${g && !g.connected && supApp !== 'aero' ? `<p class="note">Orvix Grid isn’t connected: ${esc(g.reason || '')}</p>` : ''}
-    ${grid.length ? '<p class="note">Orvix Grid player reports have no status; they show under Open and All. Act on them in Orvix Grid.</p>' : ''}`;
+    ${grid.length ? '<p class="note">Orvix Grid player reports (flagged crew posts) have no status; they show under Open and All. Act on them in Orvix Grid.</p>' : ''}
+    ${g && g.connected && g.feedback_ready === false && supApp !== 'aero' ? '<p class="note">Orvix Grid’s bug reports table isn’t set up yet.</p>' : ''}`;
   $('#pane').querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { bugFilter[b.dataset.f] = b.dataset.v; supportPage(); });
   const qi = $('#q'); qi.oninput = () => { bugFilter.q = qi.value; clearTimeout(supportPage.t); supportPage.t = setTimeout(async () => { await supportPage(); const n = $('#q'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 300); };
   $('#pane').querySelectorAll('.report[data-id]').forEach(wireReport);
+  $('#pane').querySelectorAll('.report[data-gid]').forEach(wireGridReport);
   loadShots($('#pane'));
+}
+
+function gridFeedbackCard(r) {
+  const [, label, color] = statusOf(r.status);
+  return `<article class="report" data-gid="${r.id}">
+    <div class="report-head"><span class="b blue" style="margin-right:2px">Orvix Grid</span><span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
+      <span class="status" style="--c:${color}">${esc(label)}</span><span class="meta">#${r.id} · ${esc(when(r.created_at))}</span><span class="spacer"></span>
+      <span class="meta">${esc(r.email || 'not signed in')}${r.platform ? ' · ' + esc(r.platform) : ''}${r.app_version ? ' ' + esc(r.app_version) : ''}</span></div>
+    <p class="msg">${esc(r.message)}</p>
+    <div class="reply-row">
+      <select class="st">${STATUSES.map(([v, l]) => `<option value="${v}" ${v === r.status ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <textarea class="rp" maxlength="1000" placeholder="${r.signed_in ? 'Reply the player will see under “Your reports”' : 'Not signed in: they won’t see a reply in the app' + (r.email ? '. Email them at ' + esc(r.email) : '')}">${esc(r.reply || '')}</textarea>
+      <button class="btn btn-primary btn-small sv">Save</button>
+    </div></article>`;
+}
+function wireGridReport(el) {
+  const id = Number(el.dataset.gid), ta = $('.rp', el); grow(ta); ta.addEventListener('input', () => grow(ta));
+  $('.sv', el).onclick = async (e) => {
+    const b = e.currentTarget; b.disabled = true;
+    const status = $('.st', el).value, reply = ta.value;
+    const { data, error } = await sb.functions.invoke('hub-grid', { body: { action: 'feedback.update', id, status, reply } });
+    b.disabled = false;
+    if (error || data?.error) return toast(data?.error || 'Couldn’t save to Orvix Grid');
+    const r = (cache.grid?.feedback || []).find((x) => x.id === id); if (r) Object.assign(r, { status, reply: reply.trim() || null });
+    const [, label, color] = statusOf(status); const st = $('.status', el); st.textContent = label; st.style.setProperty('--c', color);
+    toast(`Orvix Grid report #${id} saved`);
+  };
 }
 
 // ---------- Audit log ----------
@@ -1098,10 +1135,11 @@ const ACTIONS = {
   'report.update': 'Updated a report', 'tester.add': 'Added a tester', 'tester.remove': 'Removed a tester',
   'admin.add': 'Added an admin', 'admin.remove': 'Removed an admin', 'android.on_play': 'Marked as on the Play list',
   'android.off_play': 'Unmarked from the Play list', 'access.give': 'Gave free access', 'access.remove': 'Removed free access',
-  'admin.password_changed': 'Changed their hub password', 'launch.open_paywall': 'Opened the paywall (launch)', 'launch.close_paywall': 'Closed the paywall',
+  'admin.password_changed': 'Changed their hub password', 'grid_report.update': 'Updated an Orvix Grid report', 'launch.open_paywall': 'Opened the paywall (launch)', 'launch.close_paywall': 'Closed the paywall',
 };
 function auditDetail(a) {
   const d = a.detail || {};
+  if (a.action === 'grid_report.update') return `${esc(statusOf(d.to)[1])}${d.replied ? ' · with a reply' : ''}`;
   if (a.action === 'report.update') return `${d.from && d.from !== d.to ? `${esc(statusOf(d.from)[1])} → ` : ''}${esc(statusOf(d.to)[1])}${d.replied ? ' · with a reply' : ''}`;
   if (a.action === 'access.give') return d.months ? `${d.months} month${d.months > 1 ? 's' : ''}` : 'for good';
   if (d.note) return esc(d.note);
@@ -1190,6 +1228,8 @@ async function grid() {
       <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>New Orvix Grid accounts</h3><span class="muted">Last 14 days</span></div><div class="chart-wrap" id="chart"></div></section>
       <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Recent activity</h3></div><div id="acts"></div></section>
     </div>
+    <div class="sec" style="margin-top:28px"><h2>Bug reports &amp; ideas</h2><a class="muted" href="#/support" style="color:var(--ink-2)">Answer in Support →</a></div>
+    ${g.feedback_ready === false ? '<div class="empty">The bug reports table isn’t set up in Orvix Grid yet.</div>' : `<div class="reports" id="gfb">${(g.feedback || []).slice(0, 20).map(gridFeedbackCard).join('') || '<div class="empty">No bug reports yet.</div>'}</div>`}
     <div class="sec" style="margin-top:28px"><h2>Player reports</h2><span class="muted">${g.upcoming_ops} upcoming crew ops</span></div>
     <div class="reports">${g.reports.length ? g.reports.map((r) => `<article class="report">
       <div class="report-head"><span class="tag other">${esc(r.what)}</span><span class="meta">${esc(r.crew)} · ${esc(when(r.created_at))}</span><span class="spacer"></span>
@@ -1197,8 +1237,9 @@ async function grid() {
       <p class="msg" style="margin:0">${esc(r.reason || 'No reason given')}</p></article>`).join('') : '<div class="empty">No player reports.</div>'}</div>
     <p class="note">Player reports flag crew comments, ops, needs or members. To act on one, use Orvix Grid’s own tools; the hub only reads.</p>`;
   drawChart($('#chart'), g.by_day);
+  pane.querySelectorAll('.report[data-gid]').forEach(wireGridReport);
   $('#acts').innerHTML = g.activity.length ? g.activity.map((a) => {
-    const [icon, c, title] = a.kind === 'signup' ? [IC.plus, 'var(--blue)', 'New account'] : [IC.msg, 'var(--orange)', 'Player report'];
+    const [icon, c, title] = a.kind === 'signup' ? [IC.plus, 'var(--blue)', 'New account'] : a.kind === 'feedback' ? [IC.bug, 'var(--orange)', 'New bug report or idea'] : [IC.msg, 'var(--violet)', 'Player report'];
     return `<div class="act"><span class="ai" style="--c:${c}">${icon}</span><div class="at"><b>${title}</b><span>${esc(a.detail || a.who || '')}${a.detail && a.who ? ' · ' + esc(a.who) : ''}</span></div><time>${ago(a.at)}</time></div>`;
   }).join('') : '<div class="muted">Nothing yet.</div>';
 }
