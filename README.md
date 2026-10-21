@@ -8,4 +8,4 @@ read/write goes through the hub_* functions (migration
 
 Published from its own repo jgdeleon22/orvixcentralhub (GitHub Pages, custom
 domain). This folder is the source copy; keep both in sync.
-Supabase Auth needs https://orvixcentralhub.com/** in Redirect URLs for Google sign-in.
+Sign-in is email + password only (internal; no Google).
