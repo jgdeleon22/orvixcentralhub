@@ -240,7 +240,6 @@ $('#login-form').addEventListener('submit', async (e) => {
   $('#password').value = '';
   check();
 });
-});
 $('#signout').addEventListener('click', async () => { await sb.auth.signOut(); location.hash = ''; showLogin(); });
 document.addEventListener('click', (e) => { const g = e.target.closest('[data-go]'); if (g) location.hash = g.dataset.go; });
 sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') showLogin(); });
