@@ -33,6 +33,9 @@
   .brand img { width: 44px; height: 44px; object-fit: contain; }
   .brand b { font-family: var(--display); font-size: 26px; display: block; line-height: 1; }
   .brand span { color: var(--ink-3); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+  .login-logo { text-align: center; margin: 4px 0 26px; }
+  .login-logo img { width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto 10px; }
+  .login-logo span { color: var(--ink-3); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; }
   label { display: block; font-size: 13px; color: var(--ink-2); margin: 14px 0 6px; }
   input[type=email], input[type=password], input[type=text], textarea, select {
     width: 100%; background: var(--navy); border: 1px solid var(--edge); border-radius: 10px; padding: 11px 12px; outline: none;
@@ -152,7 +155,7 @@
 <!-- Sign in: the only thing anyone sees until they're a confirmed admin. -->
 <section id="login" class="hidden">
   <div class="login-card">
-    <div class="brand"><img src="logo.png" alt=""><div><b>Orvix Central Hub</b><span>Admins only</span></div></div>
+    <div class="login-logo"><img src="hub-logo.png" alt="Orvix Central Hub"><span>Admins only</span></div>
     <form id="login-form">
       <label for="email" style="margin-top:0">Email</label>
       <input id="email" type="email" autocomplete="username" required>
@@ -167,7 +170,7 @@
 <section id="app" class="hidden">
   <header class="top">
     <div class="wrap">
-      <div class="brand" data-go="#/"><img src="logo.png" alt=""><b>Orvix Central Hub</b></div>
+      <div class="brand" data-go="#/"><img src="hub-mark.png" alt=""><b>Orvix Central Hub</b></div>
       <div class="crumb" id="crumb"></div>
       <div class="spacer"></div>
       <div class="who" id="who"></div>
