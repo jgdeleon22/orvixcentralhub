@@ -43,6 +43,8 @@
   .ring.mark { width: 30px; height: 30px; flex: none; }
   .forgot { display: block; margin: 16px auto 0; background: none; border: 0; color: var(--ink-2); font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .forgot:hover { color: var(--ink); }
+  .links { display: flex; justify-content: center; gap: 22px; margin-top: 16px; }
+  .links .forgot { margin: 0; }
   .ok { color: var(--green); font-size: 14px; margin-top: 12px; }
   label { display: block; font-size: 13px; color: var(--ink-2); margin: 14px 0 6px; }
   input[type=email], input[type=password], input[type=text], textarea, select {
@@ -169,10 +171,18 @@
       <input id="email" type="email" autocomplete="username" required>
       <label for="password">Password</label>
       <input id="password" type="password" autocomplete="current-password" required>
+      <div id="pw-again" class="hidden">
+        <label for="password2">Type it again</label>
+        <input id="password2" type="password" autocomplete="new-password">
+        <div class="muted" style="margin-top:8px;font-size:13px">At least 10 characters.</div>
+      </div>
       <button class="btn btn-primary full" style="margin-top:20px" type="submit" id="login-btn">Sign in</button>
     </form>
     <div class="err" id="login-err"></div>
-    <button type="button" class="forgot" id="forgot">Forgot password?</button>
+    <div class="links">
+      <button type="button" class="forgot" id="forgot">Forgot password?</button>
+      <button type="button" class="forgot" id="mode">Create account</button>
+    </div>
   </div>
 </section>
 
@@ -263,9 +273,44 @@ function showLogin(msg = '') {
   $('#login').classList.remove('hidden');
   $('#login-err').className = 'err'; $('#login-err').textContent = msg;
 }
+// Create account: only for emails already on the admins list.
+let creating = false;
+function setMode(c) {
+  creating = c;
+  $('#pw-again').classList.toggle('hidden', !c);
+  $('#password2').required = c;
+  $('#password').autocomplete = c ? 'new-password' : 'current-password';
+  $('#login-btn').textContent = c ? 'Create account' : 'Sign in';
+  $('#forgot').classList.toggle('hidden', c);
+  $('#mode').textContent = c ? 'Back to sign in' : 'Create account';
+  $('#login-err').className = 'err'; $('#login-err').textContent = '';
+}
+$('#mode').addEventListener('click', () => setMode(!creating));
+async function createAccount() {
+  const email = $('#email').value.trim().toLowerCase(), pw = $('#password').value, err = $('#login-err');
+  const say = (msg, ok) => { err.className = ok ? 'ok' : 'err'; err.textContent = msg; };
+  if (pw !== $('#password2').value) return say('The two passwords don’t match.');
+  if (pw.length < 10) return say('Use at least 10 characters.');
+  const { data: allowed, error: e1 } = await sb.rpc('hub_can_register', { p_email: email });
+  if (e1) return say(e1.message);
+  if (!allowed) return say('This email isn’t set up for the hub. Ask an admin to add it first.');
+  const { data, error } = await sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: location.origin + '/', data: { hub_signup: true } } });
+  if (error) return say(error.message);
+  $('#password').value = $('#password2').value = '';
+  if (data.session) return check();
+  // Supabase answers the same way for an email that already has an account.
+  setMode(false);
+  say('Check your email for a link to confirm the account, then sign in here. If you already had an Orvix Aero account, sign in with that password or use “Forgot password?”.', true);
+}
+
 $('#login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const b = $('#login-btn'); b.disabled = true; $('#login-err').textContent = '';
+  if (creating) {
+    const b = $('#login-btn'); b.disabled = true;
+    try { await createAccount(); } finally { b.disabled = false; }
+    return;
+  }
+  const b = $('#login-btn'); b.disabled = true; $('#login-err').className = 'err'; $('#login-err').textContent = '';
   const { error } = await sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value });
   b.disabled = false;
   if (error) { $('#login-err').textContent = error.message; return; }
