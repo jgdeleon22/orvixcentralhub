@@ -550,7 +550,9 @@ const CHECKS = [
     const rs = await Promise.all(['weather', 'commute', 'schedule-read'].map((f) => fetch(`${SB_URL}/functions/v1/${f}`, { method: 'OPTIONS' }).then((r) => r.ok, () => false)));
     if (!rs.every(Boolean)) throw new Error(rs.filter((x) => !x).length + ' not responding');
   }],
-  ['site', 'orvixaero.com', 'Website and web app', IC.globe, async () => { await fetch('https://orvixaero.com/?hub=' + Date.now(), { mode: 'no-cors', cache: 'no-store' }); }],
+  ['site', 'orvixaero.com', 'Orvix Aero website and web app', IC.globe, async () => { await fetch('https://orvixaero.com/?hub=' + Date.now(), { mode: 'no-cors', cache: 'no-store' }); }],
+  ['gridsite', 'orvixgrid.com', 'Orvix Grid website', IC.globe, async () => { await fetch('https://www.orvixgrid.com/?hub=' + Date.now(), { mode: 'no-cors', cache: 'no-store' }); }],
+  ['griddb', 'Orvix Grid backend', 'Accounts and crews', IC.db, async () => { const g = await loadGrid(true); if (!g.connected) throw new Error(g.reason || 'Not connected'); }],
 ];
 async function health() {
   if (health.last && Date.now() - health.last.at < 60000) return health.last.results;
@@ -593,7 +595,7 @@ async function home() {
           <div class="stat"><span>Accounts</span><b id="pg-acc">–</b></div>
           <div class="stat"><span>Crews</span><b id="pg-crews">–</b></div>
           <div class="stat"><span>Player reports (7 days)</span><b id="pg-rep">–</b></div>
-          <div class="acts"><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a></div>
+          <div class="acts"><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">View site ↗</a></div>
         </div>
       </article>
     </div>
@@ -1167,7 +1169,7 @@ async function settingsPage() {
 async function grid() {
   crumb('<span>Orvix Grid</span><i>/</i><b>Overview</b>'); setNav('grid');
   $('#view').innerHTML = `
-    <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-grid.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Orvix Grid</h1><div class="muted">Read-only view of Orvix Grid’s own backend</div></div></div></div>
+    <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-grid.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Orvix Grid</h1><div class="muted">Read-only view of Orvix Grid’s own backend</div></div></div><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">View site ↗</a></div>
     <div id="gpane"><div class="muted">Loading…</div></div>`;
   const g = await loadGrid();
   const pane = $('#gpane'); if (!pane) return;
