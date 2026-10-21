@@ -618,14 +618,21 @@ async function home() {
   loadGrid().then((g) => {
     const st = $('#grid-status'); if (!st) return;
     if (!g.connected) { st.className = 'pillst off'; st.textContent = 'Not connected'; $('#grid-desc').textContent = 'Not connected yet: ' + (g.reason || ''); return; }
-    st.className = 'pillst'; st.textContent = 'Connected';
+    st.className = 'pillst'; st.textContent = 'Operational';
     $('#pg-acc').textContent = g.accounts.toLocaleString(); $('#pg-crews').textContent = g.crews; $('#pg-bug').textContent = g.feedback_ready ? g.open_bugs : '–';
     gridOpen = g.open_bugs || 0; setBadge();
   });
   health().then((rs) => {
     $('#hl') && ($('#hl').innerHTML = healthRows(rs));
-    const bad = rs.filter((r) => !r.ok).length, st = $('#aero-status');
-    if (st) { st.className = 'pillst' + (bad ? ' bad' : ''); st.textContent = bad ? `${bad} problem${bad > 1 ? 's' : ''}` : 'Operational'; }
+    // Each product's pill counts only its own checks (Grid: its website and backend).
+    const isGrid = (r) => r.id.startsWith('grid');
+    const pill = (el, list) => {
+      const bad = list.filter((r) => !r.ok).length;
+      if (el) { el.className = 'pillst' + (bad ? ' bad' : ''); el.textContent = bad ? `${bad} problem${bad > 1 ? 's' : ''}` : 'Operational'; }
+    };
+    pill($('#aero-status'), rs.filter((r) => !isGrid(r)));
+    const gst = $('#grid-status');
+    if (gst && !gst.classList.contains('off')) pill(gst, rs.filter(isGrid));
   });
   try {
     const o = await loadOverview();
