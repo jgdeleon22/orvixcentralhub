@@ -101,6 +101,28 @@
   .danger-zone { border-color: rgba(229,72,77,.35); }
   .switch-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+  .hero2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 30px; }
+  .hero-card { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 60%), var(--card); border: 1px solid color-mix(in srgb, var(--acc) 30%, var(--edge)); border-radius: 18px; padding: 22px; min-width: 0; }
+  .hero-top { display: flex; align-items: center; gap: 12px; }
+  .hero-top img { width: 40px; height: 40px; border-radius: 10px; }
+  .hero-top h3 { margin: 0; font-size: 19px; }
+  .hero-num { display: flex; align-items: center; gap: 16px; margin: 18px 0 6px; }
+  .hero-num > b { font-family: var(--display, inherit); font-size: 64px; line-height: 1; color: var(--acc); letter-spacing: -.02em; }
+  .dl { display: inline-block; margin-top: 4px; font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .dl.up { color: #4ADE80; background: rgba(74, 222, 128, .12); } .dl.down { color: #F87171; background: rgba(248, 113, 113, .12); } .dl.flat { color: var(--ink-2); background: rgba(255, 255, 255, .06); }
+  .hero-kpis, .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 14px 0 6px; }
+  .hero-kpis > div, .kpis > div { background: rgba(255, 255, 255, .03); border: 1px solid var(--edge); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .hero-kpis b, .kpis b { display: block; font-size: 22px; } .hero-kpis span, .kpis span { color: var(--ink-2); font-size: 12px; }
+  .hero-foot { margin-top: 4px; font-size: 13px; }
+  .site-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; } .site-head h3 { margin: 0; }
+  .two-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; }
+  .two-lists h4 { margin: 0 0 6px; font-size: 13px; color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .two-lists .li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--edge); font-size: 14px; }
+  .two-lists .li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+  @media (max-width: 900px) { .hero2 { grid-template-columns: 1fr; } .hero-num > b { font-size: 52px; } }
+  @media (max-width: 560px) { .hero-kpis, .kpis { grid-template-columns: 1fr 1fr; } .two-lists { grid-template-columns: 1fr; } }
+
   .nav-sep { height: 1px; background: var(--edge); margin: 14px 8px; }
   .side-foot { border-top: 1px solid var(--edge); padding-top: 14px; display: grid; gap: 12px; }
   .me { display: flex; align-items: center; gap: 10px; padding: 0 4px; min-width: 0; }
@@ -1114,9 +1136,15 @@ let aDays = 30;
 async function analyticsPage() {
   crumb('<b>Analytics</b>'); setNav('analytics');
   $('#view').innerHTML = `
-    <div class="page-title"><div><h1>Analytics</h1><div class="muted">Day by day, New York time.</div></div>
+    <div class="page-title"><div><h1>Analytics</h1><div class="muted">Who’s using your apps and visiting your sites, day by day (New York time).</div></div>
       <div class="seg">${[7, 30, 90].map((d) => `<button data-d="${d}" class="${aDays === d ? 'on' : ''}">${d} days</button>`).join('')}</div></div>
-    <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-aero.png" alt="">Orvix Aero</h2></div>
+    <div class="hero2">
+      <section class="hero-card" style="--acc:#F76E19" id="h-aero"><div class="muted">Loading…</div></section>
+      <section class="hero-card" style="--acc:#8ED8FF" id="h-grid"><div class="muted">Loading…</div></section>
+    </div>
+    <div class="sec"><h2>Websites</h2><span class="muted">Anonymous visit counts, no cookies</span></div>
+    <div class="charts" style="margin-bottom:30px" id="sites"><div class="muted">Loading…</div></div>
+    <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-aero.png" alt="">Orvix Aero activity</h2></div>
     <div class="tiles" id="a-tiles"><div class="muted">Loading…</div></div>
     <div class="charts" style="margin-bottom:30px">
       <section class="panel"><h3>New accounts</h3><div class="bars" id="c-sign"></div></section>
@@ -1124,37 +1152,143 @@ async function analyticsPage() {
       <section class="panel"><h3>Schedule uploads &amp; logbook scans</h3><div class="bars" id="c-ai"></div></section>
       <section class="panel"><h3>Reports sent</h3><div class="bars" id="c-rep"></div></section>
     </div>
-    <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-grid.png" alt="">Orvix Grid</h2></div>
+    <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-grid.png" alt="">Orvix Grid activity</h2></div>
     <div class="tiles" id="g-tiles"><div class="muted">Loading…</div></div>
     <div class="charts"><section class="panel"><h3>New accounts</h3><div class="bars" id="c-gsign"></div></section>
       <section class="panel"><h3>Player reports</h3><div class="bars" id="c-grep"></div></section></div>
-    <p class="note">“Active” counts people by their last sign-in. A day-by-day history of active users needs app tracking, which isn’t switched on.</p>`;
+    <p class="note" id="a-note"></p>`;
   $('#view').querySelectorAll('[data-d]').forEach((b) => b.onclick = () => { aDays = +b.dataset.d; analyticsPage(); });
   const days = aDays;
-  try {
-    if (!cache.analytics[days]) { const { data, error } = await sb.rpc('hub_analytics', { p_days: days }); if (error) throw error; cache.analytics[days] = data; }
-    const a = cache.analytics[days], t = a.totals; if (!$('#a-tiles') || aDays !== days) return;
-    $('#a-tiles').innerHTML =
-      tileHtml(IC.active, 'var(--green)', 'Active today', t.active_1d, 'Signed in, last 24 hours') +
-      tileHtml(IC.active, 'var(--blue)', 'Active this week', t.active_7d, `${t.active_30d} in the last 30 days`) +
-      tileHtml(IC.users, 'var(--violet)', 'Pilots logging flights', t.pilots_with_flights, `of ${t.accounts} accounts`) +
-      tileHtml(IC.db, 'var(--orange)', 'Flights logged', t.flights.toLocaleString(), `${(t.flights_by_source.auto || 0).toLocaleString()} detected automatically`);
-    const S = a.series;
-    drawBars($('#c-sign'), S, [{ key: 'signups', label: 'New accounts', color: '#4F8FE0' }]);
-    drawBars($('#c-fl'), S, [{ key: 'flights_auto', label: 'Detected automatically', color: '#4F8FE0' }, { key: 'flights_manual', label: 'Added by hand', color: '#F76E19' }, { key: 'flights_import', label: 'Imported or scanned', color: '#9A7BF0' }]);
-    drawBars($('#c-ai'), S, [{ key: 'schedule_reads', label: 'Schedule uploads', color: '#4F8FE0' }, { key: 'logbook_scans', label: 'Logbook scans', color: '#F76E19' }]);
-    drawBars($('#c-rep'), S, [{ key: 'reports', label: 'Reports', color: '#F76E19' }]);
-  } catch (e) { $('#a-tiles') && ($('#a-tiles').innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(failMsg(e))}</div>`); }
-  const g = await loadGridFull(days); if (!$('#g-tiles') || aDays !== days) return;
-  if (!g.connected) { $('#g-tiles').innerHTML = `<div class="empty" style="grid-column:1/-1">Orvix Grid isn’t connected: ${esc(g.reason || '')}</div>`; return; }
-  $('#g-tiles').innerHTML =
-    tileHtml(IC.active, 'var(--green)', 'Active today', g.signed_in_1d, 'Signed in, last 24 hours') +
-    tileHtml(IC.active, 'var(--blue)', 'Active this week', g.signed_in_7d, `${g.signed_in_30d} in the last 30 days`) +
-    tileHtml(IC.users, 'var(--violet)', 'Accounts', g.accounts, `+${g.accounts_7d} this week`) +
-    tileHtml(IC.users, 'var(--orange)', 'Crews', g.crews, `${g.upcoming_ops} upcoming ops`);
-  drawBars($('#c-gsign'), g.by_day, [{ key: 'signups', label: 'New accounts', color: '#4F8FE0' }]);
-  drawBars($('#c-grep'), g.by_day, [{ key: 'reports', label: 'Player reports', color: '#F76E19' }]);
+  cache.daily = cache.daily || {};
+  const [an, dl, g] = await Promise.all([
+    cache.analytics[days] ? Promise.resolve({ data: cache.analytics[days] }) : sb.rpc('hub_analytics', { p_days: days }),
+    cache.daily[days] ? Promise.resolve({ data: cache.daily[days] }) : sb.rpc('hub_daily', { p_days: days }),
+    loadGridFull(days),
+  ]);
+  if (!$('#h-aero') || aDays !== days) return;
+  if (an.error || dl.error) { $('#h-aero').innerHTML = `<div class="empty">${esc(failMsg(an.error || dl.error))}</div>`; return; }
+  const a = (cache.analytics[days] = an.data), d = (cache.daily[days] = dl.data), t = a.totals, D = d.series;
+  const since = d.tracking_since;
+  const gOk = g && g.connected, G = gOk ? g.by_day : [];
+  const gByDay = new Map(G.map((r) => [r.day, r]));
+
+  // Hero: daily users, one card per product.
+  const aeroRows = D.map((r) => ({ day: r.day, users: r.users, visitors: r.aero_visitors, rebuilt: !since || r.day < since }));
+  const gridRows = D.map((r) => ({ day: r.day, users: gByDay.get(r.day)?.users ?? 0, visitors: r.grid_visitors, rebuilt: !gOk || !g.tracking_since || r.day < g.tracking_since }));
+  heroCard($('#h-aero'), { icon: 'icon-aero.png', name: 'Orvix Aero', unit: 'pilots', rows: aeroRows, unique: d.unique_users, week: d.week_users, accounts: t.accounts, ready: true });
+  heroCard($('#h-grid'), { icon: 'icon-grid.png', name: 'Orvix Grid', unit: 'players', rows: gridRows, unique: gOk ? g.daily_unique : 0, week: gOk ? g.daily_week : 0, accounts: gOk ? g.accounts : 0,
+    ready: gOk && g.daily_ready, why: !gOk ? 'Orvix Grid isn’t connected.' : 'Daily players start counting once the tracking step has been run in Orvix Grid’s database.' });
+
+  // Websites.
+  const siteCard = (key, name, url, color) => {
+    const rows = D.map((r) => ({ day: r.day, visitors: r[key + '_visitors'], views: r[key + '_views'] }));
+    const today = rows.at(-1), sum = (k) => rows.reduce((x, r) => x + (r[k] || 0), 0);
+    const pages = d.top_pages[key] || [], refs = d.referrers[key] || [];
+    return `<section class="panel site-card"><div class="site-head"><h3>${name}</h3><a class="muted" href="${url}" target="_blank" rel="noopener">${url.replace('https://', '')} ↗</a></div>
+      <div class="kpis"><div><b>${today.visitors}</b><span>visitors today</span></div><div><b>${sum('visitors').toLocaleString()}</b><span>visitors, ${days} days</span></div>
+        <div><b>${sum('views').toLocaleString()}</b><span>page views</span></div><div><b>${d.mobile_share[key] ?? '–'}${d.mobile_share[key] == null ? '' : '%'}</b><span>on phones</span></div></div>
+      <div class="lines" data-site="${key}"></div>
+      <div class="two-lists"><div><h4>Top pages</h4>${pages.length ? pages.map((x) => `<div class="li"><span>${esc(x.path)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">No visits yet</div>'}</div>
+        <div><h4>Came from</h4>${refs.length ? refs.map((x) => `<div class="li"><span>${esc(x.site)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">Direct visits only so far</div>'}</div></div></section>`;
+  };
+  $('#sites').innerHTML = siteCard('aero', 'orvixaero.com', 'https://orvixaero.com', '#F76E19') + siteCard('grid', 'orvixgrid.com', 'https://www.orvixgrid.com', '#8ED8FF');
+  for (const [key, color] of [['aero', '#F76E19'], ['grid', '#8ED8FF']]) {
+    drawLines($(`#sites [data-site="${key}"]`), D.map((r) => ({ day: r.day, visitors: r[key + '_visitors'], views: r[key + '_views'] })),
+      [{ key: 'visitors', label: 'Visitors', color }, { key: 'views', label: 'Page views', color: '#9A7BF0', dashed: true }], { height: 170 });
+  }
+
+  // Existing activity charts.
+  $('#a-tiles').innerHTML =
+    tileHtml(IC.users, 'var(--blue)', 'Accounts', t.accounts, `${D.reduce((x, r) => x + r.new_users, 0)} new in ${days} days`) +
+    tileHtml(IC.users, 'var(--violet)', 'Pilots logging flights', t.pilots_with_flights, `of ${t.accounts} accounts`) +
+    tileHtml(IC.db, 'var(--orange)', 'Flights logged', t.flights.toLocaleString(), `${(t.flights_by_source.auto || 0).toLocaleString()} detected automatically`) +
+    tileHtml(IC.active, 'var(--green)', 'Schedule uploads', t.schedule_reads.toLocaleString(), `${t.logbook_scans} logbook scans`);
+  const S = a.series;
+  drawBars($('#c-sign'), S, [{ key: 'signups', label: 'New accounts', color: '#4F8FE0' }]);
+  drawBars($('#c-fl'), S, [{ key: 'flights_auto', label: 'Detected automatically', color: '#4F8FE0' }, { key: 'flights_manual', label: 'Added by hand', color: '#F76E19' }, { key: 'flights_import', label: 'Imported or scanned', color: '#9A7BF0' }]);
+  drawBars($('#c-ai'), S, [{ key: 'schedule_reads', label: 'Schedule uploads', color: '#4F8FE0' }, { key: 'logbook_scans', label: 'Logbook scans', color: '#F76E19' }]);
+  drawBars($('#c-rep'), S, [{ key: 'reports', label: 'Reports', color: '#F76E19' }]);
+  if (!gOk) { $('#g-tiles').innerHTML = `<div class="empty" style="grid-column:1/-1">Orvix Grid isn’t connected: ${esc(g?.reason || '')}</div>`; }
+  else {
+    $('#g-tiles').innerHTML =
+      tileHtml(IC.users, 'var(--blue)', 'Accounts', g.accounts, `+${g.accounts_7d} this week`) +
+      tileHtml(IC.users, 'var(--orange)', 'Crews', g.crews, `${g.crew_members} members`) +
+      tileHtml(IC.active, 'var(--green)', 'Upcoming ops', g.upcoming_ops, 'Open, not started yet') +
+      tileHtml(IC.bug, 'var(--violet)', 'Open bugs', g.feedback_ready ? g.open_bugs : '–', `${(g.feedback || []).length} reports and ideas`);
+    drawBars($('#c-gsign'), g.by_day, [{ key: 'signups', label: 'New accounts', color: '#4F8FE0' }]);
+    drawBars($('#c-grep'), g.by_day, [{ key: 'reports', label: 'Player reports', color: '#F76E19' }]);
+  }
+  $('#a-note').textContent = `Daily users count everyone who opened the app that day (iPhone, web or Windows).${since ? ` Recorded live since ${day(since)}; earlier days are rebuilt from sign-ins and activity, so they can run a little low (shown lighter).` : ''} Website counts started ${d.sites_since ? day(d.sites_since) : 'today'}.`;
 }
+
+function heroCard(el, o) {
+  const rows = o.rows, today = rows.at(-1) || { users: 0 }, yest = rows.at(-2) || { users: 0 };
+  const live = rows.filter((r) => !r.rebuilt), base = live.length >= 3 ? live : rows;
+  const avg = base.length ? base.reduce((x, r) => x + r.users, 0) / base.length : 0;
+  const peak = rows.reduce((m, r) => (r.users > m.users ? r : m), rows[0] || { users: 0, day: '' });
+  const diff = today.users - yest.users;
+  const delta = diff === 0 ? '<span class="dl flat">same as yesterday</span>' : `<span class="dl ${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '▲' : '▼'} ${Math.abs(diff)} vs yesterday</span>`;
+  el.innerHTML = `
+    <div class="hero-top"><img src="${o.icon}" alt=""><div><h3>${o.name}</h3><div class="muted">Daily ${o.unit}</div></div></div>
+    ${o.ready ? `
+    <div class="hero-num"><b>${today.users}</b><div><div class="muted">${o.unit} today</div>${delta}</div></div>
+    <div class="hero-kpis">
+      <div><b>${avg.toFixed(avg < 10 ? 1 : 0)}</b><span>avg a day</span></div>
+      <div><b>${o.week}</b><span>this week</span></div>
+      <div><b>${o.unique}</b><span>in ${rows.length} days</span></div>
+      <div><b>${o.accounts ? Math.round((o.week / o.accounts) * 100) : 0}%</b><span>of accounts weekly</span></div>
+    </div>
+    <div class="lines hero-chart"></div>
+    <div class="hero-foot muted">Busiest day: <b>${peak.users}</b> on ${peak.day ? esc(day(peak.day)) : '–'}</div>` : `<div class="empty" style="margin-top:16px">${esc(o.why || 'Not set up yet.')}</div>`}`;
+  if (o.ready) drawLines($('.hero-chart', el), rows, [{ key: 'users', label: `App ${o.unit}`, color: getComputedStyle(el).getPropertyValue('--acc').trim() || '#F76E19', area: true }, { key: 'visitors', label: 'Website visitors', color: '#9A7BF0', dashed: true }], { height: 200 });
+}
+
+// Line chart with a soft area under the first line, a crosshair and a tooltip.
+// Days marked rebuilt are drawn lighter (before live tracking started).
+function drawLines(el, rows, series, opt = {}) {
+  if (!el) return;
+  const W = Math.max(280, el.clientWidth || 600), H = opt.height || 200, L = 30, R = 8, B = 24, T = 12, n = rows.length;
+  const max = Math.max(4, ...rows.flatMap((r) => series.map((s2) => r[s2.key] || 0)));
+  const step = Math.ceil(max / 4), top = step * 4;
+  const x = (i) => L + (n <= 1 ? (W - L - R) / 2 : (i * (W - L - R)) / (n - 1));
+  const y = (v) => T + (H - T - B) * (1 - v / top);
+  const fmt = (dd) => new Date(dd + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const every = Math.max(1, Math.ceil(n / (W < 480 ? 4 : 7)));
+  const uid = 'g' + Math.random().toString(36).slice(2, 8);
+  let grid = '';
+  for (let i = 0; i <= 4; i++) grid += `<line x1="${L}" x2="${W - R}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#1C3048"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
+  const lastRebuilt = rows.map((r) => !!r.rebuilt).lastIndexOf(true);
+  const shade = lastRebuilt >= 0 && lastRebuilt < n - 1
+    ? `<rect x="${L}" y="${T}" width="${Math.max(0, x(lastRebuilt) - L + ((W - L - R) / Math.max(1, n - 1)) / 2)}" height="${H - T - B}" fill="#0B1726" opacity=".55"/><text x="${L + 6}" y="${T + 14}" fill="#56708A" font-size="10.5">rebuilt</text>`
+    : '';
+  const labels = rows.map((r, i) => ((n - 1 - i) % every ? '' : `<text x="${i === n - 1 ? W - R : i === 0 ? L : x(i)}" y="${H - 6}" fill="#6F879B" font-size="11" text-anchor="${i === n - 1 ? 'end' : i === 0 ? 'start' : 'middle'}">${fmt(r.day)}</text>`)).join('');
+  const paths = series.map((s2) => {
+    const pts = rows.map((r, i) => [x(i), y(r[s2.key] || 0)]);
+    const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join('');
+    const area = s2.area ? `<path d="${d}L${x(n - 1)},${y(0)}L${x(0)},${y(0)}Z" fill="url(#${uid}-${s2.key})"/>` : '';
+    const grad = s2.area ? `<linearGradient id="${uid}-${s2.key}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s2.color}" stop-opacity=".35"/><stop offset="1" stop-color="${s2.color}" stop-opacity="0"/></linearGradient>` : '';
+    const last = pts.at(-1);
+    return { grad, body: `${area}<path d="${d}" fill="none" stroke="${s2.color}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" ${s2.dashed ? 'stroke-dasharray="5 4"' : ''}/>${last ? `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${s2.color}" stroke="#0F1D2E" stroke-width="2"/>` : ''}` };
+  });
+  const legend = `<div class="legend">${series.map((s2) => `<span><i style="background:${s2.color}${s2.dashed ? ';opacity:.8' : ''}"></i>${s2.label}</span>`).join('')}</div>`;
+  el.innerHTML = `${legend}<div style="position:relative"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(series.map((s2) => s2.label).join(' and '))} per day">
+    <defs>${paths.map((p) => p.grad).join('')}</defs>${grid}${shade}${paths.map((p) => p.body).join('')}${labels}
+    <line class="xh" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="#56708A" stroke-dasharray="3 3" visibility="hidden"/>
+    <rect x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent" class="hit"/></svg><div class="tip hidden"></div></div>`;
+  el._redraw = () => drawLines(el, rows, series, opt);
+  const svg = $('svg', el), tip = $('.tip', el), xh = $('.xh', el);
+  svg.addEventListener('mousemove', (e) => {
+    const b = svg.getBoundingClientRect(), px = ((e.clientX - b.left) / b.width) * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round(((px - L) / (W - L - R)) * (n - 1))));
+    const r = rows[i];
+    xh.setAttribute('x1', x(i)); xh.setAttribute('x2', x(i)); xh.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<span class="muted">${fmt(r.day)}${r.rebuilt ? ' · rebuilt' : ''}</span><br>` + series.map((s2) => `<i class="sw" style="background:${s2.color}"></i><b>${r[s2.key] || 0}</b> ${s2.label.toLowerCase()}`).join('<br>');
+    tip.style.left = Math.min(W - 70, Math.max(70, x(i))) + 'px'; tip.style.top = Math.min(...series.map((s2) => y(r[s2.key] || 0))) + 'px';
+    tip.classList.remove('hidden');
+  });
+  svg.addEventListener('mouseleave', () => { tip.classList.add('hidden'); xh.setAttribute('visibility', 'hidden'); });
+}
+window.addEventListener('resize', () => document.querySelectorAll('.lines').forEach((el) => el._redraw && el._redraw()));
 
 // ---------- Support: one inbox for both apps ----------
 let supApp = 'all';
