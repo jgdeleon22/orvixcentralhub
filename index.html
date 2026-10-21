@@ -82,6 +82,25 @@
   .nav.sub { padding-left: 22px; }
   .nav-group { display: flex; align-items: center; gap: 10px; padding: 16px 12px 6px; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
   .nav-group img { width: 20px; height: 20px; border-radius: 5px; }
+  .nimg { width: 22px; height: 22px; border-radius: 6px; flex: none; }
+  .seg { display: inline-flex; background: var(--card); border: 1px solid var(--edge); border-radius: 10px; padding: 3px; gap: 2px; }
+  .seg button { background: none; border: 0; color: var(--ink-2); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+  .seg button.on { background: var(--card-2); color: var(--ink); }
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .tbl th { text-align: left; color: var(--ink-3); font-weight: 500; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; padding: 10px 12px; border-bottom: 1px solid var(--edge); white-space: nowrap; }
+  .tbl td { padding: 12px; border-bottom: 1px solid var(--edge); vertical-align: middle; }
+  .tbl tr:last-child td { border-bottom: 0; }
+  .tbl td.em { font-weight: 500; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tbl .muted { font-size: 13px; }
+  .tbl-wrap { background: var(--card); border: 1px solid var(--edge); border-radius: 14px; overflow-x: auto; }
+  .b { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 1px 7px; margin: 1px 4px 1px 0; white-space: nowrap; }
+  .b.blue { background: rgba(79,143,224,.15); color: #8FB8F0; } .b.green { background: rgba(45,180,110,.14); color: #5ED79A; } .b.orange { background: rgba(247,110,25,.15); color: #FF9F5E; } .b.violet { background: rgba(154,123,240,.15); color: #C3B0FF; } .b.gray { background: rgba(163,182,200,.1); color: var(--ink-2); }
+  .charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin: 2px 0 6px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .danger-zone { border-color: rgba(229,72,77,.35); }
+  .switch-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
   .nav-sep { height: 1px; background: var(--edge); margin: 14px 8px; }
   .side-foot { border-top: 1px solid var(--edge); padding-top: 14px; display: grid; gap: 12px; }
   .me { display: flex; align-items: center; gap: 10px; padding: 0 4px; min-width: 0; }
@@ -296,13 +315,15 @@
     <div class="side-brand" data-go="#/"><svg class="ring mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="33" fill="none" stroke="#F76E19" stroke-width="26" stroke-dasharray="63.1 6" transform="rotate(155.2 50 50)"/></svg><div class="sb-word"><b>ORVIX</b><span>CENTRAL HUB</span></div></div>
     <nav>
       <a class="nav" data-nav="home" href="#/"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg><span>Overview</span></a>
-      <div class="nav-group"><img src="icon-aero.png" alt="">Orvix Aero</div>
-      <a class="nav sub" data-nav="bugs" href="#/aero/bugs"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8a4 4 0 0 1 8 0v1H8z"/><rect x="7" y="9" width="10" height="11" rx="5"/><path d="M12 13v7M3 13h4M17 13h4M4 7l3 2M20 7l-3 2M4 19l3-2M20 19l-3-2"/></svg><span>Bug reports</span><em id="nav-bugs"></em></a>
-      <a class="nav sub" data-nav="people" href="#/aero/people"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.6c2.6.2 4.4 2 4.9 4.9"/></svg><span>Testers &amp; admins</span></a>
-      <div class="nav-group"><img src="icon-grid.png" alt="">Orvix Grid</div>
-      <a class="nav sub" data-nav="grid" href="#/grid"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Overview</span></a>
-      <div class="nav-sep"></div>
+      <a class="nav" data-nav="users" href="#/users"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.6c2.6.2 4.4 2 4.9 4.9"/></svg><span>Users &amp; Access</span></a>
+      <a class="nav" data-nav="analytics" href="#/analytics"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Analytics</span></a>
+      <a class="nav" data-nav="support" href="#/support"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg><span>Support</span><em id="nav-bugs"></em></a>
       <a class="nav" data-nav="health" href="#/health"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></svg><span>System health</span></a>
+      <a class="nav" data-nav="audit" href="#/audit"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><span>Audit log</span></a>
+      <a class="nav" data-nav="settings" href="#/settings"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
+      <div class="nav-group">Products</div>
+      <a class="nav" data-nav="aero" href="#/aero/bugs"><img class="nimg" src="icon-aero.png" alt=""><span>Orvix Aero</span></a>
+      <a class="nav" data-nav="grid" href="#/grid"><img class="nimg" src="icon-grid.png" alt=""><span>Orvix Grid</span></a>
     </nav>
     <div class="side-foot">
       <div class="me"><span class="av" id="av">J</span><div class="me-t"><b id="who"></b><span>Admin</span></div></div>
@@ -349,7 +370,7 @@ const OPEN = new Set(['new', 'working', 'needs-info']);
 const statusOf = (s) => STATUSES.find((x) => x[0] === s) || [s, s, 'var(--ink-3)'];
 
 let me = null;
-let cache = { feedback: null, people: null, overview: null, grid: null };
+let cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {} };
 
 // ---------- Sign in ----------
 async function check() {
@@ -371,7 +392,7 @@ async function check() {
   route();
 }
 function showLogin(msg = '') {
-  me = null; cache = { feedback: null, people: null, overview: null, grid: null };
+  me = null; cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {} };
   $('#app').classList.add('hidden');
   $('#pw').classList.add('hidden');
   $('#login').classList.remove('hidden');
@@ -469,6 +490,11 @@ function route() {
   if (h.startsWith('#/aero')) return aero(h.split('/')[2] || 'bugs');
   if (h.startsWith('#/grid')) return grid();
   if (h.startsWith('#/health')) return healthPage();
+  if (h.startsWith('#/users')) return usersPage(h.split('/')[2] || 'aero');
+  if (h.startsWith('#/analytics')) return analyticsPage();
+  if (h.startsWith('#/support')) return supportPage();
+  if (h.startsWith('#/audit')) return auditPage();
+  if (h.startsWith('#/settings')) return settingsPage();
   return home();
 }
 const crumb = (html) => { $('#crumb').innerHTML = '<span>Central Hub</span>' + (html ? '<i>/</i>' + html : '<i>/</i><b>Overview</b>'); };
@@ -478,7 +504,7 @@ function setNav(key) {
 }
 $('#menu').addEventListener('click', () => $('#app').classList.toggle('open'));
 $('#scrim').addEventListener('click', () => $('#app').classList.remove('open'));
-$('#refresh-all').addEventListener('click', () => { cache = { feedback: null, people: null, overview: null, grid: null }; health.last = null; route(); });
+$('#refresh-all').addEventListener('click', () => { cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {} }; health.last = null; route(); });
 
 const ago = (t) => {
   const m = Math.round((Date.now() - new Date(t)) / 60000);
@@ -681,7 +707,7 @@ async function loadPeople(force) {
 // ---------- Orvix Aero ----------
 let bugFilter = { show: 'open', kind: 'all', q: '' };
 async function aero(tab) {
-  crumb('<span>Orvix Aero</span><i>/</i><b>' + (tab === 'people' ? 'Testers &amp; admins' : 'Bug reports') + '</b>'); setNav(tab === 'people' ? 'people' : 'bugs');
+  crumb('<span>Orvix Aero</span><i>/</i><b>' + (tab === 'people' ? 'Testers &amp; admins' : 'Bug reports') + '</b>'); setNav('aero');
   $('#view').innerHTML = `
     <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-aero.png" alt="" style="width:52px;height:52px;border-radius:12px"><h1>Orvix Aero</h1></div></div>
     <div class="tabs">
@@ -813,7 +839,7 @@ function people(p) {
 
   const after = async (error, msg) => {
     if (error) return toast(error.message);
-    toast(msg); people(await loadPeople(true));
+    toast(msg); cache.users = null; people(await loadPeople(true));
   };
   $('#add-admin').onsubmit = async (e) => {
     e.preventDefault(); const email = $('input', e.target).value;
@@ -841,6 +867,300 @@ function people(p) {
     cache.people.android.find((t) => t.email === c.dataset.play).added_to_play = c.checked;
     toast(c.checked ? 'Marked as on the Play list' : 'Unmarked');
   });
+}
+
+
+// ---------- Shared: multi-series bar chart ----------
+// series: [{ key, label, color }]; stacked when more than one. Hover shows the day.
+function drawBars(el, rows, series) {
+  const W = Math.max(280, el.clientWidth || 640), H = 220, L = 34, B = 26, T = 10, n = rows.length;
+  const tot = (r) => series.reduce((a, s2) => a + (r[s2.key] || 0), 0);
+  const max = Math.max(4, ...rows.map(tot)), step = Math.ceil(max / 4), top = step * 4, bw = (W - L) / n;
+  const y = (v) => T + (H - T - B) * (1 - v / top);
+  const fmt = (d) => new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const every = Math.max(1, Math.ceil(n / (W < 480 ? 5 : 8)));
+  let g = '';
+  for (let i = 0; i <= 4; i++) g += `<line x1="${L}" x2="${W}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#1C3048"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
+  const bars = rows.map((r, i) => {
+    const w = Math.max(2, bw * 0.64), x = L + i * bw + (bw - w) / 2;
+    let base = 0, segs = '';
+    series.forEach((s2, k) => {
+      const v = r[s2.key] || 0; if (!v) return;
+      const y1 = y(base + v), y0 = y(base), last = series.slice(k + 1).every((s3) => !(r[s3.key] || 0));
+      const h = Math.max(1, y0 - y1 - (base ? 2 : 0));
+      segs += last && h > 4 && w > 6
+        ? `<path d="M${x},${y0 - (base ? 2 : 0)} V${y1 + 3} q0,-3 3,-3 h${w - 6} q3,0 3,3 V${y0 - (base ? 2 : 0)} z" fill="${s2.color}"/>`
+        : `<rect x="${x}" y="${y1}" width="${w}" height="${h}" fill="${s2.color}"/>`;
+      base += v;
+    });
+    const lbl = (n - 1 - i) % every ? '' : `<text x="${i === n - 1 ? W - 2 : x + w / 2}" y="${H - 8}" fill="#6F879B" font-size="11" text-anchor="${i === n - 1 ? 'end' : 'middle'}">${fmt(r.day)}</text>`;
+    return `<g data-i="${i}"><rect x="${L + i * bw}" y="${T}" width="${bw}" height="${H - T - B}" fill="transparent"/>${segs}${lbl}</g>`;
+  }).join('');
+  const legend = series.length > 1 ? `<div class="legend">${series.map((s2) => `<span><i style="background:${s2.color}"></i>${s2.label}</span>`).join('')}</div>` : '';
+  el.innerHTML = `${legend}<div style="position:relative"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">${g}${bars}</svg><div class="tip hidden"></div></div>`;
+  el._redraw = () => drawBars(el, rows, series);
+  const tip = $('.tip', el), svg = $('svg', el);
+  svg.addEventListener('mousemove', (e) => {
+    const gEl = e.target.closest('g[data-i]'); if (!gEl) return tip.classList.add('hidden');
+    const i = +gEl.dataset.i, r = rows[i];
+    tip.innerHTML = series.map((s2) => `<b>${r[s2.key] || 0}</b> ${s2.label.toLowerCase()}`).join('<br>') + `<br><span class="muted">${fmt(r.day)}</span>`;
+    tip.style.left = (L + (i + 0.5) * bw) + 'px'; tip.style.top = y(tot(r)) + 'px';
+    tip.classList.remove('hidden');
+  });
+  svg.addEventListener('mouseleave', () => tip.classList.add('hidden'));
+}
+window.addEventListener('resize', () => document.querySelectorAll('.bars').forEach((el) => el._redraw && el._redraw()));
+const tileHtml = (icon, c, label, value, sub) => `<div class="tile" style="--c:${c}"><div class="ti">${icon}</div><div style="min-width:0"><div class="tl">${label}</div><div class="tv">${value}</div><div class="ts">${sub}</div></div></div>`;
+async function loadGridFull(days = 30, force) {
+  const k = 'd' + days;
+  cache.gridFull = cache.gridFull || {};
+  if (cache.gridFull[k] && !force) return cache.gridFull[k];
+  const { data, error } = await sb.functions.invoke('hub-grid', { body: { days, users: true } });
+  if (error) return { connected: false, reason: 'The hub-grid service didn’t answer' };
+  return (cache.gridFull[k] = data);
+}
+
+// ---------- Users & Access ----------
+let userQ = '', userFilter = 'all';
+async function usersPage(app) {
+  crumb('<b>Users &amp; Access</b>'); setNav('users');
+  $('#view').innerHTML = `
+    <div class="page-title"><div><h1>Users &amp; Access</h1><div class="muted">Everyone with an account, and who can get in.</div></div>
+      <div class="seg"><button data-go="#/users/aero" class="${app === 'aero' ? 'on' : ''}">Orvix Aero</button><button data-go="#/users/grid" class="${app === 'grid' ? 'on' : ''}">Orvix Grid</button></div></div>
+    <div id="upane"><div class="muted">Loading…</div></div>`;
+  if (app === 'grid') return usersGrid();
+  try {
+    if (!cache.users) { const { data, error } = await sb.rpc('hub_users'); if (error) throw error; cache.users = data; }
+    renderAeroUsers();
+  } catch (e) { $('#upane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
+}
+function accessBadges(u) {
+  const b = [];
+  if (u.admin) b.push('<span class="b orange">Admin</span>');
+  if (u.tester) b.push('<span class="b blue">Tester</span>');
+  if (u.plan) b.push(`<span class="b green">Paying · ${esc((u.plan.product || '').replace('orvix_pro_', '').replace('_', ' '))}</span>`);
+  if (u.gift) b.push(`<span class="b violet">Free ${u.gift.until ? 'until ' + esc(day(u.gift.until)) : 'for good'}</span>`);
+  if (!b.length) b.push('<span class="b gray">No access</span>');
+  return b.join('');
+}
+function renderAeroUsers() {
+  const all = cache.users, q = userQ.toLowerCase();
+  const F = { all: () => true, testers: (u) => u.tester, admins: (u) => u.admin, free: (u) => !!u.gift, paying: (u) => !!u.plan, none: (u) => !u.tester && !u.admin && !u.gift && !u.plan };
+  const list = all.filter((u) => F[userFilter](u) && (!q || u.email.includes(q)));
+  const cnt = (k) => all.filter(F[k]).length;
+  $('#upane').innerHTML = `
+    <div class="tiles">
+      ${tileHtml(IC.users, 'var(--blue)', 'Accounts', all.length, `${all.filter((u) => !u.confirmed).length} not confirmed yet`)}
+      ${tileHtml(IC.key, 'var(--green)', 'Can use the app', all.filter((u) => u.tester || u.admin || u.gift || u.plan).length, 'Tester, admin, free or paying')}
+      ${tileHtml(IC.card, 'var(--violet)', 'Paying', cnt('paying'), `${cnt('free')} with free access`)}
+      ${tileHtml(IC.active, 'var(--orange)', 'Active this week', all.filter((u) => u.last_sign_in_at && Date.now() - new Date(u.last_sign_in_at) < 7 * 864e5).length, 'Signed in, last 7 days')}
+    </div>
+    <div class="filters">
+      ${[['all', 'Everyone'], ['testers', 'Testers'], ['admins', 'Admins'], ['free', 'Free access'], ['paying', 'Paying'], ['none', 'No access']].map(([k, l]) => `<button class="pill ${userFilter === k ? 'on' : ''}" data-uf="${k}">${l} <span class="muted">${cnt(k)}</span></button>`).join('')}
+      <span class="spacer"></span><input type="text" id="uq" placeholder="Search email" value="${esc(userQ)}">
+    </div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>Signed up</th><th>Last in</th><th>Flights</th><th>Access</th><th></th></tr></thead><tbody>
+      ${list.map((u) => `<tr><td class="em" title="${esc(u.email)}">${esc(u.email)}${u.email === me.email.toLowerCase() ? ' <span class="muted">(you)</span>' : ''}${u.confirmed ? '' : ' <span class="b gray">unconfirmed</span>'}</td>
+        <td class="muted">${esc(day(u.created_at))}</td><td class="muted">${u.last_sign_in_at ? esc(ago(u.last_sign_in_at)) : 'Never'}</td><td>${u.flights}</td><td>${accessBadges(u)}</td>
+        <td><select class="ua" data-email="${esc(u.email)}" style="width:auto;padding:6px 10px;font-size:13px">
+          <option value="">Change…</option>
+          ${u.tester ? '<option value="tester-off">Remove tester</option>' : '<option value="tester-on">Make tester</option>'}
+          <option value="gift-1">Free access: 1 month</option><option value="gift-3">Free access: 3 months</option><option value="gift-12">Free access: 12 months</option><option value="gift-0">Free access: for good</option>
+          ${u.gift ? '<option value="gift-off">Remove free access</option>' : ''}
+          ${u.admin ? (u.email === me.email.toLowerCase() ? '' : '<option value="admin-off">Remove admin</option>') : '<option value="admin-on">Make admin</option>'}
+        </select></td></tr>`).join('') || '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">No one matches.</td></tr>'}
+    </tbody></table></div>
+    <div class="sec" style="margin-top:30px"><h2>Testers, admins &amp; sign-ups</h2></div>
+    <div id="pane"><div class="muted">Loading…</div></div>`;
+  $('#upane').querySelectorAll('[data-uf]').forEach((b) => b.onclick = () => { userFilter = b.dataset.uf; renderAeroUsers(); });
+  const qi = $('#uq'); qi.oninput = () => { userQ = qi.value; clearTimeout(renderAeroUsers.t); renderAeroUsers.t = setTimeout(() => { renderAeroUsers(); const n = $('#uq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 250); };
+  $('#upane').querySelectorAll('.ua').forEach((sel) => sel.onchange = async () => {
+    const v = sel.value, email = sel.dataset.email; if (!v) return;
+    const label = sel.options[sel.selectedIndex].text;
+    if (/off/.test(v) && !confirm(`${label} for ${email}?`)) { sel.value = ''; return; }
+    let r;
+    if (v.startsWith('tester')) r = await sb.rpc('hub_set_member', { p_email: email, p_note: 'Added from the hub', p_on: v === 'tester-on' });
+    else if (v.startsWith('admin')) r = await sb.rpc('hub_set_admin', { p_email: email, p_on: v === 'admin-on' });
+    else if (v === 'gift-off') r = await sb.rpc('hub_set_access', { p_email: email, p_months: null, p_on: false });
+    else { const m = +v.split('-')[1]; r = await sb.rpc('hub_set_access', { p_email: email, p_months: m || null, p_on: true }); }
+    if (r.error) { sel.value = ''; return toast(r.error.message); }
+    toast(`${label}: done for ${email}`);
+    const { data } = await sb.rpc('hub_users'); cache.users = data; cache.people = null; cache.overview = null; renderAeroUsers();
+  });
+  loadPeople().then(people).catch((e) => { const p2 = $('#pane'); if (p2) p2.innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; });
+}
+async function usersGrid() {
+  const g = await loadGridFull(30); const pane = $('#upane'); if (!pane) return;
+  if (!g.connected) { pane.innerHTML = `<div class="empty">Orvix Grid isn’t connected: ${esc(g.reason || '')}</div>`; return; }
+  const q = userQ.toLowerCase(), list = (g.users || []).filter((u) => !q || u.email.toLowerCase().includes(q));
+  pane.innerHTML = `
+    <div class="tiles">
+      ${tileHtml(IC.users, 'var(--blue)', 'Accounts', g.accounts, `+${g.accounts_7d} this week`)}
+      ${tileHtml(IC.active, 'var(--green)', 'Active today', g.signed_in_1d, 'Signed in, last 24 hours')}
+      ${tileHtml(IC.active, 'var(--orange)', 'Active this week', g.signed_in_7d, 'Signed in, last 7 days')}
+      ${tileHtml(IC.users, 'var(--violet)', 'Crews', g.crews, `${g.crew_members} crew members`)}
+    </div>
+    <div class="filters"><span class="muted">Read-only. Orvix Grid accounts are managed in Orvix Grid itself.</span><span class="spacer"></span><input type="text" id="uq" placeholder="Search email" value="${esc(userQ)}"></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>Signed up</th><th>Last in</th></tr></thead><tbody>
+      ${list.map((u) => `<tr><td class="em">${esc(u.email || '(no email)')}</td><td class="muted">${esc(day(u.created_at))}</td><td class="muted">${u.last_sign_in_at ? esc(ago(u.last_sign_in_at)) : 'Never'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted" style="text-align:center;padding:32px">No one matches.</td></tr>'}
+    </tbody></table></div>`;
+  const qi = $('#uq'); qi.oninput = () => { userQ = qi.value; clearTimeout(usersGrid.t); usersGrid.t = setTimeout(() => { usersGrid(); }, 250); };
+}
+
+// ---------- Analytics ----------
+let aDays = 30;
+async function analyticsPage() {
+  crumb('<b>Analytics</b>'); setNav('analytics');
+  $('#view').innerHTML = `
+    <div class="page-title"><div><h1>Analytics</h1><div class="muted">Day by day, New York time.</div></div>
+      <div class="seg">${[7, 30, 90].map((d) => `<button data-d="${d}" class="${aDays === d ? 'on' : ''}">${d} days</button>`).join('')}</div></div>
+    <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-aero.png" alt="">Orvix Aero</h2></div>
+    <div class="tiles" id="a-tiles"><div class="muted">Loading…</div></div>
+    <div class="charts" style="margin-bottom:30px">
+      <section class="panel"><h3>New accounts</h3><div class="bars" id="c-sign"></div></section>
+      <section class="panel"><h3>Flights logged</h3><div class="bars" id="c-fl"></div></section>
+      <section class="panel"><h3>Schedule uploads &amp; logbook scans</h3><div class="bars" id="c-ai"></div></section>
+      <section class="panel"><h3>Reports sent</h3><div class="bars" id="c-rep"></div></section>
+    </div>
+    <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-grid.png" alt="">Orvix Grid</h2></div>
+    <div class="tiles" id="g-tiles"><div class="muted">Loading…</div></div>
+    <div class="charts"><section class="panel"><h3>New accounts</h3><div class="bars" id="c-gsign"></div></section>
+      <section class="panel"><h3>Player reports</h3><div class="bars" id="c-grep"></div></section></div>
+    <p class="note">“Active” counts people by their last sign-in. A day-by-day history of active users needs app tracking, which isn’t switched on.</p>`;
+  $('#view').querySelectorAll('[data-d]').forEach((b) => b.onclick = () => { aDays = +b.dataset.d; analyticsPage(); });
+  const days = aDays;
+  try {
+    if (!cache.analytics[days]) { const { data, error } = await sb.rpc('hub_analytics', { p_days: days }); if (error) throw error; cache.analytics[days] = data; }
+    const a = cache.analytics[days], t = a.totals; if (!$('#a-tiles') || aDays !== days) return;
+    $('#a-tiles').innerHTML =
+      tileHtml(IC.active, 'var(--green)', 'Active today', t.active_1d, 'Signed in, last 24 hours') +
+      tileHtml(IC.active, 'var(--blue)', 'Active this week', t.active_7d, `${t.active_30d} in the last 30 days`) +
+      tileHtml(IC.users, 'var(--violet)', 'Pilots logging flights', t.pilots_with_flights, `of ${t.accounts} accounts`) +
+      tileHtml(IC.db, 'var(--orange)', 'Flights logged', t.flights.toLocaleString(), `${(t.flights_by_source.auto || 0).toLocaleString()} detected automatically`);
+    const S = a.series;
+    drawBars($('#c-sign'), S, [{ key: 'signups', label: 'New accounts', color: '#4F8FE0' }]);
+    drawBars($('#c-fl'), S, [{ key: 'flights_auto', label: 'Detected automatically', color: '#4F8FE0' }, { key: 'flights_manual', label: 'Added by hand', color: '#F76E19' }, { key: 'flights_import', label: 'Imported or scanned', color: '#9A7BF0' }]);
+    drawBars($('#c-ai'), S, [{ key: 'schedule_reads', label: 'Schedule uploads', color: '#4F8FE0' }, { key: 'logbook_scans', label: 'Logbook scans', color: '#F76E19' }]);
+    drawBars($('#c-rep'), S, [{ key: 'reports', label: 'Reports', color: '#F76E19' }]);
+  } catch (e) { $('#a-tiles') && ($('#a-tiles').innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(failMsg(e))}</div>`); }
+  const g = await loadGridFull(days); if (!$('#g-tiles') || aDays !== days) return;
+  if (!g.connected) { $('#g-tiles').innerHTML = `<div class="empty" style="grid-column:1/-1">Orvix Grid isn’t connected: ${esc(g.reason || '')}</div>`; return; }
+  $('#g-tiles').innerHTML =
+    tileHtml(IC.active, 'var(--green)', 'Active today', g.signed_in_1d, 'Signed in, last 24 hours') +
+    tileHtml(IC.active, 'var(--blue)', 'Active this week', g.signed_in_7d, `${g.signed_in_30d} in the last 30 days`) +
+    tileHtml(IC.users, 'var(--violet)', 'Accounts', g.accounts, `+${g.accounts_7d} this week`) +
+    tileHtml(IC.users, 'var(--orange)', 'Crews', g.crews, `${g.upcoming_ops} upcoming ops`);
+  drawBars($('#c-gsign'), g.by_day, [{ key: 'signups', label: 'New accounts', color: '#4F8FE0' }]);
+  drawBars($('#c-grep'), g.by_day, [{ key: 'reports', label: 'Player reports', color: '#F76E19' }]);
+}
+
+// ---------- Support: one inbox for both apps ----------
+let supApp = 'all';
+async function supportPage() {
+  crumb('<b>Support</b>'); setNav('support');
+  $('#view').innerHTML = `
+    <div class="page-title"><div><h1>Support</h1><div class="muted">Bug reports and ideas from Orvix Aero, player reports from Orvix Grid.</div></div>
+      <div class="seg">${[['all', 'Both apps'], ['aero', 'Orvix Aero'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-app="${k}" class="${supApp === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+    <div id="pane"><div class="muted">Loading…</div></div>`;
+  $('#view').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
+  const [f, g] = await Promise.all([loadFeedback().catch(() => []), supApp === 'aero' ? Promise.resolve(null) : loadGrid()]);
+  if (!$('#pane')) return;
+  const aero = supApp === 'grid' ? [] : f;
+  const grid = g && g.connected && supApp !== 'aero' ? g.reports : [];
+  const q = bugFilter.q.toLowerCase();
+  const pills = (key, opts) => opts.map(([v, l]) => `<button class="pill ${bugFilter[key] === v ? 'on' : ''}" data-f="${key}" data-v="${v}">${l}</button>`).join('');
+  const aList = aero.filter((r) =>
+    (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
+    (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
+    (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
+  const gList = (bugFilter.show === 'closed' || !['all', 'other'].includes(bugFilter.kind)) ? [] :
+    grid.filter((r) => !q || `${r.reason} ${r.crew} ${r.reporter} ${r.target}`.toLowerCase().includes(q));
+  const items = [...aList.map((r) => ({ at: r.created_at, html: reportCard(r).replace('<span class="tag ', '<span class="b orange" style="margin-right:2px">Orvix Aero</span><span class="tag ') })),
+    ...gList.map((r) => ({ at: r.created_at, html: `<article class="report"><div class="report-head"><span class="b blue">Orvix Grid</span><span class="tag other">${esc(r.what)}</span><span class="meta">${esc(r.crew)} · ${esc(when(r.created_at))}</span><span class="spacer"></span><span class="meta">from ${esc(r.reporter || 'unknown')}${r.target ? ' · about ' + esc(r.target) : ''}</span></div><p class="msg" style="margin:0">${esc(r.reason || 'No reason given')}</p></article>` }))]
+    .sort((a, b) => (a.at < b.at ? 1 : -1));
+  $('#pane').innerHTML = `
+    <div class="filters">${pills('show', [['open', 'Open'], ['closed', 'Closed'], ['all', 'All']])}<span style="width:8px"></span>
+      ${pills('kind', [['all', 'Everything'], ['bug', 'Bugs'], ['idea', 'Ideas'], ['other', 'Other']])}
+      <span class="spacer"></span><input type="text" id="q" placeholder="Search reports" value="${esc(bugFilter.q)}"></div>
+    <div class="reports">${items.map((x) => x.html).join('') || '<div class="empty">Nothing here. Nice.</div>'}</div>
+    ${g && !g.connected && supApp !== 'aero' ? `<p class="note">Orvix Grid isn’t connected: ${esc(g.reason || '')}</p>` : ''}
+    ${grid.length ? '<p class="note">Orvix Grid player reports have no status; they show under Open and All. Act on them in Orvix Grid.</p>' : ''}`;
+  $('#pane').querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { bugFilter[b.dataset.f] = b.dataset.v; supportPage(); });
+  const qi = $('#q'); qi.oninput = () => { bugFilter.q = qi.value; clearTimeout(supportPage.t); supportPage.t = setTimeout(async () => { await supportPage(); const n = $('#q'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 300); };
+  $('#pane').querySelectorAll('.report[data-id]').forEach(wireReport);
+  loadShots($('#pane'));
+}
+
+// ---------- Audit log ----------
+const ACTIONS = {
+  'report.update': 'Updated a report', 'tester.add': 'Added a tester', 'tester.remove': 'Removed a tester',
+  'admin.add': 'Added an admin', 'admin.remove': 'Removed an admin', 'android.on_play': 'Marked as on the Play list',
+  'android.off_play': 'Unmarked from the Play list', 'access.give': 'Gave free access', 'access.remove': 'Removed free access',
+  'admin.password_changed': 'Changed their hub password', 'launch.open_paywall': 'Opened the paywall (launch)', 'launch.close_paywall': 'Closed the paywall',
+};
+function auditDetail(a) {
+  const d = a.detail || {};
+  if (a.action === 'report.update') return `${d.from && d.from !== d.to ? `${esc(statusOf(d.from)[1])} → ` : ''}${esc(statusOf(d.to)[1])}${d.replied ? ' · with a reply' : ''}`;
+  if (a.action === 'access.give') return d.months ? `${d.months} month${d.months > 1 ? 's' : ''}` : 'for good';
+  if (d.note) return esc(d.note);
+  return '';
+}
+async function auditPage() {
+  crumb('<b>Audit log</b>'); setNav('audit');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Audit log</h1><div class="muted">Every change made from the hub: who, what and when.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data, error } = await sb.rpc('hub_audit_list', { p_limit: 500 });
+  if (!$('#pane')) return;
+  if (error) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  $('#pane').innerHTML = data.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>When</th><th>Admin</th><th>What</th><th>On</th><th>Details</th></tr></thead><tbody>
+    ${data.map((a) => `<tr><td class="muted" style="white-space:nowrap">${esc(when(a.at))}</td><td class="em">${esc(a.admin_email)}</td><td>${esc(ACTIONS[a.action] || a.action)}</td><td class="em">${esc(a.target || '')}</td><td class="muted">${auditDetail(a)}</td></tr>`).join('')}
+    </tbody></table></div>` : '<div class="empty">Nothing yet. Changes you make in the hub will show up here.</div>';
+}
+
+// ---------- Settings ----------
+async function settingsPage() {
+  crumb('<b>Settings</b>'); setNav('settings');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Settings</h1></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data: st, error } = await sb.rpc('hub_settings');
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  pane.innerHTML = `
+    <div class="grid2">
+      <section class="panel"><h3>Your account</h3><div class="sub">${esc(me.email)}</div>
+        <form id="cpw"><label for="np1">New password</label><input id="np1" type="password" autocomplete="new-password" minlength="10" required>
+          <label for="np2">Type it again</label><input id="np2" type="password" autocomplete="new-password" minlength="10" required>
+          <div class="muted" style="margin-top:8px;font-size:13px">At least 10 characters.</div>
+          <button class="btn btn-primary" style="margin-top:16px">Change password</button></form><div class="err" id="cpw-err"></div></section>
+      <section class="panel"><h3>Who can sign in here <span class="count">${st.admins.length}</span></h3><div class="sub">Hub admins. Add or remove them under Users &amp; Access.</div>
+        <div class="rows">${st.admins.map((a) => `<div class="row"><div class="main"><b>${esc(a.email)}</b><span>${a.must_change_password ? 'Must choose a password on first sign-in' : 'Password set'}${a.email === me.email.toLowerCase() ? ' · you' : ''}</span></div></div>`).join('')}</div>
+        <a class="btn btn-ghost btn-small" style="margin-top:12px" href="#/users/aero">Manage in Users &amp; Access →</a></section>
+    </div>
+    <section class="panel danger-zone" style="margin-top:18px;max-width:900px">
+      <h3>Launch switch · Orvix Aero</h3>
+      <div class="sub">${st.paywall_open
+        ? 'The paywall is <b style="color:#5ED79A">open</b>: anyone can sign up and subscribe. Testers, admins and free access still get in free.'
+        : 'The paywall is <b style="color:var(--amber)">closed</b>: only testers, admins, free access and the paywall preview accounts can get in. Everyone else sees “invite-only”.'}</div>
+      <div class="switch-row">
+        <input type="text" id="lc" placeholder="Type ${st.paywall_open ? 'CLOSE' : 'LAUNCH'} to confirm" style="max-width:260px">
+        <button class="btn ${st.paywall_open ? 'btn-ghost' : 'btn-primary'}" id="lbtn">${st.paywall_open ? 'Close the paywall' : 'Open the paywall to everyone'}</button>
+      </div>
+      <p class="note">This changes who can use Orvix Aero right away, on every device. It’s written to the audit log.</p>
+    </section>`;
+  $('#cpw').onsubmit = async (e) => {
+    e.preventDefault(); const a = $('#np1').value, err = $('#cpw-err'); err.className = 'err';
+    if (a !== $('#np2').value) { err.textContent = 'The two passwords don’t match.'; return; }
+    const { error: e1 } = await sb.auth.updateUser({ password: a });
+    if (e1) { err.textContent = e1.message; return; }
+    await sb.rpc('hub_password_changed');
+    $('#np1').value = $('#np2').value = ''; err.className = 'ok'; err.textContent = 'Password changed.';
+  };
+  $('#lbtn').onclick = async () => {
+    const open = !st.paywall_open, word = $('#lc').value.trim();
+    if (word !== (open ? 'LAUNCH' : 'CLOSE')) return toast(`Type ${open ? 'LAUNCH' : 'CLOSE'} in the box first.`);
+    if (!confirm(open ? 'Open Orvix Aero’s paywall to everyone now?' : 'Close the paywall? New people will see “invite-only” again.')) return;
+    const { error: e2 } = await sb.rpc('hub_set_launch', { p_open: open, p_confirm: word });
+    if (e2) return toast(e2.message);
+    toast(open ? 'Paywall open. Orvix Aero is launched.' : 'Paywall closed.'); settingsPage();
+  };
 }
 
 // ---------- Orvix Grid ----------
