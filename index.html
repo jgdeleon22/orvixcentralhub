@@ -101,6 +101,36 @@
   .danger-zone { border-color: rgba(229,72,77,.35); }
   .switch-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   @media (max-width: 900px) { .charts { grid-template-columns: 1fr; } }
+  .ov-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  .ov-head h1 { margin: 0 0 4px; }
+  .sys-pill { display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--edge); background: var(--card); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
+  .sys-pill i { width: 9px; height: 9px; border-radius: 50%; background: #6F879B; box-shadow: 0 0 0 4px rgba(111, 135, 155, .15); }
+  .sys-pill.ok i { background: #4ADE80; box-shadow: 0 0 0 4px rgba(74, 222, 128, .18); } .sys-pill.bad { border-color: rgba(248, 113, 113, .5); } .sys-pill.bad i { background: #F87171; box-shadow: 0 0 0 4px rgba(248, 113, 113, .2); }
+  .kpis4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .kpi { display: block; background: linear-gradient(180deg, color-mix(in srgb, var(--c, #4F8FE0) 9%, transparent), transparent 70%), var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 16px 18px; color: inherit; text-decoration: none; min-width: 0; transition: border-color .15s, transform .15s; }
+  a.kpi:hover { border-color: color-mix(in srgb, var(--c) 45%, var(--edge)); transform: translateY(-1px); }
+  .kl { color: var(--ink-2); font-size: 13px; } .kv { font-family: var(--display, inherit); font-size: 36px; line-height: 1.1; margin: 4px 0 2px; }
+  .kr { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; min-height: 34px; } .ks { color: var(--ink-2); font-size: 12.5px; }
+  .spark { display: block; flex: none; }
+  .prod2 { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; background: radial-gradient(120% 100% at 100% 0%, color-mix(in srgb, var(--acc) 14%, transparent), transparent 55%), var(--card); border: 1px solid color-mix(in srgb, var(--acc) 26%, var(--edge)); border-radius: 18px; padding: 20px; min-width: 0; }
+  .prod2 header { display: flex; align-items: center; gap: 12px; } .prod2 header > div { flex: 1; min-width: 0; } .prod2 h3 { margin: 0; font-size: 20px; }
+  .prod2 .app-icon { width: 46px; height: 46px; border-radius: 12px; }
+  .p-today { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .p-today b { font-family: var(--display, inherit); font-size: 46px; line-height: 1; color: var(--acc); }
+  .p-today span { display: block; color: var(--ink-2); font-size: 13px; margin: 2px 0 4px; } .p-spark { flex: 1; display: flex; justify-content: flex-end; min-width: 0; } .p-spark svg { max-width: 100%; }
+  .p-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .p-stats > div { background: rgba(255, 255, 255, .03); border: 1px solid var(--edge); border-radius: 12px; padding: 9px 11px; min-width: 0; }
+  .p-stats span { display: block; color: var(--ink-2); font-size: 12px; } .p-stats b { font-size: 20px; }
+  .prod2 footer { display: flex; gap: 8px; flex-wrap: wrap; }
+  .ov-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; margin-top: 18px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; } .chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: rgba(255, 255, 255, .03); border: 1px solid var(--edge); font-size: 13.5px; }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; } .chip.bad { border-color: rgba(248, 113, 113, .45); } .chip.bad i { background: #F87171; }
+  .todo { display: flex; align-items: center; gap: 12px; padding: 10px 6px; border-bottom: 1px solid var(--edge); color: inherit; text-decoration: none; border-radius: 8px; }
+  .todo:hover { background: rgba(255, 255, 255, .03); } .todo .ai { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); flex: none; }
+  .todo .ai svg { width: 18px; height: 18px; } .todo .at { flex: 1; min-width: 0; display: flex; flex-direction: column; } .todo .at span { color: var(--ink-2); font-size: 13px; } .todo .go { color: var(--ink-2); }
+  .allgood { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 24px 0; text-align: center; }
+  .ok-dot { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #4ADE80; background: rgba(74, 222, 128, .12); border: 1px solid rgba(74, 222, 128, .35); }
+  @media (max-width: 1100px) { .kpis4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ov-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .p-stats { grid-template-columns: 1fr 1fr; } .kv { font-size: 30px; } }
+
   .hero2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 30px; }
   .hero-card { position: relative; overflow: hidden; background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 60%), var(--card); border: 1px solid color-mix(in srgb, var(--acc) 30%, var(--edge)); border-radius: 18px; padding: 22px; min-width: 0; }
   .hero-top { display: flex; align-items: center; gap: 12px; }
@@ -604,89 +634,127 @@ const healthRows = (rs) => rs.map((r) => `<div class="hrow"><span style="color:v
   <span class="hs ${r.ok ? 'ok' : 'bad'}">${r.ok ? 'Healthy' : 'Problem'}</span></div>`).join('');
 
 // ---------- Overview ----------
+// Tiny trend line for tiles and product cards.
+function spark(vals, color, w = 120, h = 34) {
+  if (!vals || vals.length < 2) return '';
+  const max = Math.max(1, ...vals), n = vals.length;
+  const pts = vals.map((v, i) => `${(i * (w - 4)) / (n - 1) + 2},${h - 3 - (v / max) * (h - 8)}`);
+  const id = 's' + Math.random().toString(36).slice(2, 7);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="2,${h - 2} ${pts.join(' ')} ${w - 2},${h - 2}" fill="url(#${id})"/><polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${pts.at(-1).split(',')[0]}" cy="${pts.at(-1).split(',')[1]}" r="3" fill="${color}"/></svg>`;
+}
+const greet = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; };
+const deltaPill = (today, yest) => { const d = today - yest; return d === 0 ? '<span class="dl flat">same as yesterday</span>' : `<span class="dl ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'} ${Math.abs(d)} vs yesterday</span>`; };
+
 async function home() {
   crumb(''); setNav('home');
+  const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
   $('#view').innerHTML = `
-    <div class="page-title"><div><h1>Orvix Central Hub</h1><div class="muted">Everything you run, in one place.</div></div></div>
-    <div class="tiles" id="tiles">${[1, 2, 3, 4].map(() => '<div class="tile"><div class="ti"></div><div><div class="tl">&nbsp;</div><div class="tv">·</div></div></div>').join('')}</div>
-    <div class="sec"><h2>Your products</h2></div>
+    <div class="ov-head">
+      <div><h1>${greet()}</h1><div class="muted">${esc(today)} · Orvix Central Hub</div></div>
+      <a class="sys-pill wait" id="sys-pill" href="#/health"><i></i><span>Checking systems…</span></a>
+    </div>
+    <div class="kpis4" id="kpis">${[1, 2, 3, 4].map(() => '<div class="kpi"><div class="muted">Loading…</div></div>').join('')}</div>
     <div class="products">
-      <article class="prod" style="--glow: var(--orange)">
-        <div class="prod-top"><img class="app-icon" src="icon-aero.png" alt="">
-          <div><h3>Orvix Aero</h3><div class="tag2">Pilot logbook &amp; schedule app</div><span class="pillst wait" id="aero-status">Checking…</span>
-          <div class="prod-desc">Automatic logbook, FAR 117, schedule, commuter and briefing for airline pilots.</div></div></div>
-        <div class="prod-foot">
-          <div class="stat"><span>Accounts</span><b id="ps-acc">–</b></div>
-          <div class="stat"><span>Flights logged</span><b id="ps-fl">–</b></div>
-          <div class="stat"><span>Open bugs</span><b id="ps-bug">–</b></div>
-          <div class="acts"><a class="btn btn-primary btn-small" href="#/aero/bugs">Open admin →</a><a class="btn btn-ghost btn-small" href="https://orvixaero.com" target="_blank" rel="noopener">View site ↗</a></div>
-        </div>
+      <article class="prod2" style="--acc:#F76E19">
+        <header><img class="app-icon" src="icon-aero.png" alt=""><div><h3>Orvix Aero</h3><div class="tag2">Pilot logbook &amp; schedule</div></div><span class="pillst wait" id="aero-status">Checking…</span></header>
+        <div class="p-today"><div><b id="pa-today">–</b><span>pilots today</span><div id="pa-delta"></div></div><div class="p-spark" id="pa-spark"></div></div>
+        <div class="p-stats"><div><span>Accounts</span><b id="ps-acc">–</b></div><div><span>Flights logged</span><b id="ps-fl">–</b></div><div><span>Subscribers</span><b id="ps-pay">–</b></div><div><span>Open bugs</span><b id="ps-bug">–</b></div></div>
+        <footer><a class="btn btn-primary btn-small" href="#/aero/bugs">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/aero">Users</a><a class="btn btn-ghost btn-small" href="https://orvixaero.com" target="_blank" rel="noopener">Site ↗</a></footer>
       </article>
-      <article class="prod" style="--glow: var(--blue)">
-        <div class="prod-top"><img class="app-icon" src="icon-grid.png" alt="">
-          <div><h3>Orvix Grid</h3><div class="tag2">Star Citizen companion app</div><span class="pillst wait" id="grid-status">Checking…</span>
-          <div class="prod-desc" id="grid-desc">Item finder, trade routes, ships and crews for Star Citizen players.</div></div></div>
-        <div class="prod-foot">
-          <div class="stat"><span>Accounts</span><b id="pg-acc">–</b></div>
-          <div class="stat"><span>Crews</span><b id="pg-crews">–</b></div>
-          <div class="stat"><span>Open bugs</span><b id="pg-bug">–</b></div>
-          <div class="acts"><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">View site ↗</a></div>
-        </div>
+      <article class="prod2" style="--acc:#8ED8FF">
+        <header><img class="app-icon" src="icon-grid.png" alt=""><div><h3>Orvix Grid</h3><div class="tag2">Star Citizen companion</div></div><span class="pillst wait" id="grid-status">Checking…</span></header>
+        <div class="p-today"><div><b id="pg-today">–</b><span>players today</span><div id="pg-delta"></div></div><div class="p-spark" id="pg-spark"></div></div>
+        <div class="p-stats"><div><span>Accounts</span><b id="pg-acc">–</b></div><div><span>Crews</span><b id="pg-crews">–</b></div><div><span>Upcoming ops</span><b id="pg-ops">–</b></div><div><span>Open bugs</span><b id="pg-bug">–</b></div></div>
+        <footer><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/grid">Users</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">Site ↗</a></footer>
       </article>
     </div>
-    <div class="lower">
-      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>New Orvix Aero accounts</h3><span class="muted">Last 14 days</span></div>
-        <div class="chart-wrap" id="chart"><div class="muted" style="padding:80px 0;text-align:center">Loading…</div></div></section>
-      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Recent activity</h3></div><div id="acts"><div class="muted">Loading…</div></div></section>
-      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>System status</h3><a class="muted" href="#/health" style="color:var(--ink-2)">Details →</a></div><div id="hl"><div class="muted">Checking…</div></div></section>
+    <div class="ov-grid">
+      <section class="panel ov-chart"><div class="sec" style="margin-bottom:6px"><h3>Daily users</h3><a class="muted" href="#/analytics" style="color:var(--ink-2)">Analytics →</a></div><div class="lines" id="ov-users"><div class="muted">Loading…</div></div></section>
+      <section class="panel"><div class="sec" style="margin-bottom:6px"><h3>Needs attention</h3></div><div id="todo"><div class="muted">Loading…</div></div></section>
+      <section class="panel ov-acts"><div class="sec" style="margin-bottom:6px"><h3>Recent activity</h3><a class="muted" href="#/audit" style="color:var(--ink-2)">Audit log →</a></div><div id="acts"><div class="muted">Loading…</div></div></section>
+      <section class="panel"><div class="sec" style="margin-bottom:6px"><h3>Systems</h3><a class="muted" href="#/health" style="color:var(--ink-2)">Details →</a></div><div class="chips" id="hl"><div class="muted">Checking…</div></div></section>
     </div>`;
 
-  loadGrid().then((g) => {
-    const st = $('#grid-status'); if (!st) return;
-    if (!g.connected) { st.className = 'pillst off'; st.textContent = 'Not connected'; $('#grid-desc').textContent = 'Not connected yet: ' + (g.reason || ''); return; }
-    st.className = 'pillst'; st.textContent = 'Operational';
-    $('#pg-acc').textContent = g.accounts.toLocaleString(); $('#pg-crews').textContent = g.crews; $('#pg-bug').textContent = g.feedback_ready ? g.open_bugs : '–';
-    gridOpen = g.open_bugs || 0; setBadge();
-  });
-  health().then((rs) => {
-    $('#hl') && ($('#hl').innerHTML = healthRows(rs));
-    // Each product's pill counts only its own checks (Grid: its website and backend).
-    const isGrid = (r) => r.id.startsWith('grid');
-    const pill = (el, list) => {
-      const bad = list.filter((r) => !r.ok).length;
-      if (el) { el.className = 'pillst' + (bad ? ' bad' : ''); el.textContent = bad ? `${bad} problem${bad > 1 ? 's' : ''}` : 'Operational'; }
-    };
-    pill($('#aero-status'), rs.filter((r) => !isGrid(r)));
-    const gst = $('#grid-status');
-    if (gst && !gst.classList.contains('off')) pill(gst, rs.filter(isGrid));
-  });
-  try {
-    const o = await loadOverview();
-    if (!$('#tiles')) return;
+  cache.daily = cache.daily || {};
+  const [ov, dl, g, inv, rs] = await Promise.all([
+    loadOverview().catch((e) => ({ error: e })),
+    cache.daily[14] ? Promise.resolve(cache.daily[14]) : sb.rpc('hub_daily', { p_days: 14 }).then((r) => (r.error ? null : (cache.daily[14] = r.data))),
+    loadGridFull(14),
+    cache.invited ? Promise.resolve(cache.invited) : sb.rpc('hub_invited').then((r) => (cache.invited = r.data || [])),
+    health(),
+  ]);
+  if (!$('#kpis')) return;
+  const o = ov && !ov.error ? ov : null, gOk = g && g.connected;
+  const D = dl ? dl.series : [], gMap = new Map((gOk ? g.by_day : []).map((r) => [r.day, r]));
+  const aU = D.map((r) => r.users), gU = D.map((r) => gMap.get(r.day)?.users ?? 0);
+  const vis = D.map((r) => r.aero_visitors + r.grid_visitors);
+  const last = (a) => a.at(-1) ?? 0, prev = (a) => a.at(-2) ?? 0;
+
+  // Systems.
+  const isGrid = (r) => r.id.startsWith('grid');
+  const bad = rs.filter((r) => !r.ok);
+  const sp = $('#sys-pill'); sp.className = 'sys-pill ' + (bad.length ? 'bad' : 'ok');
+  $('span', sp).textContent = bad.length ? `${bad.length} system problem${bad.length > 1 ? 's' : ''}` : 'All systems healthy';
+  $('#hl').innerHTML = rs.map((r) => `<span class="chip ${r.ok ? 'ok' : 'bad'}" title="${esc(r.ok ? (r.ms ? r.ms + ' ms' : 'Healthy') : r.why || 'Problem')}"><i></i>${esc(r.name)}</span>`).join('');
+  const pill = (el, list) => { const n = list.filter((r) => !r.ok).length; if (el) { el.className = 'pillst' + (n ? ' bad' : ''); el.textContent = n ? `${n} problem${n > 1 ? 's' : ''}` : 'Operational'; } };
+  pill($('#aero-status'), rs.filter((r) => !isGrid(r)));
+  if (gOk) pill($('#grid-status'), rs.filter(isGrid)); else { const st = $('#grid-status'); st.className = 'pillst off'; st.textContent = 'Not connected'; }
+
+  // KPIs.
+  const kpi = (label, value, sub, vals, color, href) => `<${href ? `a href="${href}"` : 'div'} class="kpi" style="--c:${color}"><div class="kl">${label}</div><div class="kv">${value}</div><div class="kr"><span class="ks">${sub}</span>${spark(vals, color)}</div></${href ? 'a' : 'div'}>`;
+  const openAero = o ? o.open_bugs + o.open_other : 0, openGrid = gOk ? (g.feedback || []).filter((f) => ['new', 'working', 'needs-info'].includes(f.status)).length : 0;
+  $('#kpis').innerHTML =
+    kpi('Users today', (last(aU) + last(gU)).toLocaleString(), `${last(aU)} Aero · ${last(gU)} Grid`, aU.map((v, i) => v + gU[i]), '#F76E19', '#/analytics') +
+    kpi('Website visitors today', last(vis).toLocaleString(), `${D.length ? last(D).aero_visitors : 0} aero · ${D.length ? last(D).grid_visitors : 0} grid`, vis, '#9A7BF0', '#/analytics') +
+    kpi('Paid subscribers', o ? o.paying : '–', 'Orvix Aero Pro', null, '#4ADE80', '#/users/aero') +
+    kpi('Open issues', openAero + openGrid, `${openAero} Aero · ${openGrid} Grid`, null, openAero + openGrid ? '#F2B33D' : '#4ADE80', '#/support');
+
+  // Products.
+  if (o) {
     aeroOpen = o.open_bugs || 0; setBadge();
-    const tile = (icon, c, label, value, sub, href) => `<${href ? `a href="${href}"` : 'div'} class="tile" style="--c:${c}"><div class="ti">${icon}</div><div style="min-width:0"><div class="tl">${label}</div><div class="tv">${value}</div><div class="ts">${sub}</div></div></${href ? 'a' : 'div'}>`;
-    $('#tiles').innerHTML =
-      tile(IC.users, 'var(--blue)', 'Orvix Aero accounts', o.accounts.toLocaleString(), `+${o.accounts_7d} this week`, '#/aero/people') +
-      tile(IC.active, 'var(--green)', 'Active this week', o.signed_in_7d.toLocaleString(), 'Signed in, last 7 days') +
-      tile(IC.bug, 'var(--orange)', 'Open bug reports', o.open_bugs, `${o.open_other} ideas & other`, '#/aero/bugs') +
-      tile(IC.card, 'var(--violet)', 'Paid subscribers', o.paying, 'Revenue: not connected yet');
-    $('#ps-acc').textContent = o.accounts.toLocaleString();
-    $('#ps-fl').textContent = o.flights.toLocaleString();
-    $('#ps-bug').textContent = o.open_bugs;
-    drawChart($('#chart'), o.by_day);
-    const KIND = {
-      signup: [IC.plus, 'var(--blue)', 'New account'],
-      report: [IC.msg, 'var(--orange)', 'New report'],
-      android: [IC.phone, 'var(--green)', 'Android tester signed up'],
-      tester: [IC.users, 'var(--violet)', 'Tester added'],
-    };
-    $('#acts').innerHTML = o.activity.length ? o.activity.map((a) => {
-      const [icon, c, title] = KIND[a.kind] || [IC.msg, 'var(--ink-2)', a.kind];
-      return `<div class="act"><span class="ai" style="--c:${c}">${icon}</span><div class="at"><b>${title}</b><span>${esc(a.detail || a.who || '')}${a.detail && a.who ? ' · ' + esc(a.who) : ''}</span></div><time>${ago(a.at)}</time></div>`;
-    }).join('') : '<div class="muted">Nothing yet.</div>';
-  } catch (e) {
-    $('#tiles') && ($('#tiles').innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(failMsg(e))}</div>`);
+    $('#ps-acc').textContent = o.accounts.toLocaleString(); $('#ps-fl').textContent = o.flights.toLocaleString(); $('#ps-pay').textContent = o.paying; $('#ps-bug').textContent = o.open_bugs;
   }
+  $('#pa-today').textContent = last(aU); $('#pa-delta').innerHTML = deltaPill(last(aU), prev(aU)); $('#pa-spark').innerHTML = spark(aU, '#F76E19', 220, 56);
+  if (gOk) {
+    gridOpen = g.open_bugs || 0; setBadge();
+    $('#pg-acc').textContent = g.accounts.toLocaleString(); $('#pg-crews').textContent = g.crews; $('#pg-ops').textContent = g.upcoming_ops; $('#pg-bug').textContent = g.feedback_ready ? g.open_bugs : '–';
+    if (g.daily_ready) { $('#pg-today').textContent = last(gU); $('#pg-delta').innerHTML = deltaPill(last(gU), prev(gU)); $('#pg-spark').innerHTML = spark(gU, '#8ED8FF', 220, 56); }
+    else { $('#pg-today').textContent = '–'; $('#pg-delta').innerHTML = '<span class="muted" style="font-size:12px">Daily players not set up</span>'; }
+  }
+
+  // Daily users chart: both apps.
+  if (D.length) drawLines($('#ov-users'), D.map((r, i) => ({ day: r.day, aero: aU[i], grid: gU[i], rebuilt: dl.tracking_since ? r.day < dl.tracking_since : true })),
+    [{ key: 'aero', label: 'Orvix Aero pilots', color: '#F76E19', area: true }, { key: 'grid', label: 'Orvix Grid players', color: '#8ED8FF' }], { height: 230 });
+  else $('#ov-users').innerHTML = '<div class="empty">No data yet.</div>';
+
+  // Needs attention.
+  const weekReports = gOk ? (g.by_day || []).slice(-7).reduce((x, r) => x + r.reports, 0) : 0;
+  const pendingInv = (inv || []).length, emailedInv = (inv || []).filter((i) => i.emailed_at).length;
+  const items = [
+    o && o.open_bugs ? [IC.bug, '#F87171', `${o.open_bugs} open Orvix Aero bug${o.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/aero/bugs'] : null,
+    o && o.open_other ? [IC.msg, '#F2B33D', `${o.open_other} Orvix Aero idea${o.open_other > 1 ? 's' : ''} or message${o.open_other > 1 ? 's' : ''} to answer`, 'Waiting for a reply', '#/support'] : null,
+    gOk && g.open_bugs ? [IC.bug, '#F87171', `${g.open_bugs} open Orvix Grid bug${g.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/support'] : null,
+    weekReports ? [IC.msg, '#F2B33D', `${weekReports} Orvix Grid player report${weekReports > 1 ? 's' : ''} this week`, 'Crew posts or members flagged', '#/support'] : null,
+    pendingInv ? [IC.users, '#8ED8FF', `${pendingInv} invite${pendingInv > 1 ? 's' : ''} not accepted yet`, emailedInv ? `${emailedInv} emailed` : 'Not emailed yet', '#/users/aero'] : null,
+    ...bad.map((r) => [IC.code, '#F87171', `${r.name} has a problem`, r.why || 'Not responding', '#/health']),
+  ].filter(Boolean);
+  $('#todo').innerHTML = items.length
+    ? items.map(([icon, c, t, sub, href]) => `<a class="todo" href="${href}" style="--c:${c}"><span class="ai">${icon}</span><div class="at"><b>${esc(t)}</b><span>${esc(sub)}</span></div><span class="go">→</span></a>`).join('')
+    : `<div class="allgood"><div class="ok-dot">✓</div><b>You’re all caught up</b><span class="muted">No open bugs, reports or problems.</span></div>`;
+
+  // Recent activity (6).
+  const KIND = {
+    signup: [IC.plus, 'var(--blue)', 'New account'],
+    report: [IC.msg, 'var(--orange)', 'New report'],
+    android: [IC.phone, 'var(--green)', 'Android tester signed up'],
+    tester: [IC.users, 'var(--violet)', 'Tester added'],
+  };
+  $('#acts').innerHTML = o && o.activity.length ? o.activity.slice(0, 6).map((a) => {
+    const [icon, c, title] = KIND[a.kind] || [IC.msg, 'var(--ink-2)', a.kind];
+    return `<div class="act"><span class="ai" style="--c:${c}">${icon}</span><div class="at"><b>${title}</b><span>${esc(a.detail || a.who || '')}${a.detail && a.who ? ' · ' + esc(a.who) : ''}</span></div><time>${ago(a.at)}</time></div>`;
+  }).join('') : `<div class="muted">${o ? 'Nothing yet.' : esc(failMsg(ov.error))}</div>`;
 }
 
 // One series, bars, hover tooltip. Days run left (oldest) to right (today).
