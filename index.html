@@ -119,6 +119,10 @@
   .two-lists h4 { margin: 0 0 6px; font-size: 13px; color: var(--ink-2); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
   .two-lists .li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--edge); font-size: 14px; }
   .two-lists .li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .br { margin-bottom: 9px; } .brl { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+  .brl span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .brt { height: 6px; background: rgba(255, 255, 255, .06); border-radius: 99px; margin-top: 4px; overflow: hidden; } .brt i { display: block; height: 100%; border-radius: 99px; }
+  .brs { color: var(--ink-2); font-size: 12px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
   @media (max-width: 900px) { .hero2 { grid-template-columns: 1fr; } .hero-num > b { font-size: 52px; } }
   @media (max-width: 560px) { .hero-kpis, .kpis { grid-template-columns: 1fr 1fr; } .two-lists { grid-template-columns: 1fr; } }
@@ -1160,11 +1164,14 @@ async function analyticsPage() {
   $('#view').querySelectorAll('[data-d]').forEach((b) => b.onclick = () => { aDays = +b.dataset.d; analyticsPage(); });
   const days = aDays;
   cache.daily = cache.daily || {};
-  const [an, dl, g] = await Promise.all([
+  cache.sites = cache.sites || {};
+  const [an, dl, g, sbk] = await Promise.all([
     cache.analytics[days] ? Promise.resolve({ data: cache.analytics[days] }) : sb.rpc('hub_analytics', { p_days: days }),
     cache.daily[days] ? Promise.resolve({ data: cache.daily[days] }) : sb.rpc('hub_daily', { p_days: days }),
     loadGridFull(days),
+    cache.sites[days] ? Promise.resolve({ data: cache.sites[days] }) : sb.rpc('hub_site_breakdown', { p_days: days }),
   ]);
+  const BK = (cache.sites[days] = sbk.data || {});
   if (!$('#h-aero') || aDays !== days) return;
   if (an.error || dl.error) { $('#h-aero').innerHTML = `<div class="empty">${esc(failMsg(an.error || dl.error))}</div>`; return; }
   const a = (cache.analytics[days] = an.data), d = (cache.daily[days] = dl.data), t = a.totals, D = d.series;
@@ -1188,8 +1195,12 @@ async function analyticsPage() {
       <div class="kpis"><div><b>${today.visitors}</b><span>visitors today</span></div><div><b>${sum('visitors').toLocaleString()}</b><span>visitors, ${days} days</span></div>
         <div><b>${sum('views').toLocaleString()}</b><span>page views</span></div><div><b>${d.mobile_share[key] ?? '–'}${d.mobile_share[key] == null ? '' : '%'}</b><span>on phones</span></div></div>
       <div class="lines" data-site="${key}"></div>
+      <div class="two-lists">
+        <div><h4>Where they’re from</h4>${whereHtml(BK[key])}</div>
+        <div><h4>How they got here</h4>${howHtml(BK[key])}</div>
+      </div>
       <div class="two-lists"><div><h4>Top pages</h4>${pages.length ? pages.map((x) => `<div class="li"><span>${esc(x.path)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">No visits yet</div>'}</div>
-        <div><h4>Came from</h4>${refs.length ? refs.map((x) => `<div class="li"><span>${esc(x.site)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">Direct visits only so far</div>'}</div></div></section>`;
+        <div><h4>Top sites linking here</h4>${refs.length ? refs.map((x) => `<div class="li"><span>${esc(x.site)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">None yet</div>'}</div></div></section>`;
   };
   $('#sites').innerHTML = siteCard('aero', 'orvixaero.com', 'https://orvixaero.com', '#F76E19') + siteCard('grid', 'orvixgrid.com', 'https://www.orvixgrid.com', '#8ED8FF');
   for (const [key, color] of [['aero', '#F76E19'], ['grid', '#8ED8FF']]) {
@@ -1219,6 +1230,33 @@ async function analyticsPage() {
     drawBars($('#c-grep'), g.by_day, [{ key: 'reports', label: 'Player reports', color: '#F76E19' }]);
   }
   $('#a-note').textContent = `Daily users count everyone who opened the app that day (iPhone, web or Windows).${since ? ` Recorded live since ${day(since)}; earlier days are rebuilt from sign-ins and activity, so they can run a little low (shown lighter).` : ''} Website counts started ${d.sites_since ? day(d.sites_since) : 'today'}.`;
+}
+
+// Websites: visitors by country (flag, name, bar; US/Canada regions under it).
+const flag = (cc) => /^[A-Z]{2}$/.test(cc) ? String.fromCodePoint(...[...cc].map((c) => 127397 + c.charCodeAt(0))) : '🌐';
+const countryName = (cc) => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(cc) || cc; } catch { return cc; } };
+const barRow = (label, n, max, color, sub = '') => `<div class="br"><div class="brl"><span>${label}</span><b>${n}</b></div>
+  <div class="brt"><i style="width:${max ? Math.max(4, Math.round((n / max) * 100)) : 0}%;background:${color}"></i></div>${sub ? `<div class="brs">${sub}</div>` : ''}</div>`;
+function whereHtml(b) {
+  const cs = (b && b.countries) || [];
+  if (!cs.length) return `<div class="muted">No visits counted yet${b && b.unknown_country ? ` (${b.unknown_country} with no location)` : ''}</div>`;
+  const max = cs[0].visitors, regions = (b.regions || []);
+  return cs.slice(0, 6).map((c) => {
+    const rs = regions.filter((r) => r.country === c.country).slice(0, 4).map((r) => `${esc(r.region)} ${r.visitors}`).join(' · ');
+    return barRow(`${flag(c.country)} ${esc(countryName(c.country))}`, c.visitors, max, '#4F8FE0', rs);
+  }).join('') + (b.unknown_country ? `<div class="brs" style="margin-top:6px">${b.unknown_country} more with no location</div>` : '');
+}
+// Websites: visitors by how they arrived, with the top names in each.
+const SRC = { search: ['Search', '#4ADE80'], social: ['Social', '#F76E19'], link: ['Other websites', '#8ED8FF'], campaign: ['Your tagged links', '#9A7BF0'], email: ['Email', '#F2B33D'], direct: ['Direct or typed in', '#6F879B'] };
+function howHtml(b) {
+  const ss = (b && b.sources) || [];
+  if (!ss.length) return '<div class="muted">No visits counted yet</div>';
+  const max = Math.max(...ss.map((x) => x.visitors)), names = (b.source_names || []);
+  return ss.map((x) => {
+    const [label, color] = SRC[x.source] || [x.source, '#6F879B'];
+    const top = names.filter((nm) => nm.source === x.source).slice(0, 3).map((nm) => `${esc(nm.name)} ${nm.visitors}`).join(' · ');
+    return barRow(label, x.visitors, max, color, top);
+  }).join('');
 }
 
 function heroCard(el, o) {
