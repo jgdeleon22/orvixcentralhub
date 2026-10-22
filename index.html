@@ -890,9 +890,10 @@ async function aero(tab) {
     </div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
   try {
-    const [f] = await Promise.all([loadFeedback(), loadNotified().catch(() => [])]);
+    const [all] = await Promise.all([loadFeedback(), loadNotified().catch(() => [])]);
+    const f = all.filter((r) => r.app !== 'family'); // Orvix Family reports live on its own page and in Support
     $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
-    aeroOpen = f.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
+    aeroOpen = all.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
     if (tab === 'people') return people(await loadPeople());
     bugs(f);
   } catch (e) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
@@ -1457,19 +1458,20 @@ function drawLines(el, rows, series, opt = {}) {
 }
 window.addEventListener('resize', () => document.querySelectorAll('.lines').forEach((el) => el._redraw && el._redraw()));
 
-// ---------- Support: one inbox for both apps ----------
+// ---------- Support: one inbox for every app ----------
 let supApp = 'all';
 async function supportPage() {
   crumb('<b>Support</b>'); setNav('support');
   $('#view').innerHTML = `
-    <div class="page-title"><div><h1>Support</h1><div class="muted">Bug reports and ideas from both apps, plus Orvix Grid’s player reports.</div></div>
-      <div class="seg">${[['all', 'Both apps'], ['aero', 'Orvix Aero'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-app="${k}" class="${supApp === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+    <div class="page-title"><div><h1>Support</h1><div class="muted">Bug reports and ideas from every app, plus Orvix Grid’s player reports.</div></div>
+      <div class="seg">${[['all', 'All apps'], ['aero', 'Orvix Aero'], ['family', 'Orvix Family'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-app="${k}" class="${supApp === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
   $('#view').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
-  const [f, g] = await Promise.all([loadFeedback().catch(() => []), supApp === 'aero' ? Promise.resolve(null) : loadGrid(), loadNotified().catch(() => [])]);
+  const [f, g] = await Promise.all([loadFeedback().catch(() => []), supApp === 'aero' || supApp === 'family' ? Promise.resolve(null) : loadGrid(), loadNotified().catch(() => [])]);
   if (!$('#pane')) return;
-  const aero = supApp === 'grid' ? [] : f;
-  const grid = g && g.connected && supApp !== 'aero' ? g.reports : [];
+  // Orvix Aero and Orvix Family share one feedback table (app column).
+  const aero = supApp === 'grid' ? [] : supApp === 'all' ? f : f.filter((r) => (r.app === 'family') === (supApp === 'family'));
+  const grid = g && g.connected && (supApp === 'all' || supApp === 'grid') ? g.reports : [];
   const q = bugFilter.q.toLowerCase();
   const pills = (key, opts) => opts.map(([v, l]) => `<button class="pill ${bugFilter[key] === v ? 'on' : ''}" data-f="${key}" data-v="${v}">${l}</button>`).join('');
   const aList = aero.filter((r) =>
@@ -1478,7 +1480,7 @@ async function supportPage() {
     (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
   const gList = (bugFilter.show === 'closed' || !['all', 'other'].includes(bugFilter.kind)) ? [] :
     grid.filter((r) => !q || `${r.reason} ${r.crew} ${r.reporter} ${r.target}`.toLowerCase().includes(q));
-  const gfb = g && g.connected && supApp !== 'aero' ? (g.feedback || []) : [];
+  const gfb = g && g.connected && (supApp === 'all' || supApp === 'grid') ? (g.feedback || []) : [];
   const gfList = gfb.filter((r) =>
     (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
     (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
@@ -1491,9 +1493,9 @@ async function supportPage() {
       ${pills('kind', [['all', 'Everything'], ['bug', 'Bugs'], ['idea', 'Ideas'], ['other', 'Other']])}
       <span class="spacer"></span><input type="text" id="q" placeholder="Search reports" value="${esc(bugFilter.q)}"></div>
     <div class="reports">${items.map((x) => x.html).join('') || '<div class="empty">Nothing here. Nice.</div>'}</div>
-    ${g && !g.connected && supApp !== 'aero' ? `<p class="note">Orvix Grid isn’t connected: ${esc(g.reason || '')}</p>` : ''}
+    ${g && !g.connected ? `<p class="note">Orvix Grid isn’t connected: ${esc(g.reason || '')}</p>` : ''}
     ${grid.length ? '<p class="note">Orvix Grid player reports (flagged crew posts) have no status; they show under Open and All. Act on them in Orvix Grid.</p>' : ''}
-    ${g && g.connected && g.feedback_ready === false && supApp !== 'aero' ? '<p class="note">Orvix Grid’s bug reports table isn’t set up yet.</p>' : ''}`;
+    ${g && g.connected && g.feedback_ready === false ? '<p class="note">Orvix Grid’s bug reports table isn’t set up yet.</p>' : ''}`;
   $('#pane').querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { bugFilter[b.dataset.f] = b.dataset.v; supportPage(); });
   const qi = $('#q'); qi.oninput = () => { bugFilter.q = qi.value; clearTimeout(supportPage.t); supportPage.t = setTimeout(async () => { await supportPage(); const n = $('#q'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 300); };
   $('#pane').querySelectorAll('.report[data-id]').forEach(wireReport);
@@ -2014,6 +2016,7 @@ async function family() {
         <div class="act"><span class="ai" style="--c:var(--blue)">${IC.users}</span><div class="at"><b>${n(f.accounts)} Orvix Family accounts</b><span>Signed up in the Family app</span></div></div>
         <div class="act"><span class="ai" style="--c:var(--green)">${IC.phone}</span><div class="at"><b>${n(f.phones)} phones with notifications on</b><span>Get landed, delay and pickup alerts</span></div></div>
         <div class="act"><span class="ai" style="--c:${f.reports_open ? '#F87171' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.reports_open)} reported chat message${f.reports_open === 1 ? '' : 's'}</b><span>Last 30 days</span></div></div>
+        <a class="act" href="#/support" onclick="supApp = 'family'" style="color:inherit;text-decoration:none"><span class="ai" style="--c:var(--orange)">${IC.bug}</span><div class="at"><b>Bug reports and ideas</b><span>Sent from Settings in the app · open in Support</span></div></a>
       </section>
     </div>
     <p class="note">Live flights, landing alerts and pickups only work for families of pilots with Orvix Aero Pro. Calendar and chat are free for everyone.</p>`;
