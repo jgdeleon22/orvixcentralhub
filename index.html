@@ -926,7 +926,7 @@ function reportCard(r) {
   const shots = (r.screenshots || []).map((p) => `<a target="_blank" rel="noopener" data-shot="${esc(p)}"><img alt="Screenshot"></a>`).join('');
   return `<article class="report" data-id="${r.id}">
     <div class="report-head">
-      <span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
+      ${r.app === 'family' ? '<span class="b violet" style="margin-right:2px">Orvix Family</span>' : ''}<span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
       <span class="status" style="--c:${color}">${esc(label)}</span>
       <span class="meta">#${r.id} · ${esc(when(r.created_at))}</span>
       <span class="spacer"></span>
@@ -1483,7 +1483,7 @@ async function supportPage() {
     (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
     (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
     (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
-  const items = [...gfList.map((r) => ({ at: r.created_at, html: gridFeedbackCard(r) })), ...aList.map((r) => ({ at: r.created_at, html: reportCard(r).replace('<span class="tag ', '<span class="b orange" style="margin-right:2px">Orvix Aero</span><span class="tag ') })),
+  const items = [...gfList.map((r) => ({ at: r.created_at, html: gridFeedbackCard(r) })), ...aList.map((r) => ({ at: r.created_at, html: r.app === 'family' ? reportCard(r) : reportCard(r).replace('<span class="tag ', '<span class="b orange" style="margin-right:2px">Orvix Aero</span><span class="tag ') })),
     ...gList.map((r) => ({ at: r.created_at, html: `<article class="report"><div class="report-head"><span class="b blue">Orvix Grid</span><span class="tag other">${esc(r.what)}</span><span class="meta">${esc(r.crew)} · ${esc(when(r.created_at))}</span><span class="spacer"></span><span class="meta">from ${esc(r.reporter || 'unknown')}${r.target ? ' · about ' + esc(r.target) : ''}</span></div><p class="msg" style="margin:0">${esc(r.reason || 'No reason given')}</p></article>` }))]
     .sort((a, b) => (a.at < b.at ? 1 : -1));
   $('#pane').innerHTML = `
