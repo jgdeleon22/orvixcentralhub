@@ -328,6 +328,9 @@
   }
 
   /* Insights, checklist, announcements */
+  .ins-app { display: flex; align-items: center; gap: 14px; margin: 30px 0 14px; padding-bottom: 12px; border-bottom: 2px solid var(--acc); }
+  .ins-app:first-of-type { margin-top: 6px; }
+  .ins-app img { width: 44px; height: 44px; border-radius: 11px; } .ins-app h2 { font-size: 26px; color: var(--acc); line-height: 1.1; } .ins-app span { color: var(--ink-3); font-size: 14px; }
   .ck { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid var(--edge); }
   .ck:first-child { border-top: 0; }
   .ck input[type=checkbox] { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--green); flex: none; cursor: pointer; }
@@ -1757,24 +1760,35 @@ async function insightsPage(days = insightsPage.days || 30) {
   crumb('<b>Insights</b>'); setNav('insights');
   $('#view').innerHTML = `<div class="page-title"><div><h1>Insights</h1><div class="muted">What people use, who comes back, money, and how you’re found</div></div>
       <div class="seg" id="ins-days">${[7, 30, 90].map((d) => `<button data-d="${d}" class="${d === days ? 'on' : ''}">${d} days</button>`).join('')}</div></div>
+    <div class="ins-app" style="--acc:#F76E19"><img src="icon-aero.png" alt=""><div><h2>Orvix Aero</h2><span>Pilot logbook &amp; schedule · app and orvixaero.com</span></div></div>
     <div class="grid2">
       <section class="panel"><h3>Revenue</h3><div class="sub">Orvix Aero Pro, from RevenueCat</div><div id="i-rev"><div class="muted">Loading…</div></div></section>
       <section class="panel"><h3>App Store</h3><div class="sub">Review status and what people say</div><div id="i-asc"><div class="muted">Loading…</div></div></section>
     </div>
-    <section class="panel" style="margin-top:18px"><h3>What pilots use</h3><div class="sub" id="i-feat-sub">Orvix Aero, last ${days} days</div><div id="i-feat"><div class="muted">Loading…</div></div></section>
+    <section class="panel" style="margin-top:18px"><h3>What pilots use</h3><div class="sub" id="i-feat-sub">Last ${days} days</div><div id="i-feat"><div class="muted">Loading…</div></div></section>
     <div class="grid2" style="margin-top:18px">
-      <section class="panel"><h3>Who comes back</h3><div class="sub">People who signed up each week, and how many used the app again in the weeks after</div><div id="i-ret"><div class="muted">Loading…</div></div></section>
-      <section class="panel"><h3>Devices</h3><div class="sub">Where pilots used Orvix Aero, last ${days} days</div><div id="i-dev"><div class="muted">Loading…</div></div></section>
+      <section class="panel"><h3>Who comes back</h3><div class="sub">Pilots who signed up each week, and how many used the app again in the weeks after</div><div id="i-ret"><div class="muted">Loading…</div></div></section>
+      <section class="panel"><h3>Devices</h3><div class="sub">Where pilots used the app, last ${days} days</div><div id="i-dev"><div class="muted">Loading…</div></div></section>
     </div>
-    <section class="panel" style="margin-top:18px"><h3>Uptime</h3><div class="sub">Checked every 10 minutes from the server · last 30 days</div><div id="i-up"><div class="muted">Loading…</div></div></section>
-    <section class="panel" style="margin-top:18px"><h3>Google search</h3><div class="sub">How people find the websites on Google (Search Console, last 4 weeks)</div><div id="i-gsc"><div class="muted">Loading…</div></div></section>`;
+    <div class="grid2" style="margin-top:18px">
+      <section class="panel"><h3>Uptime</h3><div class="sub">Checked every 10 minutes · last 30 days</div><div id="i-up-a"><div class="muted">Loading…</div></div></section>
+      <section class="panel"><h3>Google search</h3><div class="sub">orvixaero.com on Google · last 4 weeks</div><div id="i-gsc-a"><div class="muted">Loading…</div></div></section>
+    </div>
+
+    <div class="ins-app" style="--acc:#8ED8FF"><img src="icon-grid.png" alt=""><div><h2>Orvix Grid</h2><span>Star Citizen companion · app and orvixgrid.com</span></div></div>
+    <section class="panel"><h3>Players</h3><div class="sub" id="i-gp-sub">Last ${days} days</div><div id="i-gp"><div class="muted">Loading…</div></div></section>
+    <div class="grid2" style="margin-top:18px">
+      <section class="panel"><h3>Uptime</h3><div class="sub">Checked every 10 minutes · last 30 days</div><div id="i-up-g"><div class="muted">Loading…</div></div></section>
+      <section class="panel"><h3>Google search</h3><div class="sub">orvixgrid.com on Google · last 4 weeks</div><div id="i-gsc-g"><div class="muted">Loading…</div></div></section>
+    </div>
+    <p class="note">Orvix Grid is free, so it has no revenue or App Store section. What players use, who comes back and devices are Orvix Aero only for now.</p>`;
   $('#ins-days').onclick = (e) => { const b = e.target.closest('button'); if (b) insightsPage(Number(b.dataset.d)); };
 
   sb.rpc('hub_insights', { p_days: days }).then(({ data, error }) => {
     if (!$('#i-feat')) return;
     if (error) { ['#i-feat', '#i-ret', '#i-dev'].forEach((s) => { $(s).innerHTML = `<div class="muted">${esc(failMsg(error))}</div>`; }); return; }
     const f = data.features.filter((x) => x.users || x.uses), max = Math.max(1, data.active_users, ...f.map((x) => x.users));
-    $('#i-feat-sub').textContent = `Orvix Aero, last ${days} days · ${data.active_users} pilot${data.active_users === 1 ? '' : 's'} used the app`;
+    $('#i-feat-sub').textContent = `Last ${days} days · ${data.active_users} pilot${data.active_users === 1 ? '' : 's'} used the app`;
     $('#i-feat').innerHTML = f.length ? f.sort((a, b) => b.users - a.users).map((x) => `<div class="fbar" title="${x.uses != null ? x.uses.toLocaleString() + ' times' : ''}"><span>${esc(x.label)}</span>
       <div class="bt"><i style="width:${Math.max(2, Math.round((x.users / max) * 100))}%"></i></div>
       <span class="n">${x.users} pilot${x.users === 1 ? '' : 's'}${x.uses != null && x.uses !== x.users ? `<br><span class="muted" style="font-size:12px">${x.uses.toLocaleString()}×</span>` : ''}</span></div>`).join('')
@@ -1796,13 +1810,25 @@ async function insightsPage(days = insightsPage.days || 30) {
   });
 
   sb.rpc('hub_uptime_summary', { p_days: 30 }).then(({ data, error }) => {
-    const el = $('#i-up'); if (!el) return;
-    if (error) { el.innerHTML = `<div class="muted">${esc(failMsg(error))}</div>`; return; }
+    const ea = $('#i-up-a'), eg = $('#i-up-g'); if (!ea || !eg) return;
+    if (error) { ea.innerHTML = eg.innerHTML = `<div class="muted">${esc(failMsg(error))}</div>`; return; }
     const names = Object.fromEntries(CHECKS.map(([id, name]) => [id, name]));
-    el.innerHTML = data.checks.length ? data.checks.map((c) => `<div class="uprow"><div class="h"><b>${esc(names[c.check_id] || c.check_id)}</b>
+    const rows = (list) => list.length ? list.map((c) => `<div class="uprow"><div class="h"><b>${esc(names[c.check_id] || c.check_id)}</b>
         <span class="muted">${c.pct}% up${c.avg_ms ? ` · ${c.avg_ms} ms` : ''}${c.last_problem ? ` · last problem ${esc(ago(c.last_problem))}` : ''}</span></div>
         <div class="upt">${(c.days || []).map((d) => `<i class="${d.pct == null ? '' : d.pct >= 99.5 ? 'ok' : d.pct >= 95 ? 'mid' : 'bad'}" title="${esc(day(d.day))}: ${d.pct == null ? 'no data' : d.pct + '% up'}"></i>`).join('')}</div></div>`).join('')
       : '<div class="empty">Checks start once the watcher is running. You’ll see 30 days of history here.</div>';
+    const isGrid = (c) => c.check_id.startsWith('grid');
+    ea.innerHTML = rows(data.checks.filter((c) => !isGrid(c)));
+    eg.innerHTML = rows(data.checks.filter(isGrid));
+  });
+
+  loadGridFull(days).then((g) => {
+    const el = $('#i-gp'); if (!el) return;
+    if (!g || !g.connected) { el.innerHTML = `<div class="muted">${esc(g?.reason || 'Orvix Grid isn’t connected.')}</div>`; return; }
+    const D = g.by_day || [], today = D.at(-1)?.users ?? 0;
+    $('#i-gp-sub').textContent = `Last ${days} days${g.tracking_since ? ` · daily counts since ${day(g.tracking_since)}` : ''}`;
+    const cell = (label, v) => `<div class="mcell"><span>${label}</span><b>${v ?? '–'}</b></div>`;
+    el.innerHTML = `<div class="mgrid">${cell('Players today', g.daily_ready ? today : '–')}${cell('Players this week', g.daily_ready ? g.daily_week : '–')}${cell(`Players, last ${days} days`, g.daily_ready ? g.daily_unique : '–')}${cell('Accounts', g.accounts?.toLocaleString())}${cell('New this week', g.accounts_7d)}${cell('Crews', g.crews)}</div>`;
   });
 
   outside('revenue').then((d) => {
@@ -1826,14 +1852,13 @@ async function insightsPage(days = insightsPage.days || 30) {
   });
 
   outside('search').then((d) => {
-    const el = $('#i-gsc'); if (!el) return;
-    if (!d.connected) { el.innerHTML = d.down ? '<div class="muted">Not set up yet.</div>' : connectBox('search'); return; }
-    if (d.error) { el.innerHTML = `<div class="muted">${esc(d.error)}</div>`; return; }
-    const site = (name, x) => !x.connected ? `<div><h3 style="font-size:17px">${name}</h3><div class="connect">${esc(x.need)}</div></div>` : `<div>
-      <h3 style="font-size:17px">${name}</h3>
+    const ea = $('#i-gsc-a'), eg = $('#i-gsc-g'); if (!ea || !eg) return;
+    if (!d.connected) { ea.innerHTML = eg.innerHTML = d.down ? '<div class="muted">Not set up yet.</div>' : connectBox('search'); return; }
+    if (d.error) { ea.innerHTML = eg.innerHTML = `<div class="muted">${esc(d.error)}</div>`; return; }
+    const site = (x) => !x.connected ? `<div class="connect">${esc(x.need)}</div>` : `<div>
       <div class="mgrid" style="margin:8px 0 12px"><div class="mcell"><span>Clicks</span><b>${x.clicks.toLocaleString()}</b></div><div class="mcell"><span>Seen in results</span><b>${x.impressions.toLocaleString()}</b></div><div class="mcell"><span>Average spot</span><b>${x.position ? x.position.toFixed(1) : '–'}</b></div></div>
       ${x.queries.length ? `<table class="tbl"><thead><tr><th>What they searched</th><th>Clicks</th><th>Seen</th></tr></thead><tbody>${x.queries.map((q) => `<tr><td class="em">${esc(q.q)}</td><td>${q.clicks}</td><td>${q.views}</td></tr>`).join('')}</tbody></table>` : '<div class="muted">No searches yet. New sites take a few weeks to show up.</div>'}</div>`;
-    el.innerHTML = `<div class="grid2">${site('orvixaero.com', d.aero)}${site('orvixgrid.com', d.grid)}</div>`;
+    ea.innerHTML = site(d.aero); eg.innerHTML = site(d.grid);
   });
 }
 
