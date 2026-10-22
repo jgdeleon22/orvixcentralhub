@@ -436,6 +436,7 @@
       <div class="nav-group">Products</div>
       <a class="nav" data-nav="aero" href="#/aero/bugs"><img class="nimg" src="icon-aero.png" alt=""><span>Orvix Aero</span></a>
       <a class="nav" data-nav="grid" href="#/grid"><img class="nimg" src="icon-grid.png" alt=""><span>Orvix Grid</span></a>
+      <a class="nav" data-nav="family" href="#/family"><img class="nimg" src="icon-family.png" alt=""><span>Orvix Family</span></a>
     </nav>
     <div class="side-foot">
       <div class="me"><span class="av" id="av">J</span><div class="me-t"><b id="who"></b><span>Admin</span></div></div>
@@ -601,6 +602,7 @@ function route() {
   window.scrollTo(0, 0);
   if (h.startsWith('#/aero')) return aero(h.split('/')[2] || 'bugs');
   if (h.startsWith('#/grid')) return grid();
+  if (h.startsWith('#/family')) return family();
   if (h.startsWith('#/health')) return healthPage();
   if (h.startsWith('#/users')) return usersPage(h.split('/')[2] || 'aero');
   if (h.startsWith('#/analytics')) return analyticsPage();
@@ -837,7 +839,7 @@ function drawChart(el, rows) {
   svg.addEventListener('mousemove', (e) => {
     const gEl = e.target.closest('g[data-i]'); if (!gEl) return tip.classList.add('hidden');
     const r = rows[+gEl.dataset.i], box = svg.getBoundingClientRect(), i = +gEl.dataset.i;
-    tip.innerHTML = `<b>${r.signups}</b> new account${r.signups === 1 ? '' : 's'} · ${r.reports} report${r.reports === 1 ? '' : 's'}<br><span class="muted">${fmt(r.day)}</span>`;
+    tip.innerHTML = r.reports == null ? `<b>${r.signups}</b> joined<br><span class="muted">${fmt(r.day)}</span>` : `<b>${r.signups}</b> new account${r.signups === 1 ? '' : 's'} · ${r.reports} report${r.reports === 1 ? '' : 's'}<br><span class="muted">${fmt(r.day)}</span>`;
     tip.style.left = ((L + (i + 0.5) * bw) / W * box.width) + 'px';
     tip.style.top = (y(r.signups) / H * box.height) + 'px';
     tip.classList.remove('hidden');
@@ -1986,6 +1988,36 @@ async function grid() {
     const [icon, c, title] = a.kind === 'signup' ? [IC.plus, 'var(--blue)', 'New account'] : a.kind === 'feedback' ? [IC.bug, 'var(--orange)', 'New bug report or idea'] : [IC.msg, 'var(--violet)', 'Player report'];
     return `<div class="act"><span class="ai" style="--c:${c}">${icon}</span><div class="at"><b>${title}</b><span>${esc(a.detail || a.who || '')}${a.detail && a.who ? ' · ' + esc(a.who) : ''}</span></div><time>${ago(a.at)}</time></div>`;
   }).join('') : '<div class="muted">Nothing yet.</div>';
+}
+
+// ---------- Orvix Family ----------
+async function family() {
+  crumb('<span>Orvix Family</span><i>/</i><b>Overview</b>'); setNav('family');
+  $('#view').innerHTML = `
+    <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-family.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Orvix Family</h1><div class="muted">Free companion app for pilots’ families · counts only, never messages or locations</div></div></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6825642968/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+    <div id="fpane"><div class="muted">Loading…</div></div>`;
+  const { data: f, error } = await sb.rpc('hub_family');
+  const pane = $('#fpane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">Couldn’t load Orvix Family: ${esc(error.message)}</div>`; return; }
+  const n = (v) => Number(v || 0).toLocaleString();
+  const tile = (icon, c, label, value, sub) => `<div class="tile" style="--c:${c}"><div class="ti">${icon}</div><div style="min-width:0"><div class="tl">${label}</div><div class="tv">${value}</div><div class="ts">${sub}</div></div></div>`;
+  pane.innerHTML = `
+    <div class="tiles">
+      ${tile(IC.users, 'var(--blue)', 'Pilots sharing', n(f.pilots_sharing), `${n(f.invites_waiting)} invite${f.invites_waiting === 1 ? '' : 's'} waiting`)}
+      ${tile(IC.users, 'var(--violet)', 'Family members', n(f.members), `${n(f.members_full)} see everything · ${n(f.accounts_7d)} new this week`)}
+      ${tile(IC.msg, 'var(--orange)', 'Chat messages', n(f.messages_7d), `${n(f.messages_today)} today · ${n(f.alerts_7d)} flight alerts this week`)}
+      ${tile(IC.active, 'var(--green)', 'Pickups', n(f.pickups_7d), `${n(f.pickups_active)} under way · ${n(f.pickups_met_7d)} met this week`)}
+    </div>
+    <div class="lower" style="grid-template-columns:1.25fr 1fr">
+      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Family members joining</h3><span class="muted">Last 14 days</span></div><div class="chart-wrap" id="chart"></div></section>
+      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>At a glance</h3></div>
+        <div class="act"><span class="ai" style="--c:var(--blue)">${IC.users}</span><div class="at"><b>${n(f.accounts)} Orvix Family accounts</b><span>Signed up in the Family app</span></div></div>
+        <div class="act"><span class="ai" style="--c:var(--green)">${IC.phone}</span><div class="at"><b>${n(f.phones)} phones with notifications on</b><span>Get landed, delay and pickup alerts</span></div></div>
+        <div class="act"><span class="ai" style="--c:${f.reports_open ? '#F87171' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.reports_open)} reported chat message${f.reports_open === 1 ? '' : 's'}</b><span>Last 30 days</span></div></div>
+      </section>
+    </div>
+    <p class="note">Live flights, landing alerts and pickups only work for families of pilots with Orvix Aero Pro. Calendar and chat are free for everyone.</p>`;
+  drawChart($('#chart'), (f.daily || []).map((d) => ({ day: d.day, signups: d.joined })));
 }
 
 check();
