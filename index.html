@@ -241,6 +241,10 @@
   .pill.on { background: var(--ink); color: var(--navy); border-color: var(--ink); }
   .filters input[type=text] { max-width: 260px; padding: 7px 12px; border-radius: 999px; }
 
+  .wl-bars { display: flex; align-items: flex-end; gap: 3px; height: 110px; }
+  .wl-bar { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+  .wl-bar i { display: block; width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #FF8A3D, #F76E19); }
+  .wl-axis { display: flex; justify-content: space-between; color: var(--ink-3); font-size: 12px; margin-top: 6px; }
   /* Support: one inbox for every app */
   .apps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
   .appc { position: relative; display: flex; flex-direction: column; gap: 10px; text-align: left; background: radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 60%), var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 16px 18px; color: var(--ink); cursor: pointer; font: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; min-width: 0; }
@@ -769,10 +773,12 @@ async function home() {
       <section class="panel"><div class="sec" style="margin-bottom:2px"><h3>Launch checklist</h3><span class="muted" id="ck-count"></span></div><div id="ck"><div class="muted">Loading…</div></div></section>
       <div class="stack">
         <section class="panel"><div class="sec" style="margin-bottom:8px"><h3>App Store</h3><a class="muted" href="#/insights" style="color:var(--ink-2)">Insights →</a></div><div id="asc"><div class="muted">Checking Apple…</div></div></section>
+        <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Waitlist</h3><a class="muted" href="#/aero/waitlist" style="color:var(--ink-2)">See list →</a></div><div id="ov-wait"><div class="muted">Loading…</div></div></section>
         <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Google Play testers</h3><a class="muted" href="#/aero/people" style="color:var(--ink-2)">Testers →</a></div><div id="andr"><div class="muted">Loading…</div></div></section>
       </div>
     </div>`;
   overviewExtras();
+  loadWaitlist(true).then((w) => { const el = $('#ov-wait'); if (el) el.innerHTML = `<div class="kr"><div><div class="kv" style="font-size:32px">${w.total}</div><div class="ks">${w.total === 1 ? 'person' : 'people'} on the orvixaero.com waitlist</div></div><span class="ks">${w.week ? '+' + w.week + ' this week' : 'No new signups this week'}</span></div>`; }).catch(() => { const el = $('#ov-wait'); if (el) el.innerHTML = '<div class="muted">Couldn’t load the waitlist.</div>'; });
 
   cache.daily = cache.daily || {};
   const [ov, dl, g, inv, rs] = await Promise.all([
@@ -917,12 +923,13 @@ async function loadPeople(force) {
 // ---------- Orvix Aero ----------
 let bugFilter = { show: 'open', kind: 'all', q: '' };
 async function aero(tab) {
-  crumb('<span>Orvix Aero</span><i>/</i><b>' + (tab === 'people' ? 'Testers &amp; admins' : 'Bug reports') + '</b>'); setNav('aero');
+  crumb('<span>Orvix Aero</span><i>/</i><b>' + (tab === 'people' ? 'Testers &amp; admins' : tab === 'waitlist' ? 'Waitlist' : 'Bug reports') + '</b>'); setNav('aero');
   $('#view').innerHTML = `
     <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-aero.png" alt="" style="width:52px;height:52px;border-radius:12px"><h1>Orvix Aero</h1></div></div>
     <div class="tabs">
       <button class="tab ${tab === 'bugs' ? 'on' : ''}" data-go="#/aero/bugs">Bug reports <span class="n" id="n-bugs">·</span></button>
       <button class="tab ${tab === 'people' ? 'on' : ''}" data-go="#/aero/people">Testers &amp; admins</button>
+      <button class="tab ${tab === 'waitlist' ? 'on' : ''}" data-go="#/aero/waitlist">Waitlist <span class="n" id="n-wait">·</span></button>
     </div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
   try {
@@ -930,9 +937,46 @@ async function aero(tab) {
     const f = all.filter((r) => r.app !== 'family'); // Orvix Family reports live on its own page and in Support
     $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
     aeroOpen = all.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
+    loadWaitlist().then((w) => { const n = $('#n-wait'); if (n) n.textContent = w.total; }).catch(() => {});
     if (tab === 'people') return people(await loadPeople());
+    if (tab === 'waitlist') return waitlist(await loadWaitlist());
     bugs(f);
   } catch (e) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
+}
+
+// ---------- Waitlist (orvixaero.com, read-only) ----------
+async function loadWaitlist(force) {
+  if (cache.waitlist && !force) return cache.waitlist;
+  const { data, error } = await sb.rpc('hub_waitlist');
+  if (error) throw error;
+  return (cache.waitlist = data);
+}
+function waitlist(w) {
+  const days = w.by_day || [], max = Math.max(1, ...days.map((d) => d.n));
+  const list = (w.recent || []).filter((r) => r.source !== 'test');
+  const fmt = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+  $('#pane').innerHTML = `
+    <div class="kpis4" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="kpi" style="--c:#F76E19"><div class="kl">On the waitlist</div><div class="kv">${w.total}</div><div class="ks">From orvixaero.com</div></div>
+      <div class="kpi" style="--c:#4ADE80"><div class="kl">Last 7 days</div><div class="kv">${w.week}</div><div class="ks">New signups</div></div>
+      <div class="kpi" style="--c:#8FB8F0"><div class="kl">Today</div><div class="kv">${w.today}</div><div class="ks">Eastern time</div></div>
+    </div>
+    <section class="panel" style="margin-bottom:18px"><div class="sec" style="margin-bottom:10px"><h3>Signups, last 30 days</h3></div>
+      <div class="wl-bars">${days.map((d) => `<div class="wl-bar" title="${fmt(d.day)}: ${d.n}"><i style="height:${Math.round((d.n / max) * 100)}%"></i></div>`).join('')}</div>
+      <div class="wl-axis"><span>${days[0] ? fmt(days[0].day) : ''}</span><span>Today</span></div></section>
+    <div class="sec" style="margin-bottom:10px"><h3>Everyone on the list</h3><span class="spacer"></span>
+      <button class="btn btn-ghost btn-small" id="wl-copy" ${list.length ? '' : 'disabled'}>Copy emails</button>
+      <button class="btn btn-ghost btn-small" id="wl-csv" ${list.length ? '' : 'disabled'}>Download CSV</button></div>
+    ${list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>From</th><th>Joined</th></tr></thead><tbody>
+      ${list.map((r) => `<tr><td>${esc(r.email)}</td><td><span class="b gray">${esc(r.source || 'unknown')}</span></td><td>${esc(when(r.at))}</td></tr>`).join('')}</tbody></table></div>`
+      : '<div class="empty">No one yet. Signups from the coming-soon page show up here.</div>'}
+    <p class="note">Read-only: the hub never changes the waitlist. Test entries are left out.</p>`;
+  const emails = list.map((r) => r.email);
+  const copy = $('#wl-copy'); if (copy) copy.onclick = async () => { await navigator.clipboard.writeText(emails.join(', ')); toast(`${emails.length} email${emails.length === 1 ? '' : 's'} copied`); };
+  const csv = $('#wl-csv'); if (csv) csv.onclick = () => {
+    const rows = [['email', 'source', 'joined'], ...list.map((r) => [r.email, r.source || '', r.at])].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','));
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' })); a.download = 'orvix-aero-waitlist.csv'; a.click(); URL.revokeObjectURL(a.href);
+  };
 }
 
 function bugs(all) {
