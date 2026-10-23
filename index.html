@@ -307,6 +307,17 @@
   .notify .nhead label { margin: 0; display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; }
   .notify .nhead input { width: 18px; height: 18px; accent-color: var(--orange); }
   .notify .nbody { margin-top: 12px; display: grid; gap: 8px; }
+  .pickbox { margin: 8px 0 4px; border: 1px solid var(--edge); border-radius: 10px; background: var(--navy); }
+  .pickbox summary { cursor: pointer; padding: 11px 12px; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+  .pickbox summary::after { content: '▾'; color: var(--ink-2); } .pickbox[open] summary::after { content: '▴'; }
+  .pickbox summary::-webkit-details-marker { display: none; }
+  .pickpanel { border-top: 1px solid var(--edge); padding: 10px; display: grid; gap: 8px; }
+  .pickacts { display: flex; gap: 8px; }
+  .picklist { max-height: 300px; overflow: auto; display: grid; }
+  .pickrow { display: grid; grid-template-columns: 22px 1fr; column-gap: 10px; align-items: center; padding: 8px 6px; border-radius: 8px; cursor: pointer; }
+  .pickrow:hover { background: rgba(255,255,255,0.04); }
+  .pickrow input { width: 18px; height: 18px; accent-color: var(--orange); grid-row: span 2; }
+  .pickrow .pn { font-weight: 600; } .pickrow .pe { font-size: 13px; color: var(--ink-2); grid-column: 2; }
   .notify .nbody textarea { min-height: 170px; font-size: 15px; line-height: 1.55; }
   .notify .sent { color: #5ED79A; font-size: 13px; }
   .saved { color: var(--green); font-size: 13px; align-self: center; }
@@ -2061,21 +2072,29 @@ async function insightsPage(days = insightsPage.days || 30) {
 // ---------- Announcements ----------
 async function announcePage() {
   crumb('<b>Announcements</b>'); setNav('announce');
-  const st = announcePage.st || (announcePage.st = { app: 'aero', subject: '', message: '', push: '', email: true, pushOn: true });
+  const st = announcePage.st || (announcePage.st = { app: 'aero', subject: '', message: '', push: '', email: true, pushOn: true, who: 'all', picked: { aero: new Set(), grid: new Set(), family: new Set() } });
+  const APPNAME = { aero: 'Orvix Aero', grid: 'Orvix Grid', family: 'Orvix Family' };
+  const people = announcePage.people || (announcePage.people = {}); // per app: [{id, name, email, phone}]
   $('#view').innerHTML = `<div class="page-title"><div><h1>Announcements</h1><div class="muted">Tell everyone who uses an app about something new</div></div></div>
     <div class="grid2">
       <section class="panel ann">
-        <div class="seg" id="an-app"><button data-a="aero" class="${st.app === 'aero' ? 'on' : ''}">Orvix Aero</button><button data-a="grid" class="${st.app === 'grid' ? 'on' : ''}">Orvix Grid</button></div>
+        <div class="seg" id="an-app"><button data-a="aero" class="${st.app === 'aero' ? 'on' : ''}">Orvix Aero</button><button data-a="grid" class="${st.app === 'grid' ? 'on' : ''}">Orvix Grid</button><button data-a="family" class="${st.app === 'family' ? 'on' : ''}">Orvix Family</button></div>
         <div class="checks"><label><input type="checkbox" id="an-email" ${st.email ? 'checked' : ''}> Email</label>
-          <label id="an-push-l" style="${st.app === 'grid' ? 'opacity:.45' : ''}"><input type="checkbox" id="an-pushon" ${st.pushOn && st.app === 'aero' ? 'checked' : ''} ${st.app === 'grid' ? 'disabled' : ''}> Phone notification ${st.app === 'grid' ? '(Orvix Aero only)' : ''}</label></div>
+          <label id="an-push-l" style="${st.app === 'grid' ? 'opacity:.45' : ''}"><input type="checkbox" id="an-pushon" ${st.pushOn && st.app !== 'grid' ? 'checked' : ''} ${st.app === 'grid' ? 'disabled' : ''}> Phone notification ${st.app === 'grid' ? '(not for Orvix Grid)' : ''}</label></div>
+        <label>Send to</label>
+        <div class="seg" id="an-who"><button data-w="all" class="${st.who === 'all' ? 'on' : ''}">Everyone</button><button data-w="pick" class="${st.who === 'pick' ? 'on' : ''}">Pick people</button></div>
+        <div id="an-pick" class="${st.who === 'pick' ? '' : 'hidden'}"><details class="pickbox" id="an-dd"><summary id="an-sum">Loading people…</summary>
+          <div class="pickpanel"><input type="text" id="an-find" placeholder="Search by name or email">
+            <div class="pickacts"><button type="button" class="btn btn-ghost btn-small" id="an-all">Select all</button><button type="button" class="btn btn-ghost btn-small" id="an-none">Clear</button></div>
+            <div id="an-list" class="picklist"></div></div></details></div>
         <label for="an-subj">Subject</label><input type="text" id="an-subj" maxlength="120" value="${esc(st.subject)}" placeholder="Orvix Aero is on the App Store">
         <label for="an-msg">Message</label><textarea id="an-msg" maxlength="5000" placeholder="Write it like you’d say it. A blank line starts a new paragraph.">${esc(st.message)}</textarea>
         <label for="an-push">Notification text <span class="muted" style="font-weight:400">(optional; the first line of the message if empty)</span></label><input type="text" id="an-push" maxlength="178" value="${esc(st.push)}">
         <div class="muted" id="an-reach" style="margin-top:14px">Counting who it would reach…</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-ghost" id="an-test">Send a test to me</button></div>
         <div class="danger-zone" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--edge)">
-          <div class="switch-row"><input type="text" id="an-confirm" placeholder="Type SEND to confirm" style="max-width:220px"><button class="btn btn-primary" id="an-send">Send to everyone</button></div>
-          <p class="note">One email per person; nobody sees anyone else’s address. Phone notifications go to Orvix Aero users who allowed them. At most one announcement every 10 minutes. Written to the audit log.</p>
+          <div class="switch-row"><input type="text" id="an-confirm" placeholder="Type SEND to confirm" style="max-width:220px"><button class="btn btn-primary" id="an-send">${st.who === 'pick' ? 'Send to picked people' : 'Send to everyone'}</button></div>
+          <p class="note">One email per person; nobody sees anyone else’s address. Phone notifications go to people who allowed them in Orvix Aero or Orvix Family. At most one announcement every 10 minutes. Written to the audit log.</p>
         </div>
         <div class="err" id="an-err"></div>
       </section>
@@ -2083,21 +2102,49 @@ async function announcePage() {
     </div>`;
   const read = () => Object.assign(st, { subject: $('#an-subj').value, message: $('#an-msg').value, push: $('#an-push').value, email: $('#an-email').checked, pushOn: $('#an-pushon').checked });
   const prev = () => {
-    read(); const accent = st.app === 'aero' ? '#F76E19' : '#8ED8FF', name = st.app === 'aero' ? 'Orvix Aero' : 'Orvix Grid';
+    read(); const accent = st.app === 'grid' ? '#8ED8FF' : '#F76E19', name = APPNAME[st.app];
     const paras = st.message.trim().split(/\n{2,}/).filter(Boolean).map((p) => `<p style="margin:0 0 12px;line-height:1.6">${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
     $('#an-prev').innerHTML = (st.email ? `<div class="preview-mail"><div class="card"><div style="font-weight:800;font-size:18px;color:${accent};margin-bottom:6px">${name}</div>
         <div style="font-size:18px;font-weight:700;margin-bottom:10px">${esc(st.subject || 'Subject')}</div><div style="font-size:15px">${paras || '<p class="muted">Your message</p>'}</div></div></div>` : '') +
-      (st.pushOn && st.app === 'aero' ? `<div class="preview-push"><img src="icon-aero.png" alt=""><div><b>${esc(st.subject || 'Subject')}</b><div style="font-size:14px;color:var(--ink-2)">${esc((st.push.trim() || st.message.split('\n')[0] || 'Notification text').slice(0, 178))}</div></div></div>` : '') ||
+      (st.pushOn && st.app !== 'grid' ? `<div class="preview-push"><img src="${st.app === 'family' ? 'icon-family.png' : 'icon-aero.png'}" alt=""><div><b>${esc(st.subject || 'Subject')}</b><div style="font-size:14px;color:var(--ink-2)">${esc((st.push.trim() || st.message.split('\n')[0] || 'Notification text').slice(0, 178))}</div></div></div>` : '') ||
       '<div class="muted">Pick email and/or phone notification.</div>';
   };
   const call = async (mode, extra = {}) => {
     read();
-    const { data, error } = await sb.functions.invoke('hub-announce', { body: { app: st.app, subject: st.subject, message: st.message, push: st.push, email: st.email, pushOn: st.pushOn, mode, ...extra } });
+    const to = st.who === 'pick' && mode !== 'test' && mode !== 'list' ? [...st.picked[st.app]] : undefined;
+    const { data, error } = await sb.functions.invoke('hub-announce', { body: { app: st.app, subject: st.subject, message: st.message, push: st.push, email: st.email, pushOn: st.pushOn, mode, to, ...extra } });
     if (error) { let m = error.message; try { m = (await error.context.json()).error || m; } catch { /* */ } throw new Error(m); }
     return data;
   };
-  const reach = () => call('count').then((d) => { const el = $('#an-reach'); if (el) el.innerHTML = `This would reach <b>${d.emails.toLocaleString()}</b> email address${d.emails === 1 ? '' : 'es'}${st.app === 'aero' ? ` and <b>${d.phones}</b> phone${d.phones === 1 ? '' : 's'} with notifications on` : ''}.`; },
-    (e) => { const el = $('#an-reach'); if (el) el.textContent = e.message.includes('Failed to send') ? 'The announcement service isn’t set up yet.' : e.message; });
+  const showPicked = () => {
+    const el = $('#an-reach'); if (!el || st.who !== 'pick') return;
+    const list = people[st.app] || [], sel = st.picked[st.app];
+    const n = list.filter((x) => sel.has(x.id)).length, ph = list.filter((x) => sel.has(x.id) && x.phone).length;
+    el.innerHTML = n ? `This would reach <b>${n}</b> ${n === 1 ? 'person' : 'people'} by email${st.app !== 'grid' ? `, and <b>${ph}</b> of them by phone notification` : ''}.` : 'Pick who gets it from the list above.';
+    const sum = $('#an-sum'); if (sum) sum.textContent = n ? `${n} picked: ${list.filter((x) => sel.has(x.id)).slice(0, 3).map((x) => x.name || x.email).join(', ')}${n > 3 ? ` and ${n - 3} more` : ''}` : 'Choose people';
+  };
+  const drawList = () => {
+    const box = $('#an-list'); if (!box) return;
+    const q = ($('#an-find')?.value || '').trim().toLowerCase(), sel = st.picked[st.app];
+    const list = (people[st.app] || []).filter((x) => !q || (x.name + ' ' + x.email).toLowerCase().includes(q));
+    box.innerHTML = list.length ? list.map((x) => `<label class="pickrow"><input type="checkbox" data-id="${esc(x.id)}" ${sel.has(x.id) ? 'checked' : ''}>
+        <span class="pn">${esc(x.name || x.email.split('@')[0])}</span><span class="pe">${esc(x.email)}${x.phone ? ' · 📱' : ''}</span></label>`).join('')
+      : `<div class="muted" style="padding:10px">${people[st.app] ? 'No one matches.' : 'Loading…'}</div>`;
+    box.querySelectorAll('input[data-id]').forEach((i) => { i.onchange = () => { i.checked ? sel.add(i.dataset.id) : sel.delete(i.dataset.id); showPicked(); }; });
+  };
+  const loadPeople = async () => {
+    if (!people[st.app]) { try { people[st.app] = (await call('list')).people; } catch (e) { const sum = $('#an-sum'); if (sum) sum.textContent = e.message; return; } }
+    drawList(); showPicked();
+  };
+  const reach = () => {
+    if (st.who === 'pick') { loadPeople(); return; }
+    call('count').then((d) => { const el = $('#an-reach'); if (el && st.who === 'all') el.innerHTML = `This would reach <b>${d.emails.toLocaleString()}</b> email address${d.emails === 1 ? '' : 'es'}${st.app !== 'grid' ? ` and <b>${d.phones}</b> phone${d.phones === 1 ? '' : 's'} with notifications on` : ''}.`; },
+      (e) => { const el = $('#an-reach'); if (el) el.textContent = e.message.includes('Failed to send') ? 'The announcement service isn’t set up yet.' : e.message; });
+  };
+  $('#an-who').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; read(); st.who = b.dataset.w; announcePage(); };
+  $('#an-find').addEventListener('input', drawList);
+  $('#an-all').onclick = () => { const q = ($('#an-find').value || '').trim().toLowerCase(); (people[st.app] || []).filter((x) => !q || (x.name + ' ' + x.email).toLowerCase().includes(q)).forEach((x) => st.picked[st.app].add(x.id)); drawList(); showPicked(); };
+  $('#an-none').onclick = () => { st.picked[st.app].clear(); drawList(); showPicked(); };
   $('#an-app').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; read(); st.app = b.dataset.a; announcePage(); };
   ['#an-subj', '#an-msg', '#an-push'].forEach((s) => $(s).addEventListener('input', prev));
   ['#an-email', '#an-pushon'].forEach((s) => $(s).addEventListener('change', prev));
@@ -2105,17 +2152,20 @@ async function announcePage() {
   const err = $('#an-err');
   $('#an-test').onclick = async () => {
     err.className = 'err'; err.textContent = '';
-    try { const d = await call('test'); err.className = 'ok'; err.textContent = `Test sent to you: ${d.emails} email${d.emails === 1 ? '' : 's'}${st.app === 'aero' ? `, ${d.phones} phone${d.phones === 1 ? '' : 's'}` : ''}.${d.problems?.length ? ' ' + d.problems.join('; ') : ''}`; }
+    try { const d = await call('test'); err.className = 'ok'; err.textContent = `Test sent to you: ${d.emails} email${d.emails === 1 ? '' : 's'}${st.app !== 'grid' ? `, ${d.phones} phone${d.phones === 1 ? '' : 's'}` : ''}.${d.problems?.length ? ' ' + d.problems.join('; ') : ''}`; }
     catch (e) { err.textContent = e.message; }
   };
   $('#an-send').onclick = async () => {
     err.className = 'err'; err.textContent = '';
     if ($('#an-confirm').value.trim() !== 'SEND') return toast('Type SEND in the box first.');
     read(); if (!st.subject.trim() || !st.message.trim()) return toast('Write a subject and a message first.');
-    if (!confirm(`Send “${st.subject}” to everyone on ${st.app === 'aero' ? 'Orvix Aero' : 'Orvix Grid'}? This can’t be undone.`)) return;
+    const nPick = st.picked[st.app].size;
+    if (st.who === 'pick' && !nPick) return toast('Pick at least one person first.');
+    const whom = st.who === 'pick' ? `${nPick} ${nPick === 1 ? 'person' : 'people'} you picked` : `everyone on ${APPNAME[st.app]}`;
+    if (!confirm(`Send “${st.subject}” to ${whom}? This can’t be undone.`)) return;
     try {
       const d = await call('send', { confirm: 'SEND' });
-      err.className = 'ok'; err.textContent = `Sent: ${d.emails.toLocaleString()} email${d.emails === 1 ? '' : 's'}${st.app === 'aero' ? `, ${d.phones} phone${d.phones === 1 ? '' : 's'}` : ''}.${d.problems?.length ? ' Problems: ' + d.problems.join('; ') : ''}`;
+      err.className = 'ok'; err.textContent = `Sent: ${d.emails.toLocaleString()} email${d.emails === 1 ? '' : 's'}${st.app !== 'grid' ? `, ${d.phones} phone${d.phones === 1 ? '' : 's'}` : ''}.${d.problems?.length ? ' Problems: ' + d.problems.join('; ') : ''}`;
       $('#an-confirm').value = ''; toast('Announcement sent.');
     } catch (e) { err.textContent = e.message; }
   };
