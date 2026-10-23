@@ -241,9 +241,45 @@
   .pill.on { background: var(--ink); color: var(--navy); border-color: var(--ink); }
   .filters input[type=text] { max-width: 260px; padding: 7px 12px; border-radius: 999px; }
 
+  /* Support: one inbox for every app */
+  .apps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .appc { position: relative; display: flex; flex-direction: column; gap: 10px; text-align: left; background: radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 60%), var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 16px 18px; color: var(--ink); cursor: pointer; font: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; min-width: 0; }
+  .appc:hover { border-color: color-mix(in srgb, var(--c) 40%, var(--edge)); transform: translateY(-1px); }
+  .appc.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 10px 30px -12px color-mix(in srgb, var(--c) 60%, transparent); }
+  .appc .ah { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .appc .ah img, .appc .ah .aic { width: 30px; height: 30px; border-radius: 8px; flex: none; }
+  .appc .ah .aic { display: grid; place-items: center; background: var(--card-2); color: var(--ink-2); }
+  .appc .ah b { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .appc .an { display: flex; align-items: baseline; gap: 8px; }
+  .appc .an strong { font-family: var(--display, inherit); font-size: 34px; line-height: 1; }
+  .appc .an span { color: var(--ink-2); font-size: 13px; }
+  .appc .ab { display: flex; gap: 6px; flex-wrap: wrap; min-height: 22px; }
+  .appc .ab i { font-style: normal; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 9px; background: rgba(255,255,255,.04); border: 1px solid var(--edge); color: var(--ink-2); }
+  .appc .ab i.bug { color: #FF8A8D; border-color: rgba(229,72,77,.3); background: rgba(229,72,77,.08); }
+  .appc .ab i.idea { color: #C3B0FF; border-color: rgba(154,123,240,.3); background: rgba(154,123,240,.08); }
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; background: var(--card); border: 1px solid var(--edge); border-radius: 14px; padding: 10px; margin-bottom: 14px; }
+  .toolbar .seg { background: var(--navy); }
+  .toolbar .seg button .n { margin-left: 6px; font-size: 12px; color: var(--ink-3); }
+  .toolbar .seg button.on .n { color: var(--ink-2); }
+  .toolbar .kinds { display: flex; gap: 6px; flex-wrap: wrap; }
+  .toolbar .kinds button { background: none; border: 1px solid transparent; color: var(--ink-2); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 14px; }
+  .toolbar .kinds button:hover { color: var(--ink); }
+  .toolbar .kinds button.on { background: var(--card-2); border-color: var(--edge-2); color: var(--ink); }
+  .toolbar .search { position: relative; margin-left: auto; flex: 0 1 280px; min-width: 180px; }
+  .toolbar .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-3); }
+  .toolbar .search input { padding: 8px 12px 8px 36px; border-radius: 10px; background: var(--navy); }
+  .appb { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border-radius: 999px; padding: 2px 10px 2px 3px; }
+  .appb img { width: 18px; height: 18px; border-radius: 5px; }
+  .allclear { display: grid; place-items: center; text-align: center; gap: 6px; padding: 56px 20px; background: var(--card); border: 1px dashed var(--edge-2); border-radius: 16px; }
+  .allclear .ok { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(45,180,110,.12); color: #5ED79A; margin-bottom: 6px; }
+  .allclear b { font-size: 18px; } .allclear span { color: var(--ink-2); font-size: 14px; }
+  @media (max-width: 1100px) { .apps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .toolbar .search { flex-basis: 100%; margin-left: 0; } }
+
   /* Reports */
   .reports { display: grid; gap: 12px; }
   .report { background: var(--card); border: 1px solid var(--edge); border-radius: 14px; padding: 18px; }
+  .report[data-app-c] { border-left: 3px solid var(--c); }
   .report-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
   .tag { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-radius: 6px; padding: 2px 8px; }
   .tag.bug { background: rgba(229,72,77,.14); color: #FF8A8D; }
@@ -927,7 +963,7 @@ function reportCard(r) {
   const shots = (r.screenshots || []).map((p) => `<a target="_blank" rel="noopener" data-shot="${esc(p)}"><img alt="Screenshot"></a>`).join('');
   return `<article class="report" data-id="${r.id}">
     <div class="report-head">
-      ${r.app === 'family' ? '<span class="b violet" style="margin-right:2px">Orvix Family</span>' : ''}<span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
+      ${r.app === 'family' ? appBadge('family') : ''}<span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
       <span class="status" style="--c:${color}">${esc(label)}</span>
       <span class="meta">#${r.id} · ${esc(when(r.created_at))}</span>
       <span class="spacer"></span>
@@ -1460,44 +1496,84 @@ window.addEventListener('resize', () => document.querySelectorAll('.lines').forE
 
 // ---------- Support: one inbox for every app ----------
 let supApp = 'all';
+const APPS = {
+  aero: { name: 'Orvix Aero', icon: 'icon-aero.png', c: '#F76E19' },
+  family: { name: 'Orvix Family', icon: 'icon-family.png', c: '#9A7BF0' },
+  grid: { name: 'Orvix Grid', icon: 'icon-grid.png', c: '#4F8FE0' },
+};
+const appBadge = (k) => `<span class="appb" style="--c:${APPS[k].c}"><img src="${APPS[k].icon}" alt="">${APPS[k].name}</span>`;
+const SEARCH_IC = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+const INBOX_IC = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h5l2 3h4l2-3h5"/><path d="M5 5h14l2 8v6H3v-6z"/></svg>';
+const CHECK_IC = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+
 async function supportPage() {
   crumb('<b>Support</b>'); setNav('support');
-  $('#view').innerHTML = `
-    <div class="page-title"><div><h1>Support</h1><div class="muted">Bug reports and ideas from every app, plus Orvix Grid’s player reports.</div></div>
-      <div class="seg">${[['all', 'All apps'], ['aero', 'Orvix Aero'], ['family', 'Orvix Family'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-app="${k}" class="${supApp === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
-    <div id="pane"><div class="muted">Loading…</div></div>`;
-  $('#view').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
-  const [f, g] = await Promise.all([loadFeedback().catch(() => []), supApp === 'aero' || supApp === 'family' ? Promise.resolve(null) : loadGrid(), loadNotified().catch(() => [])]);
+  if (!$('#sup-cards')) {
+    $('#view').innerHTML = `
+      <div class="page-title"><div><h1>Support</h1><div class="muted">One inbox for bug reports and ideas from every app, plus Orvix Grid’s player reports.</div></div></div>
+      <div class="apps4" id="sup-cards"></div>
+      <div id="pane"><div class="muted">Loading…</div></div>`;
+  }
+  const [f, g] = await Promise.all([loadFeedback().catch(() => []), loadGrid(), loadNotified().catch(() => [])]);
   if (!$('#pane')) return;
-  // Orvix Aero and Orvix Family share one feedback table (app column).
-  const aero = supApp === 'grid' ? [] : supApp === 'all' ? f : f.filter((r) => (r.app === 'family') === (supApp === 'family'));
-  const grid = g && g.connected && (supApp === 'all' || supApp === 'grid') ? g.reports : [];
+  const gOk = g && g.connected;
+  const byApp = {
+    aero: f.filter((r) => r.app !== 'family'),
+    family: f.filter((r) => r.app === 'family'),
+    grid: gOk ? (g.feedback || []) : [],
+  };
+  const players = gOk ? (g.reports || []) : [];
+
+  // The app cards: open reports per app (bugs / ideas), and All apps.
+  const openOf = (list) => list.filter((r) => OPEN.has(r.status));
+  const tally = (list) => { const o = openOf(list); return { n: o.length, bug: o.filter((r) => r.kind === 'bug').length, idea: o.filter((r) => r.kind === 'idea').length }; };
+  const t = { aero: tally(byApp.aero), family: tally(byApp.family), grid: tally(byApp.grid) };
+  const allN = t.aero.n + t.family.n + t.grid.n + players.length;
+  const card = (k, name, icon, c, x, extra = '') => `<button class="appc ${supApp === k ? 'on' : ''}" data-app="${k}" style="--c:${c}">
+      <div class="ah">${icon}<b>${name}</b></div>
+      <div class="an"><strong>${x.n}</strong><span>open</span></div>
+      <div class="ab">${x.bug ? `<i class="bug">${x.bug} bug${x.bug > 1 ? 's' : ''}</i>` : ''}${x.idea ? `<i class="idea">${x.idea} idea${x.idea > 1 ? 's' : ''}</i>` : ''}${extra}${!x.n && !extra ? '<i>All clear</i>' : ''}</div></button>`;
+  $('#sup-cards').innerHTML =
+    card('all', 'All apps', `<span class="aic">${INBOX_IC}</span>`, '#F2F6FA', { n: allN, bug: t.aero.bug + t.family.bug + t.grid.bug, idea: t.aero.idea + t.family.idea + t.grid.idea }) +
+    ['aero', 'family', 'grid'].map((k) => card(k, APPS[k].name, `<img src="${APPS[k].icon}" alt="">`, APPS[k].c, k === 'grid' ? { ...t.grid, n: t.grid.n + players.length } : t[k],
+      k === 'grid' && players.length ? `<i>${players.length} player report${players.length > 1 ? 's' : ''}</i>` : '')).join('');
+  $('#sup-cards').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
+
+  // Reports for the chosen app, then the status / type / search filters.
+  const pick = (k) => supApp === 'all' || supApp === k;
   const q = bugFilter.q.toLowerCase();
-  const pills = (key, opts) => opts.map(([v, l]) => `<button class="pill ${bugFilter[key] === v ? 'on' : ''}" data-f="${key}" data-v="${v}">${l}</button>`).join('');
-  const aList = aero.filter((r) =>
-    (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
-    (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
-    (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
-  const gList = (bugFilter.show === 'closed' || !['all', 'other'].includes(bugFilter.kind)) ? [] :
-    grid.filter((r) => !q || `${r.reason} ${r.crew} ${r.reporter} ${r.target}`.toLowerCase().includes(q));
-  const gfb = g && g.connected && (supApp === 'all' || supApp === 'grid') ? (g.feedback || []) : [];
-  const gfList = gfb.filter((r) =>
-    (bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status))) &&
-    (bugFilter.kind === 'all' || r.kind === bugFilter.kind) &&
-    (!q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q)));
-  const items = [...gfList.map((r) => ({ at: r.created_at, html: gridFeedbackCard(r) })), ...aList.map((r) => ({ at: r.created_at, html: r.app === 'family' ? reportCard(r) : reportCard(r).replace('<span class="tag ', '<span class="b orange" style="margin-right:2px">Orvix Aero</span><span class="tag ') })),
-    ...gList.map((r) => ({ at: r.created_at, html: `<article class="report"><div class="report-head"><span class="b blue">Orvix Grid</span><span class="tag other">${esc(r.what)}</span><span class="meta">${esc(r.crew)} · ${esc(when(r.created_at))}</span><span class="spacer"></span><span class="meta">from ${esc(r.reporter || 'unknown')}${r.target ? ' · about ' + esc(r.target) : ''}</span></div><p class="msg" style="margin:0">${esc(r.reason || 'No reason given')}</p></article>` }))]
-    .sort((a, b) => (a.at < b.at ? 1 : -1));
+  const fb = [...(pick('aero') ? byApp.aero.map((r) => ['aero', r]) : []), ...(pick('family') ? byApp.family.map((r) => ['family', r]) : []), ...(pick('grid') ? byApp.grid.map((r) => ['grid', r]) : [])];
+  const showOk = (r) => bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status));
+  const kindOk = (r) => bugFilter.kind === 'all' || r.kind === bugFilter.kind;
+  const qOk = (r) => !q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q);
+  const base = fb.filter(([, r]) => kindOk(r) && qOk(r));
+  const pl = pick('grid') && ['all', 'other'].includes(bugFilter.kind) ? players.filter((r) => !q || `${r.reason} ${r.crew} ${r.reporter} ${r.target}`.toLowerCase().includes(q)) : [];
+  const counts = { open: base.filter(([, r]) => OPEN.has(r.status)).length + pl.length, closed: base.filter(([, r]) => !OPEN.has(r.status)).length, all: base.length + pl.length };
+  const list = base.filter(([, r]) => showOk(r));
+  const plShown = bugFilter.show === 'closed' ? [] : pl;
+  const tag = (html, k) => html.replace('<article class="report"', `<article class="report" data-app-c="${k}" style="--c:${APPS[k].c}"`);
+  const items = [
+    ...list.map(([k, r]) => ({ at: r.created_at, html: tag(k === 'grid' ? gridFeedbackCard(r) : k === 'aero' ? reportCard(r).replace('<span class="tag ', appBadge('aero') + '<span class="tag ') : reportCard(r), k) })),
+    ...plShown.map((r) => ({ at: r.created_at, html: tag(`<article class="report"><div class="report-head">${appBadge('grid')}<span class="tag other">${esc(r.what)}</span><span class="meta">${esc(r.crew)} · ${esc(when(r.created_at))}</span><span class="spacer"></span><span class="meta">from ${esc(r.reporter || 'unknown')}${r.target ? ' · about ' + esc(r.target) : ''}</span></div><p class="msg" style="margin:0">${esc(r.reason || 'No reason given')}</p></article>`, 'grid') })),
+  ].sort((a, b) => (a.at < b.at ? 1 : -1));
+  const where = supApp === 'all' ? 'any app' : APPS[supApp].name;
+  const empty = `<div class="allclear"><div class="ok">${CHECK_IC}</div><b>${bugFilter.show === 'open' && !q && bugFilter.kind === 'all' ? 'You’re all caught up' : 'Nothing matches'}</b>
+    <span>${bugFilter.show === 'open' && !q && bugFilter.kind === 'all' ? `No open reports from ${where}.` : 'Try another filter or search.'}</span></div>`;
+  const hadFocus = document.activeElement && document.activeElement.id === 'q';
   $('#pane').innerHTML = `
-    <div class="filters">${pills('show', [['open', 'Open'], ['closed', 'Closed'], ['all', 'All']])}<span style="width:8px"></span>
-      ${pills('kind', [['all', 'Everything'], ['bug', 'Bugs'], ['idea', 'Ideas'], ['other', 'Other']])}
-      <span class="spacer"></span><input type="text" id="q" placeholder="Search reports" value="${esc(bugFilter.q)}"></div>
-    <div class="reports">${items.map((x) => x.html).join('') || '<div class="empty">Nothing here. Nice.</div>'}</div>
-    ${g && !g.connected ? `<p class="note">Orvix Grid isn’t connected: ${esc(g.reason || '')}</p>` : ''}
-    ${grid.length ? '<p class="note">Orvix Grid player reports (flagged crew posts) have no status; they show under Open and All. Act on them in Orvix Grid.</p>' : ''}
-    ${g && g.connected && g.feedback_ready === false ? '<p class="note">Orvix Grid’s bug reports table isn’t set up yet.</p>' : ''}`;
+    <div class="toolbar">
+      <div class="seg">${[['open', 'Open'], ['closed', 'Closed'], ['all', 'All']].map(([v, l]) => `<button data-f="show" data-v="${v}" class="${bugFilter.show === v ? 'on' : ''}">${l}<span class="n">${counts[v]}</span></button>`).join('')}</div>
+      <div class="kinds">${[['all', 'Everything'], ['bug', 'Bugs'], ['idea', 'Ideas'], ['other', 'Other']].map(([v, l]) => `<button data-f="kind" data-v="${v}" class="${bugFilter.kind === v ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <label class="search">${SEARCH_IC}<input type="text" id="q" placeholder="Search reports, emails, #id" value="${esc(bugFilter.q)}"></label>
+    </div>
+    <div class="reports">${items.map((x) => x.html).join('') || empty}</div>
+    ${g && !g.connected && pick('grid') ? `<p class="note">Orvix Grid isn’t connected: ${esc(g.reason || '')}</p>` : ''}
+    ${plShown.length ? '<p class="note">Orvix Grid player reports (flagged crew posts) have no status; they show under Open and All. Act on them in Orvix Grid.</p>' : ''}
+    ${gOk && g.feedback_ready === false && pick('grid') ? '<p class="note">Orvix Grid’s bug reports table isn’t set up yet.</p>' : ''}`;
   $('#pane').querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { bugFilter[b.dataset.f] = b.dataset.v; supportPage(); });
-  const qi = $('#q'); qi.oninput = () => { bugFilter.q = qi.value; clearTimeout(supportPage.t); supportPage.t = setTimeout(async () => { await supportPage(); const n = $('#q'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 300); };
+  const qi = $('#q');
+  if (hadFocus) { qi.focus(); qi.setSelectionRange(qi.value.length, qi.value.length); }
+  qi.oninput = () => { bugFilter.q = qi.value; clearTimeout(supportPage.t); supportPage.t = setTimeout(supportPage, 250); };
   $('#pane').querySelectorAll('.report[data-id]').forEach(wireReport);
   $('#pane').querySelectorAll('.report[data-gid]').forEach(wireGridReport);
   loadShots($('#pane'));
@@ -1506,7 +1582,7 @@ async function supportPage() {
 function gridFeedbackCard(r) {
   const [, label, color] = statusOf(r.status);
   return `<article class="report" data-gid="${r.id}">
-    <div class="report-head"><span class="b blue" style="margin-right:2px">Orvix Grid</span><span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
+    <div class="report-head">${appBadge('grid')}<span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
       <span class="status" style="--c:${color}">${esc(label)}</span><span class="meta">#${r.id} · ${esc(when(r.created_at))}</span><span class="spacer"></span>
       <span class="meta">${esc(r.email || 'not signed in')}${r.platform ? ' · ' + esc(r.platform) : ''}${r.app_version ? ' ' + esc(r.app_version) : ''}</span></div>
     <p class="msg">${esc(r.message)}</p>
