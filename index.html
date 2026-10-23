@@ -2068,9 +2068,9 @@ async function announcePage() {
         <div class="seg" id="an-app"><button data-a="aero" class="${st.app === 'aero' ? 'on' : ''}">Orvix Aero</button><button data-a="grid" class="${st.app === 'grid' ? 'on' : ''}">Orvix Grid</button></div>
         <div class="checks"><label><input type="checkbox" id="an-email" ${st.email ? 'checked' : ''}> Email</label>
           <label id="an-push-l" style="${st.app === 'grid' ? 'opacity:.45' : ''}"><input type="checkbox" id="an-pushon" ${st.pushOn && st.app === 'aero' ? 'checked' : ''} ${st.app === 'grid' ? 'disabled' : ''}> Phone notification ${st.app === 'grid' ? '(Orvix Aero only)' : ''}</label></div>
-        <label for="an-subj">Subject</label><input id="an-subj" maxlength="120" value="${esc(st.subject)}" placeholder="Orvix Aero is on the App Store">
+        <label for="an-subj">Subject</label><input type="text" id="an-subj" maxlength="120" value="${esc(st.subject)}" placeholder="Orvix Aero is on the App Store">
         <label for="an-msg">Message</label><textarea id="an-msg" maxlength="5000" placeholder="Write it like you’d say it. A blank line starts a new paragraph.">${esc(st.message)}</textarea>
-        <label for="an-push">Notification text <span class="muted" style="font-weight:400">(optional; the first line of the message if empty)</span></label><input id="an-push" maxlength="178" value="${esc(st.push)}">
+        <label for="an-push">Notification text <span class="muted" style="font-weight:400">(optional; the first line of the message if empty)</span></label><input type="text" id="an-push" maxlength="178" value="${esc(st.push)}">
         <div class="muted" id="an-reach" style="margin-top:14px">Counting who it would reach…</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn btn-ghost" id="an-test">Send a test to me</button></div>
         <div class="danger-zone" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--edge)">
