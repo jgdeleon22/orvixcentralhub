@@ -774,7 +774,7 @@ async function home() {
       <div class="stack">
         <section class="panel"><div class="sec" style="margin-bottom:8px"><h3>App Store</h3><a class="muted" href="#/insights" style="color:var(--ink-2)">Insights →</a></div><div id="asc"><div class="muted">Checking Apple…</div></div></section>
         <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Waitlist</h3><a class="muted" href="#/aero/waitlist" style="color:var(--ink-2)">See list →</a></div><div id="ov-wait"><div class="muted">Loading…</div></div></section>
-        <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Google Play testers</h3><a class="muted" href="#/aero/people" style="color:var(--ink-2)">Testers →</a></div><div id="andr"><div class="muted">Loading…</div></div></section>
+        <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Google Play testers</h3><a class="muted" href="#/aero/android" style="color:var(--ink-2)">Testers →</a></div><div id="andr"><div class="muted">Loading…</div></div></section>
       </div>
     </div>`;
   overviewExtras();
@@ -923,12 +923,13 @@ async function loadPeople(force) {
 // ---------- Orvix Aero ----------
 let bugFilter = { show: 'open', kind: 'all', q: '' };
 async function aero(tab) {
-  crumb('<span>Orvix Aero</span><i>/</i><b>' + (tab === 'people' ? 'Testers &amp; admins' : tab === 'waitlist' ? 'Waitlist' : 'Bug reports') + '</b>'); setNav('aero');
+  crumb('<span>Orvix Aero</span><i>/</i><b>' + (tab === 'people' ? 'Testers &amp; admins' : tab === 'waitlist' ? 'Waitlist' : tab === 'android' ? 'Android testers' : 'Bug reports') + '</b>'); setNav('aero');
   $('#view').innerHTML = `
     <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-aero.png" alt="" style="width:52px;height:52px;border-radius:12px"><h1>Orvix Aero</h1></div></div>
     <div class="tabs">
       <button class="tab ${tab === 'bugs' ? 'on' : ''}" data-go="#/aero/bugs">Bug reports <span class="n" id="n-bugs">·</span></button>
       <button class="tab ${tab === 'people' ? 'on' : ''}" data-go="#/aero/people">Testers &amp; admins</button>
+      <button class="tab ${tab === 'android' ? 'on' : ''}" data-go="#/aero/android">Android testers <span class="n" id="n-andr">·</span></button>
       <button class="tab ${tab === 'waitlist' ? 'on' : ''}" data-go="#/aero/waitlist">Waitlist <span class="n" id="n-wait">·</span></button>
     </div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
@@ -939,7 +940,9 @@ async function aero(tab) {
     aeroOpen = all.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
     loadWaitlist().then((w) => { const n = $('#n-wait'); if (n) n.textContent = w.total; }).catch(() => {});
     if (tab === 'people') return people(await loadPeople());
+    loadPeople().then((p) => { const n = $('#n-andr'); if (n) n.textContent = p.android.length; }).catch(() => {});
     if (tab === 'waitlist') return waitlist(await loadWaitlist());
+    if (tab === 'android') return androidTesters(await loadPeople());
     bugs(f);
   } catch (e) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(e))}</div>`; }
 }
@@ -977,6 +980,65 @@ function waitlist(w) {
     const rows = [['email', 'source', 'joined'], ...list.map((r) => [r.email, r.source || '', r.at])].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(','));
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' })); a.download = 'orvix-aero-waitlist.csv'; a.click(); URL.revokeObjectURL(a.href);
   };
+}
+
+// ---------- Android testers (orvixaero.com/android) ----------
+let andrFilter = 'all';
+function testerStage(t) {
+  if (!t.added_to_play) return { key: 'new', day: 0, label: '<span class="b orange">New: add to Play</span>' };
+  if (t.earned) return { key: 'earned', day: 14, label: '<span class="b violet">🎁 Earned 6 months of Pro</span>' };
+  const day = t.added_at ? Math.min(14, Math.floor((Date.now() - Date.parse(t.added_at)) / 864e5) + 1) : 1;
+  return { key: 'testing', day, label: `<span class="b blue">Testing · day ${day} of 14</span>` };
+}
+function androidTesters(p) {
+  const all = p.android.map((t) => ({ ...t, stage: testerStage(t) }));
+  const n = (k) => all.filter((t) => t.stage.key === k).length;
+  const onPlay = all.filter((t) => t.added_to_play).length, goal = 12;
+  const list = andrFilter === 'all' ? all : all.filter((t) => t.stage.key === andrFilter);
+  const fresh = all.filter((t) => t.stage.key === 'new');
+  const nextDone = all.filter((t) => t.stage.key === 'testing').sort((a, b) => b.stage.day - a.stage.day)[0];
+  const pills = [['all', 'Everyone', all.length], ['new', 'Need adding', n('new')], ['testing', 'Testing', n('testing')], ['earned', 'Earned reward', n('earned')]]
+    .map(([v, l, c]) => `<button class="pill ${andrFilter === v ? 'on' : ''}" data-af="${v}">${l} · ${c}</button>`).join('');
+  $('#pane').innerHTML = `
+    <div class="kpis4">
+      <div class="kpi" style="--c:#F76E19"><div class="kl">Signed up</div><div class="kv">${all.length}</div><div class="ks">On orvixaero.com/android</div></div>
+      <div class="kpi" style="--c:#4ADE80"><div class="kl">In the closed test</div><div class="kv">${onPlay} <span style="font-size:18px;color:var(--ink-3)">of ${goal}</span></div><div class="ks">${onPlay >= goal ? 'Enough testers for Google' : `${goal - onPlay} more needed`}</div></div>
+      <div class="kpi" style="--c:#8FB8F0"><div class="kl">Testing now</div><div class="kv">${n('testing')}</div><div class="ks">${nextDone ? `Furthest along: day ${nextDone.stage.day} of 14` : 'No one yet'}</div></div>
+      <div class="kpi" style="--c:#C3B0FF"><div class="kl">Earned 6 months of Pro</div><div class="kv">${n('earned')}</div><div class="ks">Given out at launch</div></div>
+    </div>
+    <section class="panel" style="margin-bottom:18px">
+      <div class="sec" style="margin-bottom:6px"><h3>Google’s requirement</h3><span class="spacer"></span><span class="muted">${Math.min(onPlay, goal)} of ${goal} in the test</span></div>
+      <div class="progress"><i style="width:${Math.min(100, onPlay / goal * 100)}%"></i></div>
+      ${fresh.length ? `<div class="sub" style="margin:0 0 10px"><b>${fresh.length} ${fresh.length === 1 ? 'person is' : 'people are'} waiting to be added.</b> Copy their Gmails, paste them into Play Console → Testing → Closed testing → Testers → your email list, then tick “On Play” here. Their 14 days start when you tick it.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary btn-small" id="an-copy-new">Copy ${fresh.length} new Gmail${fresh.length === 1 ? '' : 's'}</button><a class="btn btn-ghost btn-small" href="https://play.google.com/console" target="_blank" rel="noopener">Play Console ↗</a></div>`
+      : `<div class="sub" style="margin:0">Everyone who signed up is in the test. New sign-ups from orvixaero.com/android show up here right away.</div>`}
+    </section>
+    <div class="sec" style="margin-bottom:10px;flex-wrap:wrap;gap:8px"><div style="display:flex;gap:6px;flex-wrap:wrap">${pills}</div><span class="spacer"></span>
+      <button class="btn btn-ghost btn-small" id="an-copy" ${all.length ? '' : 'disabled'}>Copy all Gmails</button>
+      <button class="btn btn-ghost btn-small" id="an-csv" ${all.length ? '' : 'disabled'}>Download CSV</button></div>
+    ${list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Tester</th><th>Flies</th><th>Signed up</th><th>Status</th><th>On Play</th></tr></thead><tbody>
+      ${list.map((t) => `<tr>
+        <td><b>${esc(t.first_name || '—')}</b><div class="muted" style="font-size:13px">${esc(t.email)}</div></td>
+        <td>${esc(t.flying || '—')}</td>
+        <td>${esc(when(t.created_at))}</td>
+        <td>${t.stage.label}${t.stage.key === 'testing' ? `<div class="progress" style="margin:6px 0 0;max-width:140px"><i style="width:${t.stage.day / 14 * 100}%"></i></div>` : ''}</td>
+        <td><label class="toggle"><input type="checkbox" data-play="${esc(t.email)}" ${t.added_to_play ? 'checked' : ''}> On Play</label></td></tr>`).join('')}</tbody></table></div>`
+      : `<div class="empty">${all.length ? 'No one in this group.' : 'No sign-ups yet. Share orvixaero.com/android.html with Android pilots.'}</div>`}
+    <p class="note">Testers who stay in the closed test for 14 days earn 6 months of Orvix Aero Pro free, handed out as a gift code at launch. Unticking “On Play” resets their 14 days.</p>`;
+  const copyList = async (arr) => { await navigator.clipboard.writeText(arr.map((t) => t.email).join(', ')); toast(`${arr.length} Gmail${arr.length === 1 ? '' : 's'} copied`); };
+  const cn = $('#an-copy-new'); if (cn) cn.onclick = () => copyList(fresh);
+  const ca = $('#an-copy'); if (ca) ca.onclick = () => copyList(all);
+  const csv = $('#an-csv'); if (csv) csv.onclick = () => {
+    const rows = [['first_name', 'gmail', 'flies', 'signed_up', 'on_play', 'added_to_play_at', 'status'], ...all.map((t) => [t.first_name, t.email, t.flying, t.created_at, t.added_to_play ? 'yes' : 'no', t.added_at || '', t.stage.key === 'testing' ? `day ${t.stage.day} of 14` : t.stage.key])].map((r) => r.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','));
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' })); a.download = 'orvix-aero-android-testers.csv'; a.click(); URL.revokeObjectURL(a.href);
+  };
+  $('#pane').querySelectorAll('[data-af]').forEach((b) => b.onclick = () => { andrFilter = b.dataset.af; androidTesters(cache.people); });
+  $('#pane').querySelectorAll('[data-play]').forEach((c) => c.onchange = async () => {
+    const { error } = await sb.rpc('hub_set_android', { p_email: c.dataset.play, p_added: c.checked });
+    if (error) { c.checked = !c.checked; return toast(error.message); }
+    toast(c.checked ? 'Added: their 14 days start today' : 'Taken off the Play list');
+    androidTesters(await loadPeople(true));
+  });
 }
 
 function bugs(all) {
@@ -1081,11 +1143,8 @@ function people(p) {
 
       <section class="panel">
         <h3>Android sign-ups <span class="count">${p.android.length}</span></h3>
-        <div class="sub">From orvixaero.com/android. Google Play needs 12 testers opted in for 14 days. ${added} of ${p.android.length} added to Play. Testers who finish the 14 days get 6 months of Pro free at launch${p.android.some((t) => t.earned) ? ` (${p.android.filter((t) => t.earned).length} earned so far)` : ''}.</div>
-        <div class="progress"><i style="width:${Math.min(100, p.android.length / 12 * 100)}%"></i></div>
-        <div class="rows">${p.android.map((t) => `
-          <div class="row"><div class="main"><b>${esc(t.first_name ? t.first_name + ' · ' : '')}${esc(t.email)}</b><span>${esc(t.flying || '—')} · signed up ${esc(day(t.created_at))}${t.earned ? ' · 🎁 earned 6 months of Pro' : t.added_to_play && t.added_at ? ` · day ${Math.min(14, Math.floor((Date.now() - Date.parse(t.added_at)) / 864e5) + 1)} of 14` : ''}</span></div>
-          <label class="toggle"><input type="checkbox" data-play="${esc(t.email)}" ${t.added_to_play ? 'checked' : ''}> On Play list</label></div>`).join('') || '<div class="muted">No sign-ups yet.</div>'}</div>
+        <div class="sub">Sign-ups from orvixaero.com/android, their 14 days and the 6-month Pro reward now have their own tab.</div>
+        <a class="btn btn-ghost btn-small" href="#/aero/android">Open Android testers</a>
       </section>
 
       <section class="panel">
@@ -1119,12 +1178,6 @@ function people(p) {
     if (!confirm(`Remove ${b.dataset.rmMember}? They'll see “invite-only” in the app.`)) return;
     const { error } = await sb.rpc('hub_set_member', { p_email: b.dataset.rmMember, p_note: null, p_on: false });
     after(error, 'Tester removed');
-  });
-  pane.querySelectorAll('[data-play]').forEach((c) => c.onchange = async () => {
-    const { error } = await sb.rpc('hub_set_android', { p_email: c.dataset.play, p_added: c.checked });
-    if (error) { c.checked = !c.checked; return toast(error.message); }
-    cache.people.android.find((t) => t.email === c.dataset.play).added_to_play = c.checked;
-    toast(c.checked ? 'Marked as on the Play list' : 'Unmarked');
   });
 }
 
