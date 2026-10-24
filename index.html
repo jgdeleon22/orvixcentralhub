@@ -536,6 +536,35 @@ const statusOf = (s) => STATUSES.find((x) => x[0] === s) || [s, s, 'var(--ink-3)
 let me = null;
 let cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {}, outside: {}, checklist: null };
 
+// ---------- Orvix Hub iPhone app ----------
+// Inside the app, the page and the app talk through postMessage: the app
+// sends its push token and version; the page saves the token for this admin
+// and can ask the app to look for an update.
+const IN_APP = !!window.ReactNativeWebView;
+const appInfo = { version: '', push: '' };
+const toApp = (m) => { try { window.ReactNativeWebView.postMessage(JSON.stringify(m)); } catch {} };
+let pushSaved = '';
+async function savePush() {
+  if (!me || !appInfo.token || pushSaved === appInfo.token) return;
+  const { error } = await sb.rpc('hub_claim_push', { p_token: appInfo.token, p_platform: 'ios' });
+  if (!error) pushSaved = appInfo.token;
+}
+window.addEventListener('orvix-app', (e) => {
+  const m = e.detail || {};
+  if (m.type === 'info') {
+    Object.assign(appInfo, { version: m.version || '', push: m.push || '', token: m.token || '' });
+    if ($('#app-ver')) $('#app-ver').textContent = appInfo.version || '—';
+    if ($('#app-push')) $('#app-push').textContent = appInfo.push === 'on' ? 'On for this phone' : 'Off. Turn them on in iPhone Settings → Orvix Hub → Notifications.';
+    savePush();
+  }
+  if (m.type === 'update') {
+    const b = $('#app-update'), msg = $('#app-update-msg');
+    if (b) b.disabled = false;
+    if (msg) msg.textContent = m.state === 'none' ? 'You have the latest version.' : m.state === 'error' ? `Couldn’t check: ${m.message || 'try again later'}.` : 'Updating…';
+  }
+});
+if (IN_APP) toApp({ type: 'hello' });
+
 // ---------- Sign in ----------
 async function check() {
   const { data: { session } } = await sb.auth.getSession();
@@ -553,6 +582,7 @@ async function check() {
   $('#app').classList.remove('hidden');
   $('#who').textContent = me.email;
   $('#av').textContent = (me.email || '?')[0].toUpperCase();
+  savePush();
   route();
 }
 function showLogin(msg = '') {
@@ -1876,8 +1906,17 @@ async function settingsPage() {
     <section class="panel" style="margin-top:18px;max-width:900px">
       <h3>Alerts &amp; daily email</h3><div class="sub">Sent to every hub admin. Shared by all admins.</div>
       <div id="prefs"><div class="muted">Loading…</div></div>
-    </section>`;
+    </section>
+    ${IN_APP ? `<section class="panel" style="margin-top:18px;max-width:900px">
+      <h3>This iPhone app</h3><div class="sub">Orvix Hub on this phone.</div>
+      <div class="tgl"><div class="main"><b>App version</b><span id="app-ver">${esc(appInfo.version || '—')}</span></div></div>
+      <div class="tgl"><div class="main"><b>Notifications</b><span id="app-push">${appInfo.push === 'on' ? 'On for this phone' : appInfo.push === 'off' ? 'Off. Turn them on in iPhone Settings → Orvix Hub → Notifications.' : 'Checking…'}</span></div></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px">
+        <button class="btn btn-primary btn-small" id="app-update">Check for app updates</button>
+        <span class="muted" style="font-size:13px" id="app-update-msg"></span></div>
+    </section>` : ''}`;
   loadPrefs();
+  if (IN_APP) $('#app-update').onclick = (e) => { e.target.disabled = true; $('#app-update-msg').textContent = 'Checking…'; toApp({ type: 'update' }); };
   $('#cpw').onsubmit = async (e) => {
     e.preventDefault(); const a = $('#np1').value, err = $('#cpw-err'); err.className = 'err';
     if (a !== $('#np2').value) { err.textContent = 'The two passwords don’t match.'; return; }
@@ -2191,7 +2230,7 @@ async function loadPrefs() {
   const row = (key, title, sub) => `<div class="tgl"><div class="main"><b>${title}</b><span>${sub}</span></div><label class="sw"><input type="checkbox" data-k="${key}" ${p?.[key] !== false ? 'checked' : ''}><i></i></label></div>`;
   const since = up.data?.since;
   el.innerHTML = row('alerts_email', 'Email me when something needs me', 'A system goes down or comes back, a new bug report or idea, a player report, or Apple changes the app’s status') +
-    row('alerts_push', 'Notify my phone too', 'Same alerts as a notification on the phones where you use Orvix Aero with notifications on') +
+    row('alerts_push', 'Notify my phone too', 'Same alerts as a notification in the Orvix Hub iPhone app (or Orvix Aero, on phones without Orvix Hub)') +
     row('digest', 'Daily email', 'A short summary of yesterday for both apps, every morning around 8am New York time') +
     `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px"><button class="btn btn-ghost btn-small" id="dg-now">Send me yesterday’s summary now</button>
       <span class="muted" style="font-size:13px">${since ? `Watching since ${esc(day(since))}` : 'The watcher hasn’t run yet.'}</span></div>`;
