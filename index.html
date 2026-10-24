@@ -456,6 +456,13 @@
     .srow { padding: 14px 16px; } .set-foot { padding: 12px 16px; } .pwform { padding: 0 16px 16px; }
     .pwform .two { grid-template-columns: 1fr; }
   }
+  .person-head { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; } .person-head h1 { font-size: 34px; line-height: 1.05; overflow-wrap: anywhere; }
+  .pav { width: 64px; height: 64px; border-radius: 50%; flex: none; display: grid; place-items: center; font-family: var(--display); font-size: 30px; font-weight: 700; color: #FF9F5E; background: radial-gradient(circle at 30% 25%, rgba(247,110,25,.35), rgba(247,110,25,.12)); border: 1px solid rgba(247,110,25,.35); }
+  .meter { height: 8px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; margin-top: 8px; } .meter i { display: block; height: 100%; border-radius: 99px; transition: width .4s; }
+  .gc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; } .gc-grid label { margin-top: 0; } .gc-grid > div { margin-bottom: 10px; }
+  a.srow:hover { background: rgba(255,255,255,.025); } .srow .main b .status { display: inline-flex; margin-top: 0; font-size: 12.5px; }
+  .tbl a.plink { color: inherit; text-decoration: none; } .tbl a.plink:hover { color: var(--orange-2); text-decoration: underline; }
+  @media (max-width: 760px) { .gc-grid { grid-template-columns: 1fr; } .person-head h1 { font-size: 28px; } .pav { width: 56px; height: 56px; font-size: 26px; } }
   /* ---------- Phone layout: glass header, floating tab bar, More sheet ---------- */
   .mlogo, .mtitle, #mrefresh, .mtabs, .msheet { display: none; }
   @keyframes hub-spin { to { transform: rotate(360deg); } }
@@ -610,6 +617,10 @@
       <a class="nav" data-nav="announce" href="#/announce"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l6 4V6L7 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg><span>Announcements</span></a>
       <a class="nav" data-nav="health" href="#/health"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></svg><span>System health</span></a>
       <a class="nav" data-nav="audit" href="#/audit"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><span>Audit log</span></a>
+      <a class="nav" data-nav="costs" href="#/costs"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/></svg><span>Costs &amp; limits</span></a>
+      <a class="nav" data-nav="releases" href="#/releases"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/></svg><span>Releases</span></a>
+      <a class="nav" data-nav="gifts" href="#/gifts"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg><span>Gift codes</span></a>
+      <a class="nav" data-nav="discord" href="#/discord"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg><span>Discord</span></a>
       <a class="nav" data-nav="settings" href="#/settings"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
       <div class="nav-group">Products</div>
       <a class="nav" data-nav="aero" href="#/aero/bugs"><img class="nimg" src="icon-aero.png" alt=""><span>Orvix Aero</span></a>
@@ -652,6 +663,10 @@
         <a class="sheet-item" data-nav="insights" href="#/insights" style="--c:#F2C46D"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span>Insights</a>
         <a class="sheet-item" data-nav="announce" href="#/announce" style="--c:#FF9F5E"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l6 4V6L7 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span>Announce</a>
         <a class="sheet-item" data-nav="audit" href="#/audit" style="--c:#C3B0FF"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>Audit log</a>
+        <a class="sheet-item" data-nav="costs" href="#/costs" style="--c:#5ED79A"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/></svg></span>Costs</a>
+        <a class="sheet-item" data-nav="releases" href="#/releases" style="--c:#8ED8FF"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/></svg></span>Releases</a>
+        <a class="sheet-item" data-nav="gifts" href="#/gifts" style="--c:#FF8A8D"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg></span>Gift codes</a>
+        <a class="sheet-item" data-nav="discord" href="#/discord" style="--c:#8B93F8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg></span>Discord</a>
         <a class="sheet-item" data-nav="settings" href="#/settings" style="--c:#A3B6C8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 6.2l2.1 2.1M17.7 15.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 17.8l2.1-2.1M17.7 8.3l2.1-2.1"/></svg></span>Settings</a>
       </div>
       <div class="sheet-h">Apps</div>
@@ -700,10 +715,16 @@ let cache = { feedback: null, people: null, overview: null, grid: null, gridFull
 // sends its push token and version; the page saves the token for this admin
 // and can ask the app to look for an update.
 const IN_APP = !!window.ReactNativeWebView;
-const appInfo = { version: '', push: '' };
+const appInfo = { version: '', push: '', lock: null, features: [] };
 const toApp = (m) => { try { window.ReactNativeWebView.postMessage(JSON.stringify(m)); } catch {} };
 let pushSaved = '';
+let seenSaved = false;
 async function savePush() {
+  if (me && IN_APP && appInfo.version && !seenSaved) {
+    const m = /^(\S+)(?: \((\S+)\))?(?: · (\S+))?/.exec(appInfo.version) || [];
+    seenSaved = true;
+    sb.rpc('app_seen', { p_app: 'hub', p_platform: 'ios', p_version: m[1] || '', p_build: m[2] || '', p_update: m[3] || '' }).then(() => {}, () => { seenSaved = false; });
+  }
   if (!me || !appInfo.token || pushSaved === appInfo.token) return;
   const { error } = await sb.rpc('hub_claim_push', { p_token: appInfo.token, p_platform: 'ios' });
   if (!error) pushSaved = appInfo.token;
@@ -711,18 +732,36 @@ async function savePush() {
 window.addEventListener('orvix-app', (e) => {
   const m = e.detail || {};
   if (m.type === 'info') {
-    Object.assign(appInfo, { version: m.version || '', push: m.push || '', token: m.token || '' });
+    Object.assign(appInfo, { version: m.version || '', push: m.push || '', token: m.token || '', lock: m.lock ?? null, features: m.features || [] });
+    if ($('#app-lock')) { $('#app-lock').checked = !!appInfo.lock; $('#app-lock-row').style.display = appInfo.features.includes('lock') ? '' : 'none'; }
     if ($('#app-ver')) $('#app-ver').textContent = appInfo.version || '—';
     if ($('#app-push')) $('#app-push').textContent = appPushText();
     if ($('#app-push-pill')) $('#app-push-pill').innerHTML = appPushPill();
     savePush();
   }
+  if (m.type === 'action') appAction(m);
   if (m.type === 'update') {
     const b = $('#app-update'), msg = $('#app-update-msg');
     if (b) b.disabled = false;
     if (msg) msg.textContent = m.state === 'none' ? 'You’re on the latest version.' : m.state === 'error' ? `Couldn’t check: ${m.message || 'try again later'}.` : 'Installing the update. The app will restart…';
   }
 });
+// Reply / Mark fixed pressed on a bug-report notification.
+async function appAction(m) {
+  for (let i = 0; i < 20 && !me; i++) await new Promise((r) => setTimeout(r, 500));
+  if (!me) return;
+  try {
+    const all = await loadFeedback(true), r = all.find((x) => x.id === m.id);
+    if (!r) return toast('That report wasn’t found.');
+    const status = m.action === 'fixed' ? 'fixed' : (r.status === 'new' ? 'seen' : r.status);
+    const reply = m.action === 'reply' ? (m.text || '').trim() : (r.reply || '');
+    if (m.action === 'reply' && !reply) { location.hash = '#/support'; return; }
+    const { error } = await sb.rpc('hub_update_feedback', { p_id: m.id, p_status: status, p_reply: reply });
+    if (error) return toast(error.message);
+    toast(m.action === 'fixed' ? `Report #${m.id} marked fixed.` : `Reply sent on report #${m.id}.`);
+    cache.feedback = null; location.hash = '#/support';
+  } catch (e) { toast(e.message || 'That didn’t work.'); }
+}
 if (IN_APP) toApp({ type: 'hello' });
 
 // ---------- Sign in ----------
@@ -852,6 +891,11 @@ function route() {
   if (h.startsWith('#/support')) return supportPage();
   if (h.startsWith('#/audit')) return auditPage();
   if (h.startsWith('#/settings')) return settingsPage();
+  if (h.startsWith('#/person/')) return personPage(h.split('/')[2]);
+  if (h.startsWith('#/costs')) return costsPage();
+  if (h.startsWith('#/releases')) return releasesPage();
+  if (h.startsWith('#/gifts')) return giftsPage();
+  if (h.startsWith('#/discord')) return discordPage();
   return home();
 }
 const crumb = (html) => {
@@ -1037,6 +1081,8 @@ async function home() {
     kpi('Website visitors today', last(vis).toLocaleString(), `${D.length ? last(D).aero_visitors : 0} aero · ${D.length ? last(D).grid_visitors : 0} grid`, vis, '#9A7BF0', '#/analytics') +
     kpi('Paid subscribers', o ? o.paying : '–', 'Orvix Aero Pro', null, '#4ADE80', '#/users/aero') +
     kpi('Open issues', openAero + openGrid, `${openAero} Aero · ${openGrid} Grid`, null, openAero + openGrid ? '#F2B33D' : '#4ADE80', '#/support');
+
+  if (IN_APP) toApp({ type: 'summary', users: last(aU) + last(gU), issues: openAero + openGrid, problems: bad.length });
 
   // Products.
   if (o) {
@@ -1559,7 +1605,7 @@ function renderAeroUsers() {
       </div>
     </form>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>Signed up</th><th>Last in</th><th>Flights</th><th>Access</th><th></th></tr></thead><tbody>
-      ${list.map((u) => `<tr><td class="em" title="${esc(u.email)}">${esc(u.email)}${u.email === me.email.toLowerCase() ? ' <span class="muted">(you)</span>' : ''}${u.confirmed ? '' : ' <span class="b gray">unconfirmed</span>'}</td>
+      ${list.map((u) => `<tr><td class="em" title="${esc(u.email)}"><a class="plink" href="#/person/${u.id}">${esc(u.email)}</a>${u.email === me.email.toLowerCase() ? ' <span class="muted">(you)</span>' : ''}${u.confirmed ? '' : ' <span class="b gray">unconfirmed</span>'}</td>
         <td class="muted">${esc(day(u.created_at))}</td><td class="muted">${u.last_sign_in_at ? esc(ago(u.last_sign_in_at)) : 'Never'}</td><td>${u.flights}</td><td>${accessBadges(u)}</td>
         <td><select class="ua" data-email="${esc(u.email)}" style="width:auto;padding:6px 10px;font-size:13px">
           <option value="">Change…</option>
@@ -2082,6 +2128,7 @@ async function settingsPage() {
     ${IN_APP ? sec('iPhone app', 'Orvix Hub on this phone.', `<div class="set-card">
       <div class="srow"><div class="main"><b>Version</b></div><span class="val" id="app-ver">${esc(appInfo.version || '—')}</span></div>
       <div class="srow"><div class="main"><b>Notifications</b><span id="app-push">${appPushText()}</span></div><span id="app-push-pill">${appPushPill()}</span></div>
+      <div class="srow" id="app-lock-row" style="${appInfo.features.includes('lock') ? '' : 'display:none'}"><div class="main"><b>Face ID lock</b><span>Asks for Face ID when the app opens and after 2 minutes away.</span></div><label class="sw" aria-label="Face ID lock"><input type="checkbox" id="app-lock" ${appInfo.lock ? 'checked' : ''}><i></i></label></div>
       <div class="srow"><div class="main"><b>App updates</b><span id="app-update-msg">Downloads the newest version and restarts the app.</span></div><button class="btn btn-primary btn-small" id="app-update" type="button">Check now</button></div>
     </div>`) : ''}
     ${sec('Admins', 'People who can sign in to the hub. Add or remove them in Users &amp; Access.', `<div class="set-card">
@@ -2105,6 +2152,7 @@ async function settingsPage() {
   $('#pw-toggle').onclick = () => { form.classList.toggle('open'); if (form.classList.contains('open')) $('#np1').focus(); };
   $('#pw-cancel').onclick = () => { form.classList.remove('open'); $('#np1').value = $('#np2').value = ''; $('#cpw-err').textContent = ''; };
   $('#set-out').onclick = () => $('#signout').click();
+  if (IN_APP) $('#app-lock').onchange = (e) => { toApp({ type: 'lock', on: e.target.checked }); toast(e.target.checked ? 'Face ID lock on.' : 'Face ID lock off.'); };
   if (IN_APP) $('#app-update').onclick = (e) => { e.target.disabled = true; $('#app-update-msg').textContent = 'Checking…'; toApp({ type: 'update' }); };
   form.onsubmit = async (e) => {
     e.preventDefault(); const a = $('#np1').value, err = $('#cpw-err'); err.className = 'err';
@@ -2125,6 +2173,244 @@ async function settingsPage() {
 }
 const appPushText = () => appInfo.push === 'on' ? 'Hub alerts arrive on this phone.' : appInfo.push === 'off' ? 'Turn them on in iPhone Settings → Orvix Hub → Notifications.' : 'Checking…';
 const appPushPill = () => appInfo.push === 'on' ? '<span class="spill green"><i></i>On</span>' : appInfo.push === 'off' ? '<span class="spill amber"><i></i>Off</span>' : '';
+
+// ---------- Person: one account on one page ----------
+const APPN = { aero: 'Orvix Aero', family: 'Orvix Family', hub: 'Orvix Hub' };
+const APPI = { aero: 'icon-aero.png', family: 'icon-family.png', hub: 'favicon.png' };
+const PLAT = { ios: 'iPhone', android: 'Android', web: 'Web', windows: 'Windows' };
+const FLY = { student: 'Student', cfi: 'Instructor', airline: 'Airline', corporate: 'Corporate/charter', military: 'Military', ga: 'General aviation' };
+async function personPage(id) {
+  crumb('<a href="#/users" style="color:inherit;text-decoration:none">Users</a><i>/</i><b>Person</b>'); setNav('users');
+  $('#view').innerHTML = '<div class="muted">Loading…</div>';
+  const { data: p, error } = await sb.rpc('hub_person', { p_id: id });
+  if (!$('#view')) return;
+  if (error || !p) { $('#view').innerHTML = `<div class="empty">${esc(error ? failMsg(error) : 'No one with that id.')}</div>`; return; }
+  const name = p.name || p.email.split('@')[0];
+  const badges = [p.admin && '<span class="b orange">Admin</span>', p.tester && '<span class="b blue">Tester</span>',
+    p.plan?.active && `<span class="b green">Paying · ${esc((p.plan.product || '').replace('orvix_pro_', '').replace('_', ' '))}</span>`,
+    p.gift && (!p.gift.until || new Date(p.gift.until) > new Date()) && `<span class="b violet">Free ${p.gift.until ? 'until ' + esc(day(p.gift.until)) : 'for good'}</span>`].filter(Boolean);
+  const c = p.counts || {};
+  const sec = (title, sub, body) => `<section class="set-sec"><header><h2>${title}</h2><p>${sub}</p></header><div>${body}</div></section>`;
+  const statusC = { new: 'var(--orange)', working: 'var(--blue)', 'needs-info': 'var(--amber)', fixed: 'var(--green)', done: 'var(--green)' };
+  $('#view').innerHTML = `
+    <div class="person-head">
+      <span class="pav">${esc(name[0].toUpperCase())}</span>
+      <div style="min-width:0"><h1>${esc(name)}</h1><div class="muted">${esc(p.email)}</div>
+        <div style="margin-top:8px">${badges.join('') || '<span class="b gray">No access</span>'}</div></div>
+    </div>
+    <div class="kpis4" style="margin-bottom:6px">
+      <div class="kpi"><div class="kl">Flights</div><div class="kv">${(c.flights || 0).toLocaleString()}</div><div class="ks">${c.flights_30d || 0} in the last 30 days</div></div>
+      <div class="kpi"><div class="kl">Aircraft</div><div class="kv">${c.aircraft || 0}</div><div class="ks">in their list</div></div>
+      <div class="kpi"><div class="kl">Duty days</div><div class="kv">${c.duties || 0}</div><div class="ks">${c.schedule_months || 0} schedule month${c.schedule_months === 1 ? '' : 's'} saved</div></div>
+      <div class="kpi"><div class="kl">Last in</div><div class="kv" style="font-size:24px;margin-top:10px">${p.last_sign_in_at ? esc(ago(p.last_sign_in_at)) : 'Never'}</div><div class="ks">Signed up ${esc(day(p.created_at))}</div></div>
+    </div>
+    <div class="set">
+    ${sec('Devices', 'Which app and version they use, and where notifications reach them.', `<div class="set-card">
+      ${(p.devices || []).map((d) => `<div class="srow"><img src="${APPI[d.app]}" alt="" style="width:34px;height:34px;border-radius:9px;flex:none">
+        <div class="main"><b>${esc(APPN[d.app] || d.app)} ${esc(d.version)}${d.build ? ` (${esc(d.build)})` : ''}</b><span>${esc(PLAT[d.platform] || d.platform)} · seen ${esc(ago(d.seen_at))}${d.update_id ? ` · update ${esc(d.update_id.slice(0, 8))}` : ''}</span></div>
+        ${(p.push || []).some((t) => t.app === d.app) ? '<span class="spill green"><i></i>Push on</span>' : '<span class="spill">No push</span>'}</div>`).join('')
+        || `<div class="srow"><div class="main"><span>No app has checked in yet. Phones report their version after the next app update.</span></div></div>`}
+    </div>`)}
+    ${sec('Access', 'Give free time, make them a tester, or take access away.', `<div class="set-card">
+      <div class="srow"><div class="main"><b>Free access</b><span>${p.gift ? (p.gift.until ? `Until ${esc(day(p.gift.until))}` : 'For good') + (p.gift.code ? ` · code ${esc(p.gift.code)}` : '') : 'None'}</span></div>
+        <select id="pa-gift" style="width:auto;padding:7px 10px;font-size:14px"><option value="">Give…</option><option value="1">1 month</option><option value="3">3 months</option><option value="12">12 months</option><option value="0">For good</option>${p.gift ? '<option value="off">Remove</option>' : ''}</select></div>
+      <div class="srow"><div class="main"><b>Tester</b><span>${p.tester ? 'Gets in free as a tester.' : 'Not a tester.'}</span></div><button class="btn btn-ghost btn-small" id="pa-tester">${p.tester ? 'Remove' : 'Make tester'}</button></div>
+      <div class="srow"><div class="main"><b>Subscription</b><span>${p.plan ? `${esc(p.plan.product || '')} · ${esc(p.plan.store || '')}${p.plan.expires_at ? ` · ${p.plan.will_renew ? 'renews' : 'ends'} ${esc(day(p.plan.expires_at))}` : ''}${p.plan.active ? '' : ' · ended'}` : 'Never subscribed.'}</span></div></div>
+      <div class="srow"><div class="main"><b>Email them</b><span>Opens your mail app.</span></div><a class="btn btn-ghost btn-small" href="mailto:${esc(p.email)}">Email</a></div>
+    </div>`)}
+    ${sec('Profile', 'What they told the app.', `<div class="set-card">
+      <div class="srow"><div class="main"><b>Name</b></div><span class="val">${esc(p.name || '—')}</span></div>
+      <div class="srow"><div class="main"><b>Home airport</b></div><span class="val">${esc(p.home_airport || '—')}</span></div>
+      <div class="srow"><div class="main"><b>What they fly</b></div><span class="val">${esc((p.flying || []).map((k) => FLY[k] || k).join(', ') || '—')}</span></div>
+      <div class="srow"><div class="main"><b>Signed up in</b></div><span class="val">${esc(APPN[p.signup_app] || p.signup_app || '—')}</span></div>
+      <div class="srow"><div class="main"><b>Heard about us</b></div><span class="val">${esc(p.heard_from || '—')}</span></div>
+      <div class="srow"><div class="main"><b>Signs in with</b></div><span class="val">${esc((p.providers || []).join(', ') || 'email')}${p.confirmed ? '' : ' · email not confirmed'}</span></div>
+      <div class="srow"><div class="main"><b>Family circles</b></div><span class="val">${c.family || 0}</span></div>
+    </div>`)}
+    ${sec('Reports', 'Bug reports and ideas they sent.', `<div class="set-card">
+      ${(p.reports || []).map((r) => `<a class="srow" href="#/support" style="color:inherit;text-decoration:none"><div class="main"><b>#${r.id} · ${esc(r.kind === 'bug' ? 'Bug' : r.kind === 'idea' ? 'Idea' : 'Message')} <span class="status" style="--c:${statusC[r.status] || 'var(--ink-3)'};margin-left:6px">${esc(r.status)}</span></b><span>${esc(r.message)}</span></div><span class="val">${esc(ago(r.created_at))}</span></a>`).join('')
+        || '<div class="srow"><div class="main"><span>No reports.</span></div></div>'}
+    </div>`)}
+    </div>`;
+  $('#pa-gift').onchange = async (e) => {
+    const v = e.target.value; if (!v) return;
+    if (v === 'off' && !confirm(`Remove free access for ${p.email}?`)) { e.target.value = ''; return; }
+    const { error: e1 } = await sb.rpc('hub_set_access', { p_email: p.email, p_months: v === 'off' || v === '0' ? null : +v, p_on: v !== 'off' });
+    if (e1) { e.target.value = ''; return toast(e1.message); }
+    toast('Done.'); cache.users = null; personPage(id);
+  };
+  $('#pa-tester').onclick = async () => {
+    if (p.tester && !confirm(`Remove ${p.email} as a tester?`)) return;
+    const { error: e1 } = await sb.rpc('hub_set_member', { p_email: p.email, p_note: 'Added from the hub', p_on: !p.tester });
+    if (e1) return toast(e1.message);
+    toast('Done.'); cache.users = null; personPage(id);
+  };
+}
+
+// ---------- Costs & limits ----------
+const PLAN_DEFAULTS = [
+  { name: 'Supabase', plan: 'Free', cost: 0, limit: '500 MB database, 1 GB files, 50,000 monthly users', url: 'https://supabase.com/dashboard/org/_/billing' },
+  { name: 'Expo (EAS builds & updates)', plan: 'Pay as you go', cost: null, limit: '', url: 'https://expo.dev/accounts/jgdeleon22/settings/billing' },
+  { name: 'Apple Developer Program', plan: 'Yearly', cost: 8.25, limit: '$99 a year', url: 'https://developer.apple.com/account' },
+  { name: 'Google Play Console', plan: 'One-time', cost: 0, limit: '$25 once', url: 'https://play.google.com/console' },
+  { name: 'AeroDataBox (RapidAPI)', plan: 'Free', cost: 0, limit: 'Basic is 400 units a month', url: 'https://rapidapi.com/aedbx-aedbx/api/aerodatabox/pricing' },
+  { name: 'Aviationstack', plan: 'Free', cost: 0, limit: '100 calls a month', url: 'https://aviationstack.com/dashboard' },
+  { name: 'FlightAware AeroAPI', plan: 'Personal', cost: null, limit: '', url: 'https://www.flightaware.com/aeroapi/portal/' },
+  { name: 'Anthropic (schedule & logbook readers)', plan: 'Pay as you go', cost: null, limit: '', url: 'https://console.anthropic.com/settings/billing' },
+  { name: 'Resend (emails)', plan: 'Free', cost: 0, limit: '3,000 emails a month, 100 a day', url: 'https://resend.com/settings/billing' },
+  { name: 'Geoapify (places)', plan: 'Free', cost: 0, limit: '3,000 a day', url: 'https://myprojects.geoapify.com/' },
+  { name: 'Azure Artifact Signing', plan: 'Basic', cost: 9.99, limit: 'Windows app signing', url: 'https://portal.azure.com/' },
+  { name: 'RevenueCat', plan: 'Free', cost: 0, limit: 'Free up to $2,500 a month in revenue', url: 'https://app.revenuecat.com/' },
+];
+const fmtBytes = (b) => b >= 1e9 ? (b / 1e9).toFixed(2) + ' GB' : b >= 1e6 ? (b / 1e6).toFixed(1) + ' MB' : Math.round(b / 1e3) + ' KB';
+const money = (n) => '$' + (Math.round(n * 100) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function meter(label, used, max, usedTxt, maxTxt, note = '') {
+  const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
+  const c = !max ? 'var(--ink-3)' : pct >= 90 ? '#F87171' : pct >= 70 ? 'var(--amber)' : '#4ADE80';
+  return `<div class="srow" style="display:block"><div style="display:flex;justify-content:space-between;gap:10px"><b style="font-weight:600">${label}</b><span class="val">${usedTxt}${maxTxt ? ` of ${maxTxt}` : ''}</span></div>
+    ${max ? `<div class="meter"><i style="width:${pct}%;background:${c}"></i></div>` : ''}${note ? `<div class="muted" style="font-size:13px;margin-top:6px">${note}</div>` : ''}</div>`;
+}
+async function costsPage() {
+  crumb('<b>Costs &amp; limits</b>'); setNav('costs');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Costs &amp; limits</h1><div class="muted">What each service costs you, and how close you are to its limits.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data: d, error } = await sb.rpc('hub_costs');
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  let plans = (d.plans && d.plans.length) ? d.plans : PLAN_DEFAULTS.map((x) => ({ ...x }));
+  const api = (s) => (d.apis || []).find((a) => a.service === s);
+  const adb = api('aerodatabox'), avs = api('aviationstack'), fa = api('flightaware');
+  const ai = d.ai || {}, aiN = (ai.schedule_reads || 0) + (ai.logbook_scans || 0);
+  const render = () => {
+    const total = plans.reduce((s, x) => s + (+x.cost || 0), 0);
+    const unknown = plans.filter((x) => x.cost === null || x.cost === '' || x.cost === undefined).length;
+    pane.innerHTML = `<div class="set">
+      <section class="set-sec"><header><h2>This month</h2><p>Measured from your own data. Phone calls to paid APIs are counted as they happen.</p></header><div><div class="set-card">
+        ${meter('Database', d.db_bytes, 500e6, fmtBytes(d.db_bytes), '500 MB', 'Supabase free plan limit')}
+        ${meter('Files (photos, records)', d.storage_bytes, 1e9, fmtBytes(d.storage_bytes), '1 GB')}
+        ${meter('Monthly active users', d.mau, 50000, d.mau.toLocaleString(), '50,000', `${d.users.toLocaleString()} accounts in all`)}
+        ${meter('AeroDataBox', adb && adb.limit ? adb.limit - adb.remaining : 0, adb?.limit || 0, adb && adb.limit ? `${(adb.limit - adb.remaining).toLocaleString()} used` : adb ? `${adb.calls_month} calls` : 'No calls counted yet', adb?.limit ? adb.limit.toLocaleString() : '', adb ? `${adb.remaining ?? '?'} left, from RapidAPI's own counter · ${adb.calls_today} calls today` : 'Shows up after the next flight lookup.')}
+        ${meter('Aviationstack', avs?.calls_month || 0, 100, `${avs?.calls_month || 0} calls`, '100', 'Gates for one flight. Free plan; Basic is $49.99 a month for 10,000.')}
+        ${fa ? meter('FlightAware AeroAPI', 0, 0, `${fa.calls_month} calls`, '', `${fa.calls_today} today`) : ''}
+        ${meter('AI reads (Anthropic)', aiN, 0, `${aiN} this month`, '', `${ai.schedule_reads || 0} schedule reads, ${ai.logbook_scans || 0} logbook pages · ${ai.today || 0} today. Each pilot can do 40 schedule reads and 30 pages a day.`)}
+      </div></div></section>
+      <section class="set-sec"><header><h2>Plans</h2><p>Type in what you pay. The total is per month; yearly bills are divided by 12.</p></header><div><div class="set-card" id="plans">
+        ${plans.map((x, i) => `<div class="srow plan-row" data-i="${i}">
+          <div class="main"><b>${esc(x.name)}</b><span>${esc(x.plan || '')}${x.limit ? ` · ${esc(x.limit)}` : ''}</span></div>
+          <input type="number" min="0" step="0.01" class="pc" value="${x.cost === null || x.cost === undefined ? '' : x.cost}" placeholder="$ / mo" style="width:96px;padding:7px 10px;text-align:right">
+          ${x.url ? `<a class="btn btn-ghost btn-small" href="${esc(x.url)}" target="_blank" rel="noopener">Open ↗</a>` : ''}</div>`).join('')}
+        <div class="set-foot"><b style="color:var(--ink);font-size:15px">${money(total)} a month</b><span>${unknown ? `${unknown} without a price yet` : 'All priced'}</span>
+          <button class="btn btn-primary btn-small" id="plans-save" style="margin-left:auto">Save</button></div>
+      </div></div></section>
+    </div>`;
+    pane.querySelectorAll('.plan-row').forEach((row) => { $('.pc', row).oninput = (e) => { const v = e.target.value; plans[+row.dataset.i].cost = v === '' ? null : +v; }; });
+    $('#plans-save').onclick = async () => {
+      const { error: e1 } = await sb.rpc('hub_set_costs', { p_plans: plans });
+      if (e1) return toast(e1.message);
+      toast('Saved.'); render();
+    };
+  };
+  render();
+}
+
+// ---------- Releases: versions in use ----------
+async function releasesPage() {
+  crumb('<b>Releases</b>'); setNav('releases');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Releases</h1><div class="muted">Which versions people run, and where each app stands with the stores.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const [{ data: v, error }, asc] = await Promise.all([sb.rpc('hub_versions'), outside('appstore').catch(() => ({ connected: false }))]);
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  const rows = v.rows || [];
+  const block = (app) => {
+    const list = rows.filter((r) => r.app === app);
+    const total = list.reduce((s, r) => s + r.users, 0);
+    const builds = list.map((r) => +r.build || 0), newest = Math.max(0, ...builds);
+    const old = list.filter((r) => r.platform === 'ios' && newest && (+r.build || 0) < newest).reduce((s, r) => s + r.users, 0);
+    return `<section class="set-sec"><header><h2>${APPN[app]}</h2><p>${total ? `${total} ${total === 1 ? 'person' : 'people'} in the last 30 days${old ? ` · ${old} on an older iPhone build` : ''}` : 'Nobody has checked in yet.'}</p></header><div><div class="set-card">
+      ${list.map((r) => `<div class="srow"><img src="${APPI[app]}" alt="" style="width:30px;height:30px;border-radius:8px;flex:none"><div class="main"><b>${esc(r.version || '?')}${r.build ? ` (${esc(r.build)})` : ''}</b><span>${esc(PLAT[r.platform] || r.platform)}${r.update_id ? ` · update ${esc(r.update_id.slice(0, 8))}` : ' · built-in code'} · last seen ${esc(ago(r.last_seen))}</span></div>
+        <span class="spill ${(+r.build || 0) === newest || r.platform !== 'ios' ? 'green' : 'amber'}">${r.users} ${r.users === 1 ? 'user' : 'users'}</span></div>`).join('') || '<div class="srow"><div class="main"><span>Versions show up after each phone opens the updated app.</span></div></div>'}
+    </div></div></section>`;
+  };
+  const ascV = asc.connected ? ((asc.versions || []).find((x) => x.platform === 'IOS') || (asc.versions || [])[0]) : null;
+  pane.innerHTML = `<div class="set">
+    <section class="set-sec"><header><h2>Stores</h2><p>Where to ship and check builds.</p></header><div><div class="set-card">
+      <div class="srow"><img src="icon-aero.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Aero · App Store</b><span>${ascV ? esc(ascState(ascV.state)[1]) + ' · ' + esc(ascV.version || '') : 'Connect App Store Connect on Insights to see the review status here.'}</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6824412999/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+      <div class="srow"><img src="icon-family.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Family · App Store</b><span>App Store Connect</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6825642968/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+      <div class="srow"><img src="favicon.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Hub · TestFlight</b><span>Internal testing</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6826462031/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+      <div class="srow"><img src="icon-aero.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Aero · Google Play</b><span>Closed testing</span></div><a class="btn btn-ghost btn-small" href="https://play.google.com/console" target="_blank" rel="noopener">Play Console ↗</a></div>
+      <div class="srow"><div class="main"><b>Builds &amp; updates</b><span>Every build and over-the-air update, on Expo.</span></div><a class="btn btn-ghost btn-small" href="https://expo.dev/accounts/jgdeleon22/projects" target="_blank" rel="noopener">Expo ↗</a></div>
+    </div></div></section>
+    ${block('aero')}${block('family')}${block('hub')}
+  </div>`;
+}
+
+// ---------- Gift codes ----------
+const fmtCode = (c) => `ORVX-${c.slice(0, 4)}-${c.slice(4, 8)}-${c.slice(8, 12)}`;
+async function giftsPage() {
+  crumb('<b>Gift codes</b>'); setNav('gifts');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Gift codes</h1><div class="muted">Free Orvix Aero Pro time people redeem in the app.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data: codes, error } = await sb.rpc('list_gift_codes');
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  pane.innerHTML = `<div class="set">
+    <section class="set-sec"><header><h2>New code</h2><p>People type it in Orvix Aero (Settings → Subscription, or on the paywall).</p></header><div><form class="set-card" id="gc-new" style="padding:16px 18px">
+      <div class="gc-grid"><div><label for="gc-m">Free for</label><select id="gc-m"><option value="1">1 month</option><option value="3">3 months</option><option value="6">6 months</option><option value="12" selected>12 months</option><option value="0">For good</option></select></div>
+        <div><label for="gc-u">How many people can use it</label><input id="gc-u" type="number" min="1" max="1000" value="1"></div>
+        <div style="grid-column:1/-1"><label for="gc-n">Note (who it’s for)</label><input id="gc-n" type="text" maxlength="80" placeholder="e.g. Beta tester thank-you"></div></div>
+      <button class="btn btn-primary" style="margin-top:14px">Make code</button><div id="gc-made"></div></form></div></section>
+    <section class="set-sec"><header><h2>Codes</h2><p>${codes.length} made. Turning one off stops new people using it; anyone who already redeemed it keeps their time.</p></header><div><div class="set-card">
+      ${codes.map((g) => `<div class="srow"><div class="main"><b style="font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em">${fmtCode(g.code)}</b><span>${g.months ? g.months + ' month' + (g.months > 1 ? 's' : '') : 'For good'} · used ${g.uses} of ${g.max_uses}${g.note ? ' · ' + esc(g.note) : ''}${g.redeemed_by.length ? ' · ' + esc(g.redeemed_by.join(', ')) : ''}</span></div>
+        <button class="btn btn-ghost btn-small gc-copy" data-c="${fmtCode(g.code)}">Copy</button>
+        <label class="sw" aria-label="Active"><input type="checkbox" class="gc-on" data-code="${esc(g.code)}" ${g.active ? 'checked' : ''}><i></i></label></div>`).join('') || '<div class="srow"><div class="main"><span>No codes yet.</span></div></div>'}
+    </div></div></section></div>`;
+  const copy = (t) => { navigator.clipboard?.writeText(t).then(() => toast('Copied ' + t), () => toast(t)); };
+  pane.querySelectorAll('.gc-copy').forEach((b) => b.onclick = () => copy(b.dataset.c));
+  pane.querySelectorAll('.gc-on').forEach((i) => i.onchange = async () => {
+    const { error: e1 } = await sb.rpc('set_gift_code_active', { gift: i.dataset.code, on_off: i.checked });
+    if (e1) { i.checked = !i.checked; return toast(e1.message); } toast(i.checked ? 'Code on.' : 'Code off.');
+  });
+  $('#gc-new').onsubmit = async (e) => {
+    e.preventDefault();
+    const m = +$('#gc-m').value, u = Math.max(1, +$('#gc-u').value || 1);
+    const { data: code, error: e1 } = await sb.rpc('create_gift_code', { months: m || null, max_uses: u, note: $('#gc-n').value.trim() });
+    if (e1) return toast(e1.message);
+    copy(fmtCode(code)); giftsPage();
+  };
+}
+
+// ---------- Discord ----------
+async function discordPage() {
+  crumb('<b>Discord</b>'); setNav('discord');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Discord</h1><div class="muted">The Orvix Central Hub server: members, newcomers and posting.</div></div><a class="btn btn-ghost btn-small" href="https://discord.com/channels/1562898518128070796" target="_blank" rel="noopener">Open Discord ↗</a></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data: d, error } = await sb.functions.invoke('hub-discord', { body: { action: 'summary' } });
+  const pane = $('#pane'); if (!pane) return;
+  if (error || !d?.ok) { pane.innerHTML = `<div class="empty">${esc(d?.error || 'The Discord service didn’t answer. It may not be set up yet.')}</div>`; return; }
+  const textCh = (d.channels || []).filter((c) => c.type === 0);
+  pane.innerHTML = `
+    <div class="kpis4" style="margin-bottom:6px">
+      <div class="kpi" style="--c:#5865F2"><div class="kl">Members</div><div class="kv">${(d.members ?? 0).toLocaleString()}</div><div class="ks">${d.online ?? 0} online now</div></div>
+      <div class="kpi" style="--c:#4ADE80"><div class="kl">Joined this week</div><div class="kv">${d.week ?? '–'}</div><div class="ks">${d.recent ? 'Newest below' : 'Needs the Server Members setting'}</div></div>
+      <div class="kpi" style="--c:#F2B33D"><div class="kl">Channels</div><div class="kv">${textCh.length}</div><div class="ks">text channels</div></div>
+      <div class="kpi" style="--c:#C3B0FF"><div class="kl">Boosts</div><div class="kv">${d.boosts ?? 0}</div><div class="ks">Server level ${d.tier ?? 0}</div></div>
+    </div>
+    <div class="set">
+    <section class="set-sec"><header><h2>Post a message</h2><p>Posts as the Orvix Central Hub bot. Discord formatting works (**bold**, links).</p></header><div><form class="set-card" id="dc-post" style="padding:16px 18px">
+      <label for="dc-ch" style="margin-top:0">Channel</label><select id="dc-ch">${textCh.map((c) => `<option value="${c.id}" ${c.name === 'announcements' ? 'selected' : ''}>#${esc(c.name)}${c.parent ? ` · ${esc(c.parent)}` : ''}</option>`).join('')}</select>
+      <label for="dc-msg">Message</label><textarea id="dc-msg" rows="6" maxlength="2000" placeholder="What’s new…"></textarea>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap"><button class="btn btn-primary">Post</button><span class="muted" id="dc-n">0 / 2000</span></div></form></div></section>
+    ${d.recent ? `<section class="set-sec"><header><h2>Newest members</h2><p>Who joined most recently.</p></header><div><div class="set-card">
+      ${d.recent.map((m) => `<div class="srow"><span class="av-sm">${esc((m.name || '?')[0].toUpperCase())}</span><div class="main"><b>${esc(m.name)}</b><span>${esc((m.roles || []).join(', ') || 'No roles yet')}</span></div><span class="val">${esc(ago(m.joined_at))}</span></div>`).join('')}
+    </div></div></section>` : ''}
+    </div>`;
+  const msg = $('#dc-msg'); msg.oninput = () => { $('#dc-n').textContent = `${msg.value.length} / 2000`; };
+  $('#dc-post').onsubmit = async (e) => {
+    e.preventDefault();
+    const ch = $('#dc-ch'), text = msg.value.trim(); if (!text) return toast('Write a message first.');
+    if (!confirm(`Post this in ${ch.options[ch.selectedIndex].text}?`)) return;
+    const { data: r, error: e1 } = await sb.functions.invoke('hub-discord', { body: { action: 'post', channel: ch.value, text } });
+    if (e1 || !r?.ok) return toast(r?.error || 'It didn’t post.');
+    msg.value = ''; $('#dc-n').textContent = '0 / 2000'; toast('Posted.');
+  };
+}
 
 // ---------- Outside services (Apple, RevenueCat, Google) ----------
 async function outside(action, force) {
