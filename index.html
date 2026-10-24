@@ -1449,12 +1449,24 @@ async function analyticsPage() {
       <section class="panel"><h3>Schedule uploads &amp; logbook scans</h3><div class="bars" id="c-ai"></div></section>
       <section class="panel"><h3>Reports sent</h3><div class="bars" id="c-rep"></div></section>
     </div>
+    <section class="panel" style="margin:-14px 0 30px"><h3>What Orvix Aero pilots fly</h3><div class="sub">Main kind of flying (what each pilot picked first), plus everyone who flies it at all</div><div id="a-fly"><div class="muted">Loading…</div></div></section>
     <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-grid.png" alt="">Orvix Grid activity</h2></div>
     <div class="tiles" id="g-tiles"><div class="muted">Loading…</div></div>
     <div class="charts"><section class="panel"><h3>New accounts</h3><div class="bars" id="c-gsign"></div></section>
       <section class="panel"><h3>Player reports</h3><div class="bars" id="c-grep"></div></section></div>
     <p class="note" id="a-note"></p>`;
   $('#view').querySelectorAll('[data-d]').forEach((b) => b.onclick = () => { aDays = +b.dataset.d; analyticsPage(); });
+  sb.rpc('hub_flying_breakdown').then(({ data, error }) => {
+    const el = $('#a-fly'); if (!el) return;
+    if (error) { el.innerHTML = `<div class="muted">${esc(failMsg(error))}</div>`; return; }
+    const NAMES = { airline: 'Airline', corporate: 'Corporate / charter', cfi: 'Flight instructor', student: 'Student', military: 'Military', ga: 'General aviation', unset: 'Not answered yet' };
+    const main = data?.main || {}, any = data?.any || {};
+    const keys = Object.keys(NAMES).filter((k) => main[k] || any[k]);
+    const top = Math.max(1, ...keys.map((k) => main[k] || 0));
+    el.innerHTML = keys.length ? `<table class="tbl"><thead><tr><th>Kind</th><th>Main</th><th></th><th>Flies it at all</th></tr></thead><tbody>${keys.map((k) => `<tr><td class="em">${NAMES[k]}</td><td>${main[k] || 0}</td>
+        <td style="width:40%"><div style="height:8px;border-radius:4px;background:var(--orange);opacity:${k === 'unset' ? 0.35 : 1};width:${Math.round(((main[k] || 0) / top) * 100)}%"></div></td><td>${k === 'unset' ? '–' : any[k] || 0}</td></tr>`).join('')}</tbody></table>`
+      : '<div class="muted">No answers yet.</div>';
+  });
   const days = aDays;
   cache.daily = cache.daily || {};
   cache.sites = cache.sites || {};
