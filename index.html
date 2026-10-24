@@ -424,6 +424,37 @@
   .sw i { position: absolute; inset: 0; background: var(--card-2); border: 1px solid var(--edge-2); border-radius: 99px; cursor: pointer; transition: .15s; }
   .sw i::after { content: ''; position: absolute; width: 20px; height: 20px; left: 2px; top: 2px; background: var(--ink-2); border-radius: 50%; transition: .15s; }
   .sw input:checked + i { background: var(--green); border-color: var(--green); } .sw input:checked + i::after { left: 20px; background: #fff; }
+  /* Settings */
+  .set { max-width: 1000px; }
+  .set-sec { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; padding: 28px 0; border-top: 1px solid var(--edge); }
+  .set-sec:first-child { border-top: 0; padding-top: 2px; }
+  .set-sec > header h2 { font-size: 22px; line-height: 1.15; }
+  .set-sec > header p { color: var(--ink-3); font-size: 14px; line-height: 1.45; margin: 6px 0 0; }
+  .set-card { background: var(--card); border: 1px solid var(--edge); border-radius: 14px; overflow: hidden; min-width: 0; }
+  .srow { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
+  .srow + .srow, .srow + .pwform + .srow { border-top: 1px solid var(--edge); }
+  .srow .main { flex: 1; min-width: 0; }
+  .srow .main b { display: block; font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+  .srow .main span { display: block; color: var(--ink-3); font-size: 13.5px; line-height: 1.45; margin-top: 2px; }
+  .srow .val { color: var(--ink-2); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+  .srow .btn { flex: none; }
+  .set-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 18px; border-top: 1px solid var(--edge); background: rgba(170, 196, 220, .03); color: var(--ink-3); font-size: 13px; }
+  .set-foot a { color: var(--ink-2); text-decoration: none; font-weight: 600; } .set-foot a:hover { color: var(--ink); }
+  .av-sm { width: 36px; height: 36px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; background: var(--card-2); color: var(--ink-2); font-weight: 700; font-size: 14px; }
+  .av-sm.me { background: rgba(247, 110, 25, .16); color: #FF9F5E; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; background: rgba(163, 182, 200, .1); color: var(--ink-2); }
+  .pill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .pill.green { background: rgba(45, 180, 110, .14); color: #5ED79A; } .pill.amber { background: rgba(232, 176, 74, .14); color: #F2C46D; } .pill.orange { background: rgba(247, 110, 25, .15); color: #FF9F5E; }
+  .set-sec.danger > header h2 { color: #FF8A8D; } .set-sec.danger .set-card { border-color: rgba(229, 72, 77, .35); }
+  .pwform { display: none; padding: 0 18px 18px; } .pwform.open { display: block; }
+  .pwform .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .pwform label { margin-top: 0; }
+  .pwform .acts { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+  .confirm-row { display: flex; gap: 10px; flex-wrap: wrap; } .confirm-row input { flex: 1 1 200px; max-width: 280px; }
+  @media (max-width: 760px) {
+    .set-sec { grid-template-columns: 1fr; gap: 12px; padding: 22px 0; }
+    .srow { padding: 14px 16px; } .set-foot { padding: 12px 16px; } .pwform { padding: 0 16px 16px; }
+    .pwform .two { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -554,13 +585,14 @@ window.addEventListener('orvix-app', (e) => {
   if (m.type === 'info') {
     Object.assign(appInfo, { version: m.version || '', push: m.push || '', token: m.token || '' });
     if ($('#app-ver')) $('#app-ver').textContent = appInfo.version || '—';
-    if ($('#app-push')) $('#app-push').textContent = appInfo.push === 'on' ? 'On for this phone' : 'Off. Turn them on in iPhone Settings → Orvix Hub → Notifications.';
+    if ($('#app-push')) $('#app-push').textContent = appPushText();
+    if ($('#app-push-pill')) $('#app-push-pill').innerHTML = appPushPill();
     savePush();
   }
   if (m.type === 'update') {
     const b = $('#app-update'), msg = $('#app-update-msg');
     if (b) b.disabled = false;
-    if (msg) msg.textContent = m.state === 'none' ? 'You have the latest version.' : m.state === 'error' ? `Couldn’t check: ${m.message || 'try again later'}.` : 'Updating…';
+    if (msg) msg.textContent = m.state === 'none' ? 'You’re on the latest version.' : m.state === 'error' ? `Couldn’t check: ${m.message || 'try again later'}.` : 'Installing the update. The app will restart…';
   }
 });
 if (IN_APP) toApp({ type: 'hello' });
@@ -1877,63 +1909,71 @@ async function auditPage() {
 // ---------- Settings ----------
 async function settingsPage() {
   crumb('<b>Settings</b>'); setNav('settings');
-  $('#view').innerHTML = `<div class="page-title"><div><h1>Settings</h1></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Settings</h1><div class="muted">Your account, alerts and the hub’s controls.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
   const { data: st, error } = await sb.rpc('hub_settings');
   const pane = $('#pane'); if (!pane) return;
   if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
-  pane.innerHTML = `
-    <div class="grid2">
-      <section class="panel"><h3>Your account</h3><div class="sub">${esc(me.email)}</div>
-        <form id="cpw"><label for="np1">New password</label><input id="np1" type="password" autocomplete="new-password" minlength="10" required>
-          <label for="np2">Type it again</label><input id="np2" type="password" autocomplete="new-password" minlength="10" required>
-          <div class="muted" style="margin-top:8px;font-size:13px">At least 10 characters.</div>
-          <button class="btn btn-primary" style="margin-top:16px">Change password</button></form><div class="err" id="cpw-err"></div></section>
-      <section class="panel"><h3>Who can sign in here <span class="count">${st.admins.length}</span></h3><div class="sub">Hub admins. Add or remove them under Users &amp; Access.</div>
-        <div class="rows">${st.admins.map((a) => `<div class="row"><div class="main"><b>${esc(a.email)}</b><span>${a.must_change_password ? 'Must choose a password on first sign-in' : 'Password set'}${a.email === me.email.toLowerCase() ? ' · you' : ''}</span></div></div>`).join('')}</div>
-        <a class="btn btn-ghost btn-small" style="margin-top:12px" href="#/users/aero">Manage in Users &amp; Access →</a></section>
-    </div>
-    <section class="panel danger-zone" style="margin-top:18px;max-width:900px">
-      <h3>Launch switch · Orvix Aero</h3>
-      <div class="sub">${st.paywall_open
-        ? 'The paywall is <b style="color:#5ED79A">open</b>: anyone can sign up and subscribe. Testers, admins and free access still get in free.'
-        : 'The paywall is <b style="color:var(--amber)">closed</b>: only testers, admins, free access and the paywall preview accounts can get in. Everyone else sees “invite-only”.'}</div>
-      <div class="switch-row">
-        <input type="text" id="lc" placeholder="Type ${st.paywall_open ? 'CLOSE' : 'LAUNCH'} to confirm" style="max-width:260px">
-        <button class="btn ${st.paywall_open ? 'btn-ghost' : 'btn-primary'}" id="lbtn">${st.paywall_open ? 'Close the paywall' : 'Open the paywall to everyone'}</button>
-      </div>
-      <p class="note">This changes who can use Orvix Aero right away, on every device. It’s written to the audit log.</p>
-    </section>
-    <section class="panel" style="margin-top:18px;max-width:900px">
-      <h3>Alerts &amp; daily email</h3><div class="sub">Sent to every hub admin. Shared by all admins.</div>
-      <div id="prefs"><div class="muted">Loading…</div></div>
-    </section>
-    ${IN_APP ? `<section class="panel" style="margin-top:18px;max-width:900px">
-      <h3>This iPhone app</h3><div class="sub">Orvix Hub on this phone.</div>
-      <div class="tgl"><div class="main"><b>App version</b><span id="app-ver">${esc(appInfo.version || '—')}</span></div></div>
-      <div class="tgl"><div class="main"><b>Notifications</b><span id="app-push">${appInfo.push === 'on' ? 'On for this phone' : appInfo.push === 'off' ? 'Off. Turn them on in iPhone Settings → Orvix Hub → Notifications.' : 'Checking…'}</span></div></div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px">
-        <button class="btn btn-primary btn-small" id="app-update">Check for app updates</button>
-        <span class="muted" style="font-size:13px" id="app-update-msg"></span></div>
-    </section>` : ''}`;
+  const mine = me.email.toLowerCase();
+  const sec = (title, sub, body, cls = '') => `<section class="set-sec ${cls}"><header><h2>${title}</h2><p>${sub}</p></header><div>${body}</div></section>`;
+  const open = st.paywall_open;
+  pane.innerHTML = `<div class="set">
+    ${sec('Account', 'You sign in to the hub with this email and password.', `<div class="set-card">
+      <div class="srow"><span class="av-sm me">${esc((me.email || '?')[0].toUpperCase())}</span><div class="main"><b>${esc(me.email)}</b><span>Hub admin</span></div><span class="pill orange">Admin</span></div>
+      <div class="srow"><div class="main"><b>Password</b><span>Use at least 10 characters.</span></div><button class="btn btn-ghost btn-small" id="pw-toggle" type="button">Change</button></div>
+      <form class="pwform" id="cpw">
+        <div class="two"><div><label for="np1">New password</label><input id="np1" type="password" autocomplete="new-password" minlength="10" required></div>
+          <div><label for="np2">Type it again</label><input id="np2" type="password" autocomplete="new-password" minlength="10" required></div></div>
+        <div class="acts"><button class="btn btn-primary btn-small">Save password</button><button class="btn btn-ghost btn-small" type="button" id="pw-cancel">Cancel</button></div>
+        <div class="err" id="cpw-err"></div></form>
+      <div class="srow"><div class="main"><b>Sign out</b><span>Signs you out of the hub on this device.</span></div><button class="btn btn-ghost btn-small" type="button" id="set-out">Sign out</button></div>
+    </div>`)}
+    ${sec('Notifications', 'Alerts go to every hub admin. These settings are shared by all admins.', `<div class="set-card" id="prefs"><div class="srow"><div class="main"><span>Loading…</span></div></div></div>`)}
+    ${IN_APP ? sec('iPhone app', 'Orvix Hub on this phone.', `<div class="set-card">
+      <div class="srow"><div class="main"><b>Version</b></div><span class="val" id="app-ver">${esc(appInfo.version || '—')}</span></div>
+      <div class="srow"><div class="main"><b>Notifications</b><span id="app-push">${appPushText()}</span></div><span id="app-push-pill">${appPushPill()}</span></div>
+      <div class="srow"><div class="main"><b>App updates</b><span id="app-update-msg">Downloads the newest version and restarts the app.</span></div><button class="btn btn-primary btn-small" id="app-update" type="button">Check now</button></div>
+    </div>`) : ''}
+    ${sec('Admins', 'People who can sign in to the hub. Add or remove them in Users &amp; Access.', `<div class="set-card">
+      ${st.admins.map((a) => `<div class="srow"><span class="av-sm ${a.email === mine ? 'me' : ''}">${esc((a.email || '?')[0].toUpperCase())}</span>
+        <div class="main"><b>${esc(a.email)}</b><span>${a.must_change_password ? 'Picks a password at first sign-in' : 'Password set'}</span></div>
+        ${a.email === mine ? '<span class="pill orange">You</span>' : a.must_change_password ? '<span class="pill amber">Invited</span>' : '<span class="pill green"><i></i>Active</span>'}</div>`).join('')}
+      <div class="set-foot"><span>${st.admins.length} admin${st.admins.length === 1 ? '' : 's'}</span><a href="#/users/aero" style="margin-left:auto">Manage in Users &amp; Access →</a></div>
+    </div>`)}
+    ${sec('Launch switch', 'Controls who can use Orvix Aero. Changes apply right away on every device and are written to the audit log.', `<div class="set-card">
+      <div class="srow"><div class="main"><b>Orvix Aero paywall</b><span>${open
+        ? 'Open: anyone can sign up and subscribe. Testers, admins and free access still get in free.'
+        : 'Closed: only testers, admins, free access and the paywall preview accounts can get in. Everyone else sees “invite-only”.'}</span></div>
+        ${open ? '<span class="pill green"><i></i>Open</span>' : '<span class="pill amber"><i></i>Closed</span>'}</div>
+      <div class="srow"><div class="main"><b>${open ? 'Close the paywall' : 'Open the paywall to everyone'}</b><span>Type <b style="display:inline;color:var(--ink)">${open ? 'CLOSE' : 'LAUNCH'}</b> to confirm.</span>
+        <div class="confirm-row" style="margin-top:10px"><input type="text" id="lc" autocomplete="off" autocapitalize="characters" placeholder="${open ? 'CLOSE' : 'LAUNCH'}">
+          <button class="btn ${open ? 'btn-ghost' : 'btn-primary'} btn-small" id="lbtn" type="button">${open ? 'Close paywall' : 'Open paywall'}</button></div></div></div>
+    </div>`, 'danger')}
+  </div>`;
   loadPrefs();
+  const form = $('#cpw');
+  $('#pw-toggle').onclick = () => { form.classList.toggle('open'); if (form.classList.contains('open')) $('#np1').focus(); };
+  $('#pw-cancel').onclick = () => { form.classList.remove('open'); $('#np1').value = $('#np2').value = ''; $('#cpw-err').textContent = ''; };
+  $('#set-out').onclick = () => $('#signout').click();
   if (IN_APP) $('#app-update').onclick = (e) => { e.target.disabled = true; $('#app-update-msg').textContent = 'Checking…'; toApp({ type: 'update' }); };
-  $('#cpw').onsubmit = async (e) => {
+  form.onsubmit = async (e) => {
     e.preventDefault(); const a = $('#np1').value, err = $('#cpw-err'); err.className = 'err';
     if (a !== $('#np2').value) { err.textContent = 'The two passwords don’t match.'; return; }
     const { error: e1 } = await sb.auth.updateUser({ password: a });
     if (e1) { err.textContent = e1.message; return; }
     await sb.rpc('hub_password_changed');
-    $('#np1').value = $('#np2').value = ''; err.className = 'ok'; err.textContent = 'Password changed.';
+    $('#np1').value = $('#np2').value = ''; form.classList.remove('open'); toast('Password changed.');
   };
   $('#lbtn').onclick = async () => {
-    const open = !st.paywall_open, word = $('#lc').value.trim();
-    if (word !== (open ? 'LAUNCH' : 'CLOSE')) return toast(`Type ${open ? 'LAUNCH' : 'CLOSE'} in the box first.`);
-    if (!confirm(open ? 'Open Orvix Aero’s paywall to everyone now?' : 'Close the paywall? New people will see “invite-only” again.')) return;
-    const { error: e2 } = await sb.rpc('hub_set_launch', { p_open: open, p_confirm: word });
+    const opening = !st.paywall_open, word = $('#lc').value.trim().toUpperCase();
+    if (word !== (opening ? 'LAUNCH' : 'CLOSE')) return toast(`Type ${opening ? 'LAUNCH' : 'CLOSE'} in the box first.`);
+    if (!confirm(opening ? 'Open Orvix Aero’s paywall to everyone now?' : 'Close the paywall? New people will see “invite-only” again.')) return;
+    const { error: e2 } = await sb.rpc('hub_set_launch', { p_open: opening, p_confirm: word });
     if (e2) return toast(e2.message);
-    toast(open ? 'Paywall open. Orvix Aero is launched.' : 'Paywall closed.'); settingsPage();
+    toast(opening ? 'Paywall open. Orvix Aero is launched.' : 'Paywall closed.'); settingsPage();
   };
 }
+const appPushText = () => appInfo.push === 'on' ? 'Hub alerts arrive on this phone.' : appInfo.push === 'off' ? 'Turn them on in iPhone Settings → Orvix Hub → Notifications.' : 'Checking…';
+const appPushPill = () => appInfo.push === 'on' ? '<span class="pill green"><i></i>On</span>' : appInfo.push === 'off' ? '<span class="pill amber"><i></i>Off</span>' : '';
 
 // ---------- Outside services (Apple, RevenueCat, Google) ----------
 async function outside(action, force) {
@@ -2226,14 +2266,14 @@ async function loadPrefs() {
   const el = $('#prefs'); if (!el) return;
   const [{ data: p, error }, up] = await Promise.all([sb.rpc('hub_prefs'), sb.rpc('hub_uptime_summary', { p_days: 1 })]);
   if (!$('#prefs')) return;
-  if (error) { el.innerHTML = `<div class="muted">${esc(failMsg(error))}</div>`; return; }
-  const row = (key, title, sub) => `<div class="tgl"><div class="main"><b>${title}</b><span>${sub}</span></div><label class="sw"><input type="checkbox" data-k="${key}" ${p?.[key] !== false ? 'checked' : ''}><i></i></label></div>`;
+  if (error) { el.innerHTML = `<div class="srow"><div class="main"><span>${esc(failMsg(error))}</span></div></div>`; return; }
+  const row = (key, title, sub) => `<div class="srow"><div class="main"><b>${title}</b><span>${sub}</span></div><label class="sw" aria-label="${title}"><input type="checkbox" data-k="${key}" ${p?.[key] !== false ? 'checked' : ''}><i></i></label></div>`;
   const since = up.data?.since;
-  el.innerHTML = row('alerts_email', 'Email me when something needs me', 'A system goes down or comes back, a new bug report or idea, a player report, or Apple changes the app’s status') +
-    row('alerts_push', 'Notify my phone too', 'Same alerts as a notification in the Orvix Hub iPhone app (or Orvix Aero, on phones without Orvix Hub)') +
-    row('digest', 'Daily email', 'A short summary of yesterday for both apps, every morning around 8am New York time') +
-    `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px"><button class="btn btn-ghost btn-small" id="dg-now">Send me yesterday’s summary now</button>
-      <span class="muted" style="font-size:13px">${since ? `Watching since ${esc(day(since))}` : 'The watcher hasn’t run yet.'}</span></div>`;
+  el.innerHTML = row('alerts_email', 'Email alerts', 'A system goes down or comes back, a new bug report or idea, a new sign-up, a player report, or an Apple review change.') +
+    row('alerts_push', 'Phone alerts', 'The same alerts as notifications in the Orvix Hub iPhone app (or Orvix Aero on phones without it).') +
+    row('digest', 'Daily summary email', 'Yesterday for every app, each morning around 8am New York time.') +
+    `<div class="set-foot"><button class="btn btn-ghost btn-small" id="dg-now" type="button">Send yesterday’s summary now</button>
+      <span style="margin-left:auto">${since ? `Watching since ${esc(day(since))}` : 'The watcher hasn’t run yet.'}</span></div>`;
   el.querySelectorAll('input[data-k]').forEach((i) => { i.onchange = async () => { const { error: e1 } = await sb.rpc('hub_set_pref', { p_key: i.dataset.k, p_on: i.checked }); if (e1) { toast(e1.message); i.checked = !i.checked; } else toast('Saved.'); }; });
   $('#dg-now').onclick = async (e) => {
     e.target.disabled = true;
