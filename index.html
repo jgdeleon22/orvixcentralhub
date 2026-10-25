@@ -2389,7 +2389,7 @@ async function giftsPage() {
 }
 
 // ---------- City photos (Orvix Family's layover window) ----------
-// One day and one night photo per layover city, from Pexels. New cities get
+// One day and one night photo per layover city, from Unsplash. New cities get
 // photos on their own every hour; tap Change to pick a better one.
 async function cityPhotosPage(pickFor) {
   crumb('<b>City photos</b>'); setNav('cityphotos');
@@ -2404,7 +2404,7 @@ async function cityPhotosPage(pickFor) {
   const shot = (r, slot) => {
     const url = r[slot + '_url'];
     return `<button class="cp-shot" data-city="${esc(r.city)}" data-slot="${slot}" aria-label="Change the ${slot} photo of ${esc(r.city)}">
-      ${url ? `<img src="${esc(url.replace(/h=1200&w=800/, 'h=360&w=240'))}" alt="" loading="lazy">` : `<span>No ${slot} photo</span>`}
+      ${url ? `<img src="${esc(url.replace('w=800&h=1200', 'w=240&h=360'))}" alt="" loading="lazy">` : `<span>No ${slot} photo</span>`}
       <i>${slot === 'day' ? 'Day' : 'Night'}${r[slot + '_picked'] ? ' ✓' : ''}</i></button>`;
   };
   const draw = () => {
@@ -2419,15 +2419,15 @@ async function cityPhotosPage(pickFor) {
   const picker = async (city, slot, text) => {
     const box = $('#cp-pick');
     box.innerHTML = `<div class="set-card" style="padding:16px 18px;margin-bottom:16px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><b style="font-size:17px">${esc(city)} · ${slot === 'day' ? 'by day' : 'at night'}</b>
-      <form id="cp-s" style="display:flex;gap:8px;flex:1;min-width:220px"><input id="cp-st" type="search" value="${esc(text || '')}" placeholder="Search Pexels for something else…"><button class="btn btn-ghost btn-small">Search</button></form>
-      <button class="btn btn-ghost btn-small" id="cp-x">Close</button></div><div class="cp-cands"><div class="muted">Looking on Pexels…</div></div></div>`;
+      <form id="cp-s" style="display:flex;gap:8px;flex:1;min-width:220px"><input id="cp-st" type="search" value="${esc(text || '')}" placeholder="Search Unsplash for something else…"><button class="btn btn-ghost btn-small">Search</button></form>
+      <button class="btn btn-ghost btn-small" id="cp-x">Close</button></div><div class="cp-cands"><div class="muted">Looking on Unsplash…</div></div></div>`;
     box.scrollIntoView({ behavior: 'smooth', block: 'start' });
     $('#cp-x').onclick = () => { box.innerHTML = ''; };
     $('#cp-s').onsubmit = (e) => { e.preventDefault(); picker(city, slot, $('#cp-st').value.trim()); };
     const { data: d, error: e1 } = await sb.functions.invoke('city-photos', { body: { action: 'candidates', city, slot, q: text || undefined } });
     const c = box.querySelector('.cp-cands'); if (!c) return;
-    if (e1 || !d?.photos) { c.innerHTML = `<div class="empty">${esc(d?.error || 'Pexels didn’t answer. Is the PEXELS_KEY secret set?')}</div>`; return; }
-    c.innerHTML = d.photos.map((p, i) => `<button class="cp-shot" data-i="${i}" title="${esc(p.alt)}"><img src="${esc(p.url.replace(/h=1200&w=800/, 'h=360&w=240'))}" alt="${esc(p.alt)}" loading="lazy"><i>${esc(p.by)}</i></button>`).join('') || '<div class="empty">Nothing found. Try another search.</div>';
+    if (e1 || !d?.photos) { c.innerHTML = `<div class="empty">${esc(d?.error || 'Unsplash didn’t answer. Is the UNSPLASH_ACCESS_KEY secret set?')}</div>`; return; }
+    c.innerHTML = d.photos.map((p, i) => `<button class="cp-shot" data-i="${i}" title="${esc(p.alt)}"><img src="${esc(p.url.replace('w=800&h=1200', 'w=240&h=360'))}" alt="${esc(p.alt)}" loading="lazy"><i>${esc(p.by)}</i></button>`).join('') || '<div class="empty">Nothing found. Try another search.</div>';
     c.querySelectorAll('.cp-shot').forEach((b) => b.onclick = async () => {
       const p = d.photos[+b.dataset.i];
       const { data: r, error: e2 } = await sb.functions.invoke('city-photos', { body: { action: 'pick', city, slot, photo: p } });
