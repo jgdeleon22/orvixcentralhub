@@ -636,6 +636,7 @@
       <a class="nav" data-nav="aero" href="#/aero/bugs"><img class="nimg" src="icon-aero.png" alt=""><span>Orvix Aero</span></a>
       <a class="nav" data-nav="grid" href="#/grid"><img class="nimg" src="icon-grid.png" alt=""><span>Orvix Grid</span></a>
       <a class="nav" data-nav="family" href="#/family"><img class="nimg" src="icon-family.png" alt=""><span>Orvix Family</span></a>
+      <a class="nav" data-nav="cabin" href="#/cabin"><img class="nimg" src="icon-cabin.png" alt=""><span>Orvix Cabin</span></a>
     </nav>
     <div class="side-foot">
       <div class="me"><span class="av" id="av">J</span><div class="me-t"><b id="who"></b><span>Admin</span></div></div>
@@ -684,6 +685,7 @@
         <a class="sheet-item" data-nav="aero" href="#/aero/bugs" style="--c:#F76E19"><img class="ic" src="icon-aero.png" alt="">Orvix Aero</a>
         <a class="sheet-item" data-nav="grid" href="#/grid" style="--c:#8ED8FF"><img class="ic" src="icon-grid.png" alt="">Orvix Grid</a>
         <a class="sheet-item" data-nav="family" href="#/family" style="--c:#5ED79A"><img class="ic" src="icon-family.png" alt="">Orvix Family</a>
+        <a class="sheet-item" data-nav="cabin" href="#/cabin" style="--c:#F2B66D"><img class="ic" src="icon-cabin.png" alt="">Orvix Cabin</a>
       </div>
       <button class="sheet-out" id="sheet-out" type="button">Sign out</button>
     </div>
@@ -893,6 +895,7 @@ function route() {
   if (h.startsWith('#/aero')) return aero(h.split('/')[2] || 'bugs');
   if (h.startsWith('#/grid')) return grid();
   if (h.startsWith('#/family')) return family();
+  if (h.startsWith('#/cabin')) return cabin();
   if (h.startsWith('#/health')) return healthPage();
   if (h.startsWith('#/users')) return usersPage(h.split('/')[2] || 'aero');
   if (h.startsWith('#/analytics')) return analyticsPage();
@@ -1216,7 +1219,7 @@ async function aero(tab) {
     <div id="pane"><div class="muted">Loading…</div></div>`;
   try {
     const [all] = await Promise.all([loadFeedback(), loadNotified().catch(() => [])]);
-    const f = all.filter((r) => r.app !== 'family'); // Orvix Family reports live on its own page and in Support
+    const f = all.filter((r) => r.app !== 'family' && r.app !== 'cabin'); // Orvix Family and Cabin reports live in Support
     $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
     aeroOpen = all.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
     loadWaitlist().then((w) => { const n = $('#n-wait'); if (n) n.textContent = w.total; }).catch(() => {});
@@ -1369,7 +1372,7 @@ function reportCard(r) {
   const shots = (r.screenshots || []).map((p) => `<a target="_blank" rel="noopener" data-shot="${esc(p)}"><img alt="Screenshot"></a>`).join('');
   return `<article class="report" data-id="${r.id}">
     <div class="report-head">
-      ${r.app === 'family' ? appBadge('family') : ''}<span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
+      ${r.app === 'family' || r.app === 'cabin' ? appBadge(r.app) : ''}<span class="tag ${esc(r.kind)}">${esc(r.kind)}</span>
       <span class="status" style="--c:${color}">${esc(label)}</span>
       <span class="meta">#${r.id} · ${esc(when(r.created_at))}</span>
       <span class="spacer"></span>
@@ -1908,6 +1911,7 @@ let supApp = 'all';
 const APPS = {
   aero: { name: 'Orvix Aero', icon: 'icon-aero.png', c: '#F76E19' },
   family: { name: 'Orvix Family', icon: 'icon-family.png', c: '#9A7BF0' },
+  cabin: { name: 'Orvix Cabin', icon: 'icon-cabin.png', c: '#F2B66D' },
   grid: { name: 'Orvix Grid', icon: 'icon-grid.png', c: '#4F8FE0' },
 };
 const appBadge = (k) => `<span class="appb" style="--c:${APPS[k].c}"><img src="${APPS[k].icon}" alt="">${APPS[k].name}</span>`;
@@ -1927,8 +1931,9 @@ async function supportPage() {
   if (!$('#pane')) return;
   const gOk = g && g.connected;
   const byApp = {
-    aero: f.filter((r) => r.app !== 'family'),
+    aero: f.filter((r) => r.app !== 'family' && r.app !== 'cabin'),
     family: f.filter((r) => r.app === 'family'),
+    cabin: f.filter((r) => r.app === 'cabin'),
     grid: gOk ? (g.feedback || []) : [],
   };
   const players = gOk ? (g.reports || []) : [];
@@ -1936,22 +1941,22 @@ async function supportPage() {
   // The app cards: open reports per app (bugs / ideas), and All apps.
   const openOf = (list) => list.filter((r) => OPEN.has(r.status));
   const tally = (list) => { const o = openOf(list); return { n: o.length, bug: o.filter((r) => r.kind === 'bug').length, idea: o.filter((r) => r.kind === 'idea').length }; };
-  const t = { aero: tally(byApp.aero), family: tally(byApp.family), grid: tally(byApp.grid) };
-  const allN = t.aero.n + t.family.n + t.grid.n + players.length;
+  const t = { aero: tally(byApp.aero), family: tally(byApp.family), cabin: tally(byApp.cabin), grid: tally(byApp.grid) };
+  const allN = t.aero.n + t.family.n + t.cabin.n + t.grid.n + players.length;
   const card = (k, name, icon, c, x, extra = '') => `<button class="appc ${supApp === k ? 'on' : ''}" data-app="${k}" style="--c:${c}">
       <div class="ah">${icon}<b>${name}</b></div>
       <div class="an"><strong>${x.n}</strong><span>open</span></div>
       <div class="ab">${x.bug ? `<i class="bug">${x.bug} bug${x.bug > 1 ? 's' : ''}</i>` : ''}${x.idea ? `<i class="idea">${x.idea} idea${x.idea > 1 ? 's' : ''}</i>` : ''}${extra}${!x.n && !extra ? '<i>All clear</i>' : ''}</div></button>`;
   $('#sup-cards').innerHTML =
-    card('all', 'All apps', `<span class="aic">${INBOX_IC}</span>`, '#F2F6FA', { n: allN, bug: t.aero.bug + t.family.bug + t.grid.bug, idea: t.aero.idea + t.family.idea + t.grid.idea }) +
-    ['aero', 'family', 'grid'].map((k) => card(k, APPS[k].name, `<img src="${APPS[k].icon}" alt="">`, APPS[k].c, k === 'grid' ? { ...t.grid, n: t.grid.n + players.length } : t[k],
+    card('all', 'All apps', `<span class="aic">${INBOX_IC}</span>`, '#F2F6FA', { n: allN, bug: t.aero.bug + t.family.bug + t.cabin.bug + t.grid.bug, idea: t.aero.idea + t.family.idea + t.cabin.idea + t.grid.idea }) +
+    ['aero', 'family', 'cabin', 'grid'].map((k) => card(k, APPS[k].name, `<img src="${APPS[k].icon}" alt="">`, APPS[k].c, k === 'grid' ? { ...t.grid, n: t.grid.n + players.length } : t[k],
       k === 'grid' && players.length ? `<i>${players.length} player report${players.length > 1 ? 's' : ''}</i>` : '')).join('');
   $('#sup-cards').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
 
   // Reports for the chosen app, then the status / type / search filters.
   const pick = (k) => supApp === 'all' || supApp === k;
   const q = bugFilter.q.toLowerCase();
-  const fb = [...(pick('aero') ? byApp.aero.map((r) => ['aero', r]) : []), ...(pick('family') ? byApp.family.map((r) => ['family', r]) : []), ...(pick('grid') ? byApp.grid.map((r) => ['grid', r]) : [])];
+  const fb = [...(pick('aero') ? byApp.aero.map((r) => ['aero', r]) : []), ...(pick('family') ? byApp.family.map((r) => ['family', r]) : []), ...(pick('cabin') ? byApp.cabin.map((r) => ['cabin', r]) : []), ...(pick('grid') ? byApp.grid.map((r) => ['grid', r]) : [])];
   const showOk = (r) => bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status));
   const kindOk = (r) => bugFilter.kind === 'all' || r.kind === bugFilter.kind;
   const qOk = (r) => !q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q);
@@ -2186,8 +2191,8 @@ const appPushText = () => appInfo.push === 'on' ? 'Hub alerts arrive on this pho
 const appPushPill = () => appInfo.push === 'on' ? '<span class="spill green"><i></i>On</span>' : appInfo.push === 'off' ? '<span class="spill amber"><i></i>Off</span>' : '';
 
 // ---------- Person: one account on one page ----------
-const APPN = { aero: 'Orvix Aero', family: 'Orvix Family', hub: 'Orvix Hub' };
-const APPI = { aero: 'icon-aero.png', family: 'icon-family.png', hub: 'favicon.png' };
+const APPN = { aero: 'Orvix Aero', family: 'Orvix Family', cabin: 'Orvix Cabin', hub: 'Orvix Hub' };
+const APPI = { aero: 'icon-aero.png', family: 'icon-family.png', cabin: 'icon-cabin.png', hub: 'favicon.png' };
 const PLAT = { ios: 'iPhone', android: 'Android', web: 'Web', windows: 'Windows' };
 const FLY = { student: 'Student', cfi: 'Instructor', airline: 'Airline', corporate: 'Corporate/charter', military: 'Military', ga: 'General aviation' };
 async function personPage(id) {
@@ -2346,11 +2351,12 @@ async function releasesPage() {
     <section class="set-sec"><header><h2>Stores</h2><p>Where to ship and check builds.</p></header><div><div class="set-card">
       <div class="srow"><img src="icon-aero.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Aero · App Store</b><span>${ascV ? esc(ascState(ascV.state)[1]) + ' · ' + esc(ascV.version || '') : 'Connect App Store Connect on Insights to see the review status here.'}</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6824412999/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
       <div class="srow"><img src="icon-family.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Family · App Store</b><span>App Store Connect</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6825642968/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+      <div class="srow"><img src="icon-cabin.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Cabin · TestFlight</b><span>App Store Connect</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6826745290/testflight/ios" target="_blank" rel="noopener">Open ↗</a></div>
       <div class="srow"><img src="favicon.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Hub · TestFlight</b><span>Internal testing</span></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6826462031/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
       <div class="srow"><img src="icon-aero.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="main"><b>Orvix Aero · Google Play</b><span>Closed testing</span></div><a class="btn btn-ghost btn-small" href="https://play.google.com/console" target="_blank" rel="noopener">Play Console ↗</a></div>
       <div class="srow"><div class="main"><b>Builds &amp; updates</b><span>Every build and over-the-air update, on Expo.</span></div><a class="btn btn-ghost btn-small" href="https://expo.dev/accounts/jgdeleon22/projects" target="_blank" rel="noopener">Expo ↗</a></div>
     </div></div></section>
-    ${block('aero')}${block('family')}${block('hub')}
+    ${block('aero')}${block('family')}${block('cabin')}${block('hub')}
   </div>`;
 }
 
@@ -2862,6 +2868,37 @@ async function family() {
       </section>
     </div>
     <p class="note">Live flights, landing alerts and pickups only work for families of pilots with Orvix Aero Pro. Calendar and chat are free for everyone.</p>`;
+  drawChart($('#chart'), (f.daily || []).map((d) => ({ day: d.day, signups: d.joined })));
+}
+
+// ---------- Orvix Cabin (flight attendants) ----------
+async function cabin() {
+  crumb('<span>Orvix Cabin</span><i>/</i><b>Overview</b>'); setNav('cabin');
+  $('#view').innerHTML = `
+    <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-cabin.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Orvix Cabin</h1><div class="muted">The flight attendant app · counts only, never trips, notes or crashpad details</div></div></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6826745290/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+    <div id="cpane"><div class="muted">Loading…</div></div>`;
+  const { data: f, error } = await sb.rpc('hub_cabin');
+  const pane = $('#cpane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">Couldn’t load Orvix Cabin: ${esc(failMsg(error))}</div>`; return; }
+  const n = (v) => Number(v || 0).toLocaleString();
+  const tile = (icon, c, label, value, sub) => `<div class="tile" style="--c:${c}"><div class="ti">${icon}</div><div style="min-width:0"><div class="tl">${label}</div><div class="tv">${value}</div><div class="ts">${sub}</div></div></div>`;
+  pane.innerHTML = `
+    <div class="tiles">
+      ${tile(IC.users, 'var(--blue)', 'Crew members', n(f.accounts), `${n(f.fa)} set up as flight attendants · ${n(f.accounts_7d)} new this week`)}
+      ${tile(IC.active, 'var(--green)', 'Active this week', n(f.active_7d), `${n(f.phones)} phone${f.phones === 1 ? '' : 's'} with trip alerts on`)}
+      ${tile(IC.card, 'var(--orange)', 'Subscriptions', n(f.plans), f.paywall ? `${n(f.plans_renewing)} renewing · paywall open` : 'Paywall off until launch')}
+      ${tile(IC.msg, 'var(--violet)', 'Layover tips', n(f.tips), `${n(f.tips_7d)} this week · ${n(f.tip_reports)} reported (30 days)`)}
+    </div>
+    <div class="lower" style="grid-template-columns:1.25fr 1fr">
+      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>Crew members joining</h3><span class="muted">Last 14 days</span></div><div class="chart-wrap" id="chart"></div></section>
+      <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>At a glance</h3></div>
+        <div class="act"><span class="ai" style="--c:var(--blue)">${IC.users}</span><div class="at"><b>${n(f.crashpads)} crashpad${f.crashpads === 1 ? '' : 's'}</b><span>${n(f.crashpad_members)} roommates in them</span></div></div>
+        <div class="act"><span class="ai" style="--c:var(--orange)">${IC.card}</span><div class="at"><b>$4.99 a month or $39.99 a year</b><span>An Orvix Aero plan includes Cabin</span></div></div>
+        <a class="act" href="#/support" onclick="supApp = 'cabin'" style="color:inherit;text-decoration:none"><span class="ai" style="--c:${f.feedback_open ? '#F87171' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.feedback_open)} open bug report${f.feedback_open === 1 ? '' : 's'} and ideas</b><span>Sent from the app · open in Support</span></div></a>
+        <a class="act" href="#/releases" style="color:inherit;text-decoration:none"><span class="ai" style="--c:var(--green)">${IC.phone}</span><div class="at"><b>Versions in use</b><span>Open Releases</span></div></a>
+      </section>
+    </div>
+    <p class="note">Crew members who sign in to Orvix Cabin, turn on its trip alerts, or pick flight attendant in setup count here.</p>`;
   drawChart($('#chart'), (f.daily || []).map((d) => ({ day: d.day, signups: d.joined })));
 }
 
