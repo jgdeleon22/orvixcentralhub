@@ -330,6 +330,15 @@
   .panel h3 { font-size: 22px; display: flex; align-items: center; gap: 10px; }
   .panel .sub { color: var(--ink-3); font-size: 14px; margin: 2px 0 14px; }
   .count { font-family: var(--text); font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--card-2); border-radius: 999px; padding: 1px 9px; }
+  .cp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .cp-card { display: flex; flex-direction: column; gap: 4px; }
+  .cp-two { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 4px; }
+  .cp-shot { position: relative; aspect-ratio: 2 / 3; border-radius: 10px; overflow: hidden; border: 1px solid var(--edge); background: var(--navy); padding: 0; cursor: pointer; color: var(--ink-3); font: inherit; font-size: 12px; }
+  .cp-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cp-shot span { display: grid; place-items: center; height: 100%; padding: 6px; text-align: center; }
+  .cp-shot i { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 6px 5px; font-style: normal; font-size: 11px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.7)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cp-shot:hover, .cp-shot:focus-visible { border-color: var(--orange); outline: none; }
+  .cp-cands { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
   .progress { height: 6px; background: var(--navy); border-radius: 999px; overflow: hidden; margin: 6px 0 14px; }
   .progress i { display: block; height: 100%; background: var(--green); border-radius: 999px; }
   .rows { display: grid; }
@@ -620,6 +629,7 @@
       <a class="nav" data-nav="costs" href="#/costs"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/></svg><span>Costs &amp; limits</span></a>
       <a class="nav" data-nav="releases" href="#/releases"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/></svg><span>Releases</span></a>
       <a class="nav" data-nav="gifts" href="#/gifts"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg><span>Gift codes</span></a>
+      <a class="nav" data-nav="cityphotos" href="#/cityphotos"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg><span>City photos</span></a>
       <a class="nav" data-nav="discord" href="#/discord"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg><span>Discord</span></a>
       <a class="nav" data-nav="settings" href="#/settings"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
       <div class="nav-group">Products</div>
@@ -895,6 +905,7 @@ function route() {
   if (h.startsWith('#/costs')) return costsPage();
   if (h.startsWith('#/releases')) return releasesPage();
   if (h.startsWith('#/gifts')) return giftsPage();
+  if (h.startsWith('#/cityphotos')) return cityPhotosPage();
   if (h.startsWith('#/discord')) return discordPage();
   return home();
 }
@@ -2375,6 +2386,67 @@ async function giftsPage() {
     if (e1) return toast(e1.message);
     copy(fmtCode(code)); giftsPage();
   };
+}
+
+// ---------- City photos (Orvix Family's layover window) ----------
+// One day and one night photo per layover city, from Pexels. New cities get
+// photos on their own every hour; tap Change to pick a better one.
+async function cityPhotosPage(pickFor) {
+  crumb('<b>City photos</b>'); setNav('cityphotos');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>City photos</h1><div class="muted">What Orvix Family’s window shows when the crew member is on a layover: the city by day, and by night after sunset there.</div></div><button class="btn btn-ghost btn-small" id="cp-fill">Find missing photos</button></div>
+    <div class="toolbar" style="margin-bottom:14px"><div class="search" style="flex:1"><input id="cp-q" type="search" placeholder="Search cities or airport codes"></div>
+    <div class="seg"><button class="pill on" data-f="all">All</button><button class="pill" data-f="missing">Missing</button><button class="pill" data-f="auto">Not reviewed</button></div></div>
+    <div id="cp-pick"></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data: rows, error } = await sb.from('city_photos').select('*').order('city');
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  let filter = 'all';
+  const shot = (r, slot) => {
+    const url = r[slot + '_url'];
+    return `<button class="cp-shot" data-city="${esc(r.city)}" data-slot="${slot}" aria-label="Change the ${slot} photo of ${esc(r.city)}">
+      ${url ? `<img src="${esc(url.replace(/h=1200&w=800/, 'h=360&w=240'))}" alt="" loading="lazy">` : `<span>No ${slot} photo</span>`}
+      <i>${slot === 'day' ? 'Day' : 'Night'}${r[slot + '_picked'] ? ' ✓' : ''}</i></button>`;
+  };
+  const draw = () => {
+    const t = ($('#cp-q')?.value || '').trim().toLowerCase();
+    const list = rows.filter((r) => (!t || r.city.toLowerCase().includes(t) || r.airports.some((a) => a.toLowerCase() === t))
+      && (filter === 'all' || (filter === 'missing' ? !r.day_url || !r.night_url : (r.day_url && !r.day_picked) || (r.night_url && !r.night_picked))));
+    const have = rows.filter((r) => r.day_url && r.night_url).length;
+    pane.innerHTML = `<div class="muted" style="margin-bottom:10px">${have} of ${rows.length} cities have both photos.</div>
+      <div class="cp-grid">${list.map((r) => `<div class="cp-card"><div class="cp-two">${shot(r, 'day')}${shot(r, 'night')}</div><b>${esc(r.city)}</b><span class="muted">${esc(r.airports.join(', '))}</span></div>`).join('') || '<div class="empty">No cities match.</div>'}</div>`;
+    pane.querySelectorAll('.cp-shot').forEach((b) => b.onclick = () => picker(b.dataset.city, b.dataset.slot));
+  };
+  const picker = async (city, slot, text) => {
+    const box = $('#cp-pick');
+    box.innerHTML = `<div class="set-card" style="padding:16px 18px;margin-bottom:16px"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px"><b style="font-size:17px">${esc(city)} · ${slot === 'day' ? 'by day' : 'at night'}</b>
+      <form id="cp-s" style="display:flex;gap:8px;flex:1;min-width:220px"><input id="cp-st" type="search" value="${esc(text || '')}" placeholder="Search Pexels for something else…"><button class="btn btn-ghost btn-small">Search</button></form>
+      <button class="btn btn-ghost btn-small" id="cp-x">Close</button></div><div class="cp-cands"><div class="muted">Looking on Pexels…</div></div></div>`;
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('#cp-x').onclick = () => { box.innerHTML = ''; };
+    $('#cp-s').onsubmit = (e) => { e.preventDefault(); picker(city, slot, $('#cp-st').value.trim()); };
+    const { data: d, error: e1 } = await sb.functions.invoke('city-photos', { body: { action: 'candidates', city, slot, q: text || undefined } });
+    const c = box.querySelector('.cp-cands'); if (!c) return;
+    if (e1 || !d?.photos) { c.innerHTML = `<div class="empty">${esc(d?.error || 'Pexels didn’t answer. Is the PEXELS_KEY secret set?')}</div>`; return; }
+    c.innerHTML = d.photos.map((p, i) => `<button class="cp-shot" data-i="${i}" title="${esc(p.alt)}"><img src="${esc(p.url.replace(/h=1200&w=800/, 'h=360&w=240'))}" alt="${esc(p.alt)}" loading="lazy"><i>${esc(p.by)}</i></button>`).join('') || '<div class="empty">Nothing found. Try another search.</div>';
+    c.querySelectorAll('.cp-shot').forEach((b) => b.onclick = async () => {
+      const p = d.photos[+b.dataset.i];
+      const { data: r, error: e2 } = await sb.functions.invoke('city-photos', { body: { action: 'pick', city, slot, photo: p } });
+      if (e2 || !r?.ok) return toast(r?.error || 'Couldn’t save that photo.');
+      const row = rows.find((x) => x.city === city); Object.assign(row, { [slot + '_url']: p.url, [slot + '_by']: p.by, [slot + '_link']: p.link, [slot + '_picked']: true });
+      toast(`${city} ${slot} photo saved.`); box.innerHTML = ''; draw();
+    });
+  };
+  $('#cp-q').oninput = draw;
+  document.querySelectorAll('[data-f]').forEach((b) => b.onclick = () => { filter = b.dataset.f; document.querySelectorAll('[data-f]').forEach((x) => x.classList.toggle('on', x === b)); draw(); });
+  $('#cp-fill').onclick = async () => {
+    const b = $('#cp-fill'); b.disabled = true; b.textContent = 'Finding…';
+    const { data: r, error: e1 } = await sb.functions.invoke('city-photos', { body: { action: 'fill', max: 40 } });
+    b.disabled = false; b.textContent = 'Find missing photos';
+    if (e1 || !r?.ok) return toast(r?.error || 'It didn’t run.');
+    toast(`Looked at ${r.cities} cities, found ${r.found} photos.`); cityPhotosPage();
+  };
+  draw();
+  if (pickFor) picker(pickFor.city, pickFor.slot);
 }
 
 // ---------- Discord ----------
