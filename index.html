@@ -1406,8 +1406,15 @@ function wireReport(el) {
     const [, label, color] = statusOf(status);
     const s = $('.status', el); s.textContent = label; s.style.setProperty('--c', color);
     const nb = $('#n-bugs'); if (nb) nb.textContent = cache.feedback.filter((x) => OPEN.has(x.status)).length;
-    toast(`Report #${id} saved`);
     if (sendNote) await sendNote();
+    // Saved as Fixed / Done / Not a bug while on Open (or reopened while on
+    // Closed): it leaves this list, and the counts update.
+    const fits = bugFilter.show === 'all' || (bugFilter.show === 'open') === OPEN.has(status);
+    if (!fits) {
+      toast(`Report #${id} saved · moved to ${OPEN.has(status) ? 'Open' : 'Closed'}`);
+      el.style.transition = 'opacity .3s'; el.style.opacity = '0';
+      setTimeout(() => route(), 320);
+    } else toast(OPEN.has(status) && bugFilter.show === 'open' ? `Report #${id} saved · still open (set the status to Fixed or Done to close it)` : `Report #${id} saved`);
   };
 }
 
