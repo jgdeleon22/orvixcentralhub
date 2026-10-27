@@ -571,6 +571,15 @@
 </head>
 <body>
 
+<!-- Shown while the session is checked, so the page is never blank; offers
+     a retry if that takes too long. -->
+<section id="boot" style="min-height:100vh;display:grid;place-items:center;padding:24px 16px;text-align:center">
+  <div>
+    <p id="boot-msg" style="color:#9DB2C5;margin:0 0 14px">Opening Orvix Central Hub…</p>
+    <button class="btn btn-primary hidden" id="boot-retry" type="button">Try again</button>
+  </div>
+</section>
+
 <!-- Sign in: the only thing anyone sees until they're a confirmed admin. -->
 <section id="login" class="hidden">
   <div class="login-card">
@@ -699,8 +708,11 @@
 // Orvix Aero's Supabase project. The publishable key is public by design;
 // everything this page reads goes through hub_* functions that refuse
 // anyone who isn't on the admins list.
+// In the iPhone app the page is paused while Face ID is up; the browser's
+// cross-tab lock can then stay stuck and every sign-in call waits forever.
+// The app is a single page, so it doesn't need that lock.
 const sb = supabase.createClient('https://uxnjglagrrprnsliyaed.supabase.co', 'sb_publishable_8vrxn8kJD8_lXdJ-a6_eqg_EtHNC4B8', {
-  auth: { flowType: 'pkce', persistSession: true, detectSessionInUrl: true },
+  auth: { flowType: 'pkce', persistSession: true, detectSessionInUrl: true, ...(window.ReactNativeWebView ? { lock: (_name, _wait, fn) => fn() } : {}) },
 });
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -777,7 +789,35 @@ async function appAction(m) {
 if (IN_APP) toApp({ type: 'hello' });
 
 // ---------- Sign in ----------
-async function check() {
+// Never a blank page: until check() decides, the "Opening…" screen shows; if
+// it takes over 10 s (or fails), it says so and offers Try again.
+let checking = null;
+function check() {
+  if (checking) return checking;
+  $('#boot').classList.remove('hidden');
+  $('#boot-retry').classList.add('hidden');
+  $('#boot-msg').textContent = 'Opening Orvix Central Hub…';
+  const slow = setTimeout(() => {
+    $('#boot-msg').textContent = 'This is taking longer than it should.';
+    $('#boot-retry').classList.remove('hidden');
+  }, 10_000);
+  checking = checkNow()
+    .then(() => $('#boot').classList.add('hidden'))
+    .catch((e) => {
+      $('#boot-msg').textContent = `Couldn’t open the hub${e?.message ? ` (${e.message})` : ''}.`;
+      $('#boot-retry').classList.remove('hidden');
+    })
+    .finally(() => { clearTimeout(slow); checking = null; });
+  return checking;
+}
+$('#boot-retry').addEventListener('click', () => location.reload());
+// Back from the background with nothing on screen: check again.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  const shown = ['#login', '#pw', '#app'].some((id) => !$(id).classList.contains('hidden'));
+  if (!shown) check();
+});
+async function checkNow() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return showLogin();
   const { data: admin, error } = await sb.rpc('is_admin');
