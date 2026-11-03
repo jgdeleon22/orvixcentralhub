@@ -568,6 +568,7 @@
   @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
     main.enter > * { animation: none; } .msheet .pane, .msheet .scr, .mtitle { transition: none; }
   }
+.flag { width: 20px; height: 15px; border-radius: 3px; object-fit: cover; vertical-align: -2px; margin-right: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.12); }
 </style>
 </head>
 <body>
@@ -1859,7 +1860,10 @@ async function analyticsPage() {
 }
 
 // Websites: visitors by country (flag, name, bar; US/Canada regions under it).
-const flag = (cc) => /^[A-Z]{2}$/.test(cc) ? String.fromCodePoint(...[...cc].map((c) => 127397 + c.charCodeAt(0))) : '🌐';
+// A small flag picture (Windows can't draw flag emoji; it shows the letters).
+const flag = (cc) => /^[A-Z]{2}$/.test(cc)
+  ? `<img class="flag" src="https://flagcdn.com/w40/${cc.toLowerCase()}.png" alt="" width="20" height="15" loading="lazy" onerror="this.replaceWith(document.createTextNode('${cc}'))">`
+  : '🌐';
 const countryName = (cc) => { try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(cc) || cc; } catch { return cc; } };
 const barRow = (label, n, max, color, sub = '') => `<div class="br"><div class="brl"><span>${label}</span><b>${n}</b></div>
   <div class="brt"><i style="width:${max ? Math.max(4, Math.round((n / max) * 100)) : 0}%;background:${color}"></i></div>${sub ? `<div class="brs">${sub}</div>` : ''}</div>`;
