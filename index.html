@@ -1250,7 +1250,7 @@ $('#ix-refresh').addEventListener('click', () => $('#refresh-all').click());
 function ixUpdate(key) {
   const g = IX_GROUPS.find((x) => x.keys.includes(key)) || IX_GROUPS[0];
   const sub = $('#ix-sub');
-  sub.innerHTML = '<span class="ix-grp">' + g.name + '</span>' + g.keys.map((k) => {
+  sub.innerHTML = g.keys.map((k) => {
     const a = ixLink(k); if (!a) return '';
     return '<a href="' + a.getAttribute('href') + '"' + (k === key ? ' class="on"' : '') + '>' + esc($('span', a)?.textContent || k) + '</a>';
   }).join('');
