@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050D17">
+<meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -13,9 +13,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --night: #050D17; --card: #0F1D2E; --card-2: #13253A; --edge: #1C3048; --edge-2: #2A4562;
-    --ink: #F2F6FA; --ink-2: #A3B6C8; --ink-3: #6F879B;
-    --orange: #F76E19; --orange-2: #FF8A3D; --navy: #06101C;
+    --night: #EEF2F6; --card: #FFFFFF; --card-2: #F1F5F9; --edge: #DCE3EA; --edge-2: #C3CFDA;
+    --ink: #F2F6FA; --ink-2: #5B6E82; --ink-3: #6F879B;
+    --orange: #F76E19; --orange-2: #FF8A3D; --navy: #EEF2F6;
     --green: #2DB46E; --amber: #E8B04A; --red: #E5484D; --blue: #4F8FE0; --violet: #9A7BF0;
     --display: "Barlow Condensed", "Arial Narrow", sans-serif; --text: "Barlow", system-ui, sans-serif;
   }
@@ -58,15 +58,15 @@
   .btn-ghost { background: transparent; border: 1px solid var(--edge-2); color: var(--ink); }
   .btn-ghost:hover { border-color: var(--ink-3); }
   .btn-small { padding: 6px 12px; font-size: 14px; border-radius: 8px; }
-  .btn-danger { background: transparent; border: 1px solid rgba(229,72,77,.5); color: #FF8A8D; }
+  .btn-danger { background: transparent; border: 1px solid rgba(229,72,77,.5); color: #C8363C; }
   .btn:disabled { opacity: .55; cursor: default; }
   .full { width: 100%; }
-  .err { color: #FF8A8D; font-size: 14px; margin-top: 12px; min-height: 1em; }
+  .err { color: #C8363C; font-size: 14px; margin-top: 12px; min-height: 1em; }
   .muted { color: var(--ink-3); font-size: 14px; }
 
   /* Shell */
   #app { display: flex; min-height: 100vh; }
-  .side { width: 248px; flex: none; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: rgba(8,19,31,.92); border-right: 1px solid var(--edge); padding: 22px 14px 16px; z-index: 30; }
+  .side { width: 248px; flex: none; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: rgba(255,255,255,.92); border-right: 1px solid var(--edge); padding: 22px 14px 16px; z-index: 30; }
   .side-brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 22px; cursor: pointer; }
   .side-brand .ring.mark { width: 40px; height: 40px; }
   .sb-word b { display: block; font-family: "Orbitron", var(--display); font-weight: 800; font-size: 21px; line-height: 1; letter-spacing: .04em; }
@@ -95,7 +95,7 @@
   .tbl .muted { font-size: 13px; }
   .tbl-wrap { background: var(--card); border: 1px solid var(--edge); border-radius: 14px; overflow-x: auto; }
   .b { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 1px 7px; margin: 1px 4px 1px 0; white-space: nowrap; }
-  .b.blue { background: rgba(79,143,224,.15); color: #8FB8F0; } .b.green { background: rgba(45,180,110,.14); color: #5ED79A; } .b.orange { background: rgba(247,110,25,.15); color: #FF9F5E; } .b.violet { background: rgba(154,123,240,.15); color: #C3B0FF; } .b.gray { background: rgba(163,182,200,.1); color: var(--ink-2); }
+  .b.blue { background: rgba(79,143,224,.15); color: #2462AE; } .b.green { background: rgba(45,180,110,.14); color: #13824B; } .b.orange { background: rgba(247,110,25,.15); color: #C2560C; } .b.violet { background: rgba(154,123,240,.15); color: #6A4BC4; } .b.gray { background: rgba(163,182,200,.1); color: var(--ink-2); }
   .charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin: 2px 0 6px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
@@ -106,7 +106,7 @@
   .ov-head h1 { margin: 0 0 4px; }
   .sys-pill { display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--edge); background: var(--card); color: var(--ink); text-decoration: none; font-weight: 600; font-size: 14px; }
   .sys-pill i { width: 9px; height: 9px; border-radius: 50%; background: #6F879B; box-shadow: 0 0 0 4px rgba(111, 135, 155, .15); }
-  .sys-pill.ok i { background: #4ADE80; box-shadow: 0 0 0 4px rgba(74, 222, 128, .18); } .sys-pill.bad { border-color: rgba(248, 113, 113, .5); } .sys-pill.bad i { background: #F87171; box-shadow: 0 0 0 4px rgba(248, 113, 113, .2); }
+  .sys-pill.ok i { background: #1A9455; box-shadow: 0 0 0 4px rgba(74, 222, 128, .18); } .sys-pill.bad { border-color: rgba(248, 113, 113, .5); } .sys-pill.bad i { background: #D0393F; box-shadow: 0 0 0 4px rgba(248, 113, 113, .2); }
   .kpis4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
   .kpi { display: block; background: linear-gradient(180deg, color-mix(in srgb, var(--c, #4F8FE0) 9%, transparent), transparent 70%), var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 16px 18px; color: inherit; text-decoration: none; min-width: 0; transition: border-color .15s, transform .15s; }
   a.kpi:hover { border-color: color-mix(in srgb, var(--c) 45%, var(--edge)); transform: translateY(-1px); }
@@ -118,17 +118,17 @@
   .prod2 .app-icon { width: 46px; height: 46px; border-radius: 12px; }
   .p-today { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .p-today b { font-family: var(--display, inherit); font-size: 46px; line-height: 1; color: var(--acc); }
   .p-today span { display: block; color: var(--ink-2); font-size: 13px; margin: 2px 0 4px; } .p-spark { flex: 1; display: flex; justify-content: flex-end; min-width: 0; } .p-spark svg { max-width: 100%; }
-  .p-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .p-stats > div { background: rgba(255, 255, 255, .03); border: 1px solid var(--edge); border-radius: 12px; padding: 9px 11px; min-width: 0; }
+  .p-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .p-stats > div { background: rgba(16,42,72,.03); border: 1px solid var(--edge); border-radius: 12px; padding: 9px 11px; min-width: 0; }
   .p-stats span { display: block; color: var(--ink-2); font-size: 12px; } .p-stats b { font-size: 20px; }
   .prod2 footer { display: flex; gap: 8px; flex-wrap: wrap; }
   .ov-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; margin-top: 18px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; } .chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: rgba(255, 255, 255, .03); border: 1px solid var(--edge); font-size: 13.5px; }
-  .chip i { width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; } .chip.bad { border-color: rgba(248, 113, 113, .45); } .chip.bad i { background: #F87171; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; } .chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: rgba(16,42,72,.03); border: 1px solid var(--edge); font-size: 13.5px; }
+  .chip i { width: 8px; height: 8px; border-radius: 50%; background: #1A9455; } .chip.bad { border-color: rgba(248, 113, 113, .45); } .chip.bad i { background: #D0393F; }
   .todo { display: flex; align-items: center; gap: 12px; padding: 10px 6px; border-bottom: 1px solid var(--edge); color: inherit; text-decoration: none; border-radius: 8px; }
-  .todo:hover { background: rgba(255, 255, 255, .03); } .todo .ai { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); flex: none; }
+  .todo:hover { background: rgba(16,42,72,.03); } .todo .ai { width: 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); flex: none; }
   .todo .ai svg { width: 18px; height: 18px; } .todo .at { flex: 1; min-width: 0; display: flex; flex-direction: column; } .todo .at span { color: var(--ink-2); font-size: 13px; } .todo .go { color: var(--ink-2); }
   .allgood { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 24px 0; text-align: center; }
-  .ok-dot { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #4ADE80; background: rgba(74, 222, 128, .12); border: 1px solid rgba(74, 222, 128, .35); }
+  .ok-dot { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #1A9455; background: rgba(74, 222, 128, .12); border: 1px solid rgba(74, 222, 128, .35); }
   @media (max-width: 1100px) { .kpis4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ov-grid { grid-template-columns: 1fr; } }
   @media (max-width: 560px) { .p-stats { grid-template-columns: 1fr 1fr; } .kv { font-size: 30px; } }
 
@@ -140,9 +140,9 @@
   .hero-num { display: flex; align-items: center; gap: 16px; margin: 18px 0 6px; }
   .hero-num > b { font-family: var(--display, inherit); font-size: 64px; line-height: 1; color: var(--acc); letter-spacing: -.02em; }
   .dl { display: inline-block; margin-top: 4px; font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
-  .dl.up { color: #4ADE80; background: rgba(74, 222, 128, .12); } .dl.down { color: #F87171; background: rgba(248, 113, 113, .12); } .dl.flat { color: var(--ink-2); background: rgba(255, 255, 255, .06); }
+  .dl.up { color: #1A9455; background: rgba(74, 222, 128, .12); } .dl.down { color: #D0393F; background: rgba(248, 113, 113, .12); } .dl.flat { color: var(--ink-2); background: rgba(16,42,72,.06); }
   .hero-kpis, .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 14px 0 6px; }
-  .hero-kpis > div, .kpis > div { background: rgba(255, 255, 255, .03); border: 1px solid var(--edge); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .hero-kpis > div, .kpis > div { background: rgba(16,42,72,.03); border: 1px solid var(--edge); border-radius: 12px; padding: 10px 12px; min-width: 0; }
   .hero-kpis b, .kpis b { display: block; font-size: 22px; } .hero-kpis span, .kpis span { color: var(--ink-2); font-size: 12px; }
   .hero-foot { margin-top: 4px; font-size: 13px; }
   .site-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; } .site-head h3 { margin: 0; }
@@ -153,7 +153,7 @@
   .two-lists .li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .br { margin-bottom: 9px; } .brl { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
   .brl span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .brt { height: 6px; background: rgba(255, 255, 255, .06); border-radius: 99px; margin-top: 4px; overflow: hidden; } .brt i { display: block; height: 100%; border-radius: 99px; }
+  .brt { height: 6px; background: rgba(16,42,72,.06); border-radius: 99px; margin-top: 4px; overflow: hidden; } .brt i { display: block; height: 100%; border-radius: 99px; }
   .brs { color: var(--ink-2); font-size: 12px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
   @media (max-width: 900px) { .hero2 { grid-template-columns: 1fr; } .hero-num > b { font-size: 52px; } }
@@ -167,7 +167,7 @@
   .me-t b { display: block; font-weight: 500; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .me-t span { color: var(--ink-3); font-size: 13px; }
   .mainwrap { flex: 1; min-width: 0; }
-  header.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 28px; background: rgba(5,13,23,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--edge); }
+  header.top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 28px; background: rgba(255,255,255,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--edge); }
   .menu { display: none; background: none; border: 0; color: var(--ink); cursor: pointer; padding: 6px; margin-left: -6px; }
   .scrim { display: none; }
   .crumb { color: var(--ink-3); font-size: 15px; }
@@ -198,10 +198,10 @@
   .prod .app-icon { width: 84px; height: 84px; border-radius: 19px; }
   .prod h3 { font-size: 26px; }
   .prod .tag2 { color: var(--ink-2); margin: 2px 0 10px; }
-  .pillst { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 3px 11px; background: rgba(45,180,110,.12); color: #5ED79A; border: 1px solid rgba(45,180,110,.3); }
+  .pillst { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 3px 11px; background: rgba(45,180,110,.12); color: #13824B; border: 1px solid rgba(45,180,110,.3); }
   .pillst::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
   .pillst.off { background: rgba(163,182,200,.08); color: var(--ink-2); border-color: var(--edge); }
-  .pillst.bad { background: rgba(229,72,77,.12); color: #FF8A8D; border-color: rgba(229,72,77,.35); }
+  .pillst.bad { background: rgba(229,72,77,.12); color: #C8363C; border-color: rgba(229,72,77,.35); }
   .pillst.wait { background: rgba(163,182,200,.08); color: var(--ink-3); border-color: var(--edge); }
   .prod-desc { color: var(--ink-2); font-size: 15px; margin-top: 12px; }
   .prod-foot { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 16px 22px; border-top: 1px solid var(--edge); }
@@ -228,7 +228,7 @@
   .hrow .hn span { color: var(--ink-3); font-size: 12px; }
   .hs { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--ink-3); }
   .hs::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-  .hs.ok { color: #5ED79A; } .hs.bad { color: #FF8A8D; }
+  .hs.ok { color: #13824B; } .hs.bad { color: #C8363C; }
   .note { color: var(--ink-3); font-size: 13px; margin-top: 10px; }
 
   /* Tabs */
@@ -260,9 +260,9 @@
   .appc .an strong { font-family: var(--display, inherit); font-size: 34px; line-height: 1; }
   .appc .an span { color: var(--ink-2); font-size: 13px; }
   .appc .ab { display: flex; gap: 6px; flex-wrap: wrap; min-height: 22px; }
-  .appc .ab i { font-style: normal; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 9px; background: rgba(255,255,255,.04); border: 1px solid var(--edge); color: var(--ink-2); }
-  .appc .ab i.bug { color: #FF8A8D; border-color: rgba(229,72,77,.3); background: rgba(229,72,77,.08); }
-  .appc .ab i.idea { color: #C3B0FF; border-color: rgba(154,123,240,.3); background: rgba(154,123,240,.08); }
+  .appc .ab i { font-style: normal; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 9px; background: rgba(16,42,72,.04); border: 1px solid var(--edge); color: var(--ink-2); }
+  .appc .ab i.bug { color: #C8363C; border-color: rgba(229,72,77,.3); background: rgba(229,72,77,.08); }
+  .appc .ab i.idea { color: #6A4BC4; border-color: rgba(154,123,240,.3); background: rgba(154,123,240,.08); }
   .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; background: var(--card); border: 1px solid var(--edge); border-radius: 14px; padding: 10px; margin-bottom: 14px; }
   .toolbar .seg { background: var(--navy); }
   .toolbar .seg button .n { margin-left: 6px; font-size: 12px; color: var(--ink-3); }
@@ -277,7 +277,7 @@
   .appb { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border-radius: 999px; padding: 2px 10px 2px 3px; }
   .appb img { width: 18px; height: 18px; border-radius: 5px; }
   .allclear { display: grid; place-items: center; text-align: center; gap: 6px; padding: 56px 20px; background: var(--card); border: 1px dashed var(--edge-2); border-radius: 16px; }
-  .allclear .ok { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(45,180,110,.12); color: #5ED79A; margin-bottom: 6px; }
+  .allclear .ok { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(45,180,110,.12); color: #13824B; margin-bottom: 6px; }
   .allclear b { font-size: 18px; } .allclear span { color: var(--ink-2); font-size: 14px; }
   @media (max-width: 1100px) { .apps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .toolbar .search { flex-basis: 100%; margin-left: 0; } }
@@ -288,8 +288,8 @@
   .report[data-app-c] { border-left: 3px solid var(--c); }
   .report-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
   .tag { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-radius: 6px; padding: 2px 8px; }
-  .tag.bug { background: rgba(229,72,77,.14); color: #FF8A8D; }
-  .tag.idea { background: rgba(154,123,240,.15); color: #C3B0FF; }
+  .tag.bug { background: rgba(229,72,77,.14); color: #C8363C; }
+  .tag.idea { background: rgba(154,123,240,.15); color: #6A4BC4; }
   .tag.other { background: rgba(163,182,200,.12); color: var(--ink-2); }
   .status { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
   .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--ink-3)); }
@@ -304,7 +304,7 @@
   .reply-row .sv { grid-area: sv; padding: 10px 22px; font-size: 15px; }
   .reply-label { grid-area: rp; display: none; }
   .report .msg { font-size: 17px; }
-  .notify { margin-top: 14px; border: 1px solid var(--edge); border-radius: 12px; padding: 12px 14px; background: rgba(5,13,23,.5); }
+  .notify { margin-top: 14px; border: 1px solid var(--edge); border-radius: 12px; padding: 12px 14px; background: rgba(255,255,255,.5); }
   .notify .nhead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .notify .nhead label { margin: 0; display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; }
   .notify .nhead input { width: 18px; height: 18px; accent-color: var(--orange); }
@@ -321,7 +321,7 @@
   .pickrow input { width: 18px; height: 18px; accent-color: var(--orange); grid-row: span 2; }
   .pickrow .pn { font-weight: 600; } .pickrow .pe { font-size: 13px; color: var(--ink-2); grid-column: 2; }
   .notify .nbody textarea { min-height: 170px; font-size: 15px; line-height: 1.55; }
-  .notify .sent { color: #5ED79A; font-size: 13px; }
+  .notify .sent { color: #13824B; font-size: 13px; }
   .saved { color: var(--green); font-size: 13px; align-self: center; }
   .empty { text-align: center; color: var(--ink-3); padding: 48px 16px; background: var(--card); border: 1px dashed var(--edge); border-radius: 14px; }
 
@@ -406,15 +406,15 @@
   .stack { display: grid; gap: 16px; align-content: start; }
   .asc { display: flex; align-items: center; gap: 12px; } .asc .st { font-size: 20px; font-weight: 700; font-family: var(--display); }
   .stdot { width: 12px; height: 12px; border-radius: 50%; flex: none; background: var(--ink-3); }
-  .stdot.ok { background: #4ADE80; } .stdot.wait { background: var(--amber); } .stdot.bad { background: #F87171; }
-  .prog { height: 10px; border-radius: 99px; background: var(--card-2); overflow: hidden; margin-top: 10px; } .prog i { display: block; height: 100%; background: linear-gradient(90deg, var(--green), #4ADE80); border-radius: 99px; }
+  .stdot.ok { background: #1A9455; } .stdot.wait { background: var(--amber); } .stdot.bad { background: #D0393F; }
+  .prog { height: 10px; border-radius: 99px; background: var(--card-2); overflow: hidden; margin-top: 10px; } .prog i { display: block; height: 100%; background: linear-gradient(90deg, var(--green), #1A9455); border-radius: 99px; }
   .fbar { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr) 90px; gap: 12px; align-items: center; padding: 7px 0; font-size: 14px; }
   .fbar .bt { height: 12px; border-radius: 0 4px 4px 0; background: var(--card-2); overflow: hidden; } .fbar .bt i { display: block; height: 100%; background: var(--orange); border-radius: 0 4px 4px 0; }
   .fbar .n { text-align: right; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
   @media (max-width: 640px) { .fbar { grid-template-columns: minmax(0, 1fr) 70px; } .fbar .bt { grid-column: 1 / -1; grid-row: 2; } }
   .ret td.c { text-align: center; font-variant-numeric: tabular-nums; min-width: 54px; }
   .upt { display: flex; gap: 2px; height: 26px; align-items: stretch; margin-top: 6px; } .upt i { flex: 1; border-radius: 2px; background: var(--card-2); min-width: 3px; }
-  .upt i.ok { background: #2DB46E; } .upt i.mid { background: var(--amber); } .upt i.bad { background: #F87171; }
+  .upt i.ok { background: #2DB46E; } .upt i.mid { background: var(--amber); } .upt i.bad { background: #D0393F; }
   .uprow { padding: 10px 0; border-top: 1px solid var(--edge); } .uprow:first-child { border-top: 0; }
   .uprow .h { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; } .uprow .h b { font-weight: 500; }
   .mgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
@@ -427,8 +427,8 @@
   .seg button { background: none; border: 0; color: var(--ink-2); padding: 8px 14px; border-radius: 8px; cursor: pointer; font: inherit; font-weight: 600; }
   .seg button.on { background: var(--card); color: var(--ink); box-shadow: 0 0 0 1px var(--edge-2); }
   .checks { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 14px; } .checks label { display: inline-flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; }
-  .preview-mail { background: #06101C; border-radius: 12px; padding: 16px; } .preview-mail .card { background: #0F1D2E; border: 1px solid #1C3048; border-radius: 12px; padding: 18px; }
-  .preview-push { display: flex; gap: 10px; align-items: flex-start; background: rgba(255,255,255,.06); border-radius: 14px; padding: 12px; margin-top: 12px; } .preview-push img { width: 34px; height: 34px; border-radius: 8px; }
+  .preview-mail { background: #EEF2F6; border-radius: 12px; padding: 16px; } .preview-mail .card { background: #FFFFFF; border: 1px solid #DCE3EA; border-radius: 12px; padding: 18px; }
+  .preview-push { display: flex; gap: 10px; align-items: flex-start; background: rgba(16,42,72,.06); border-radius: 14px; padding: 12px; margin-top: 12px; } .preview-push img { width: 34px; height: 34px; border-radius: 8px; }
   .tgl { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--edge); } .tgl:first-of-type { border-top: 0; }
   .tgl .main b { display: block; font-weight: 500; } .tgl .main span { color: var(--ink-3); font-size: 13px; }
   .sw { position: relative; width: 44px; height: 26px; flex: none; } .sw input { opacity: 0; width: 0; height: 0; }
@@ -452,11 +452,11 @@
   .set-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 18px; border-top: 1px solid var(--edge); background: rgba(170, 196, 220, .03); color: var(--ink-3); font-size: 13px; }
   .set-foot a { color: var(--ink-2); text-decoration: none; font-weight: 600; } .set-foot a:hover { color: var(--ink); }
   .av-sm { width: 36px; height: 36px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; background: var(--card-2); color: var(--ink-2); font-weight: 700; font-size: 14px; }
-  .av-sm.me { background: rgba(247, 110, 25, .16); color: #FF9F5E; }
+  .av-sm.me { background: rgba(247, 110, 25, .16); color: #C2560C; }
   .spill { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; background: rgba(163, 182, 200, .1); color: var(--ink-2); }
   .spill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-  .spill.green { background: rgba(45, 180, 110, .14); color: #5ED79A; } .spill.amber { background: rgba(232, 176, 74, .14); color: #F2C46D; } .spill.orange { background: rgba(247, 110, 25, .15); color: #FF9F5E; }
-  .set-sec.danger > header h2 { color: #FF8A8D; } .set-sec.danger .set-card { border-color: rgba(229, 72, 77, .35); }
+  .spill.green { background: rgba(45, 180, 110, .14); color: #13824B; } .spill.amber { background: rgba(232, 176, 74, .14); color: #9E6D0A; } .spill.orange { background: rgba(247, 110, 25, .15); color: #C2560C; }
+  .set-sec.danger > header h2 { color: #C8363C; } .set-sec.danger .set-card { border-color: rgba(229, 72, 77, .35); }
   .pwform { display: none; padding: 0 18px 18px; } .pwform.open { display: block; }
   .pwform .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; } .pwform label { margin-top: 0; }
   .pwform .acts { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
@@ -467,10 +467,10 @@
     .pwform .two { grid-template-columns: 1fr; }
   }
   .person-head { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; } .person-head h1 { font-size: 34px; line-height: 1.05; overflow-wrap: anywhere; }
-  .pav { width: 64px; height: 64px; border-radius: 50%; flex: none; display: grid; place-items: center; font-family: var(--display); font-size: 30px; font-weight: 700; color: #FF9F5E; background: radial-gradient(circle at 30% 25%, rgba(247,110,25,.35), rgba(247,110,25,.12)); border: 1px solid rgba(247,110,25,.35); }
-  .meter { height: 8px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; margin-top: 8px; } .meter i { display: block; height: 100%; border-radius: 99px; transition: width .4s; }
+  .pav { width: 64px; height: 64px; border-radius: 50%; flex: none; display: grid; place-items: center; font-family: var(--display); font-size: 30px; font-weight: 700; color: #C2560C; background: radial-gradient(circle at 30% 25%, rgba(247,110,25,.35), rgba(247,110,25,.12)); border: 1px solid rgba(247,110,25,.35); }
+  .meter { height: 8px; border-radius: 99px; background: rgba(16,42,72,.06); overflow: hidden; margin-top: 8px; } .meter i { display: block; height: 100%; border-radius: 99px; transition: width .4s; }
   .gc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; } .gc-grid label { margin-top: 0; } .gc-grid > div { margin-bottom: 10px; }
-  a.srow:hover { background: rgba(255,255,255,.025); } .srow .main b .status { display: inline-flex; margin-top: 0; font-size: 12.5px; }
+  a.srow:hover { background: rgba(16,42,72,.025); } .srow .main b .status { display: inline-flex; margin-top: 0; font-size: 12.5px; }
   .tbl a.plink { color: inherit; text-decoration: none; } .tbl a.plink:hover { color: var(--orange-2); text-decoration: underline; }
   @media (max-width: 760px) { .gc-grid { grid-template-columns: 1fr; } .person-head h1 { font-size: 28px; } .pav { width: 56px; height: 56px; font-size: 26px; } }
   /* ---------- Phone layout: glass header, floating tab bar, More sheet ---------- */
@@ -482,12 +482,12 @@
     body { background: radial-gradient(520px 340px at 50% -120px, rgba(247,110,25,.16), transparent 70%), radial-gradient(600px 400px at 110% 40%, rgba(79,143,224,.07), transparent 70%), var(--night); background-attachment: fixed; }
     .side, .scrim, .menu, .crumb, #refresh-all { display: none !important; }
     #app { display: block; }
-    header.top { height: calc(52px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 14px 0; gap: 0; background: rgba(5,13,23,.45); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid transparent; transition: background .2s, border-color .2s; }
-    header.top.scrolled { background: rgba(5,13,23,.78); border-bottom-color: rgba(157,178,197,.12); }
+    header.top { height: calc(52px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 14px 0; gap: 0; background: rgba(255,255,255,.45); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid transparent; transition: background .2s, border-color .2s; }
+    header.top.scrolled { background: rgba(255,255,255,.78); border-bottom-color: rgba(60,90,120,.12); }
     .mlogo { display: block; width: 28px; height: 28px; flex: none; }
     .mtitle { display: block; position: absolute; left: 64px; right: 64px; bottom: 0; height: 52px; line-height: 52px; text-align: center; font-weight: 600; font-size: 16.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; pointer-events: none; }
     header.top.titled .mtitle { opacity: 1; transform: none; }
-    .icon-btn { display: grid !important; place-items: center; width: 36px; height: 36px; margin-left: auto; border-radius: 50%; background: rgba(255,255,255,.06); border: 1px solid rgba(157,178,197,.14); color: var(--ink); cursor: pointer; padding: 0; }
+    .icon-btn { display: grid !important; place-items: center; width: 36px; height: 36px; margin-left: auto; border-radius: 50%; background: rgba(16,42,72,.06); border: 1px solid rgba(60,90,120,.14); color: var(--ink); cursor: pointer; padding: 0; }
     .icon-btn svg { width: 18px; height: 18px; } .icon-btn.spin svg { animation: hub-spin .7s linear; }
     main { padding: 6px 16px calc(104px + env(safe-area-inset-bottom)); }
     main.enter > * { animation: hub-rise .34s cubic-bezier(.2,.8,.2,1) both; }
@@ -501,8 +501,8 @@
     .panel h3 { font-size: 21px; } .sec { margin-bottom: 10px; }
 
     /* Surfaces */
-    .panel, .kpi, .prod2, .report, .tbl-wrap, .set-card, .toolbar, .appc, .empty, .allclear, .tile, .hero-card, .soon, .prod { border-radius: 20px; border-color: rgba(157,178,197,.12); }
-    .panel { padding: 18px 16px; background: linear-gradient(180deg, rgba(255,255,255,.028), rgba(255,255,255,0) 120px), var(--card); }
+    .panel, .kpi, .prod2, .report, .tbl-wrap, .set-card, .toolbar, .appc, .empty, .allclear, .tile, .hero-card, .soon, .prod { border-radius: 20px; border-color: rgba(60,90,120,.12); }
+    .panel { padding: 18px 16px; background: linear-gradient(180deg, rgba(16,42,72,.028), rgba(255,255,255,0) 120px), var(--card); }
     .grid2, .ov-grid, .ov-row2, .lower, .charts, .products, .hero2 { gap: 12px; }
     .ov-grid, .ov-row2 { margin-top: 12px; }
     .stack { display: grid; gap: 12px; }
@@ -523,7 +523,7 @@
     input:not([type]), input[type=email], input[type=password], input[type=text], input[type=search], input[type=url], input[type=number], input[type=date], input[type=time], textarea, select { font-size: 16px; border-radius: 12px; padding: 12px 14px; }
     .tabs { border-bottom: 0; gap: 8px; margin: 0 -16px 16px; padding: 0 16px 2px; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab { flex: none; border: 1px solid rgba(157,178,197,.16); border-radius: 999px; padding: 8px 15px; background: rgba(255,255,255,.03); font-size: 14px; }
+    .tab { flex: none; border: 1px solid rgba(60,90,120,.16); border-radius: 999px; padding: 8px 15px; background: rgba(16,42,72,.03); font-size: 14px; }
     .tab.on { background: var(--ink); color: var(--navy); border-color: var(--ink); } .tab.on .n { background: rgba(6,16,28,.12); color: var(--navy); }
     .page-title .seg, .seg.full { display: flex; width: 100%; } .page-title .seg button { flex: 1; }
     .seg { border-radius: 12px; } .seg button { padding: 8px 12px; border-radius: 9px; }
@@ -541,7 +541,7 @@
     a.kpi:active, .todo:active, .appc:active, .sheet-item:active, .btn:active, .tab:active { transform: scale(.97); }
 
     /* Floating tab bar */
-    .mtabs { display: flex; flex-direction: row; flex: none; overflow: visible; position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 40; height: 64px; padding: 6px; gap: 2px; border-radius: 24px; background: rgba(12,26,42,.72); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); border: 1px solid rgba(157,178,197,.16); box-shadow: 0 16px 40px -12px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06); }
+    .mtabs { display: flex; flex-direction: row; flex: none; overflow: visible; position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 40; height: 64px; padding: 6px; gap: 2px; border-radius: 24px; background: rgba(255,255,255,.72); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); border: 1px solid rgba(60,90,120,.16); box-shadow: 0 16px 40px -12px rgba(0,0,0,.7), inset 0 1px 0 rgba(16,42,72,.06); }
     .mtab { flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 0; border-radius: 18px; background: none; color: var(--ink-3); text-decoration: none; font-size: 10.5px; font-weight: 600; cursor: pointer; padding: 0; }
     .mtab svg { width: 23px; height: 23px; }
     .mtab.on { color: var(--ink); background: rgba(247,110,25,.14); } .mtab.on svg { color: var(--orange); }
@@ -551,24 +551,133 @@
     /* More sheet */
     .msheet.open { display: block; position: fixed; inset: 0; z-index: 60; }
     .msheet .scr { position: absolute; inset: 0; background: rgba(0,0,0,.55); opacity: 0; transition: opacity .22s; }
-    .msheet .pane { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; padding: 10px 16px calc(22px + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; background: linear-gradient(180deg, #102236, #0B1828); border-top: 1px solid rgba(157,178,197,.18); transform: translateY(100%); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
+    .msheet .pane { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; padding: 10px 16px calc(22px + env(safe-area-inset-bottom)); border-radius: 28px 28px 0 0; background: linear-gradient(180deg, #FFFFFF, #F4F7FA); border-top: 1px solid rgba(60,90,120,.18); transform: translateY(100%); transition: transform .3s cubic-bezier(.2,.8,.2,1); }
     .msheet.show .scr { opacity: 1; } .msheet.show .pane { transform: none; }
-    .grab { width: 40px; height: 5px; border-radius: 3px; background: rgba(157,178,197,.3); margin: 0 auto 16px; }
+    .grab { width: 40px; height: 5px; border-radius: 3px; background: rgba(60,90,120,.3); margin: 0 auto 16px; }
     .sheet-me { display: flex; align-items: center; gap: 12px; padding: 4px 4px 14px; }
-    .sheet-me .av { width: 44px; height: 44px; background: rgba(247,110,25,.16); color: #FF9F5E; border-color: rgba(247,110,25,.3); }
+    .sheet-me .av { width: 44px; height: 44px; background: rgba(247,110,25,.16); color: #C2560C; border-color: rgba(247,110,25,.3); }
     .sheet-me b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; } .sheet-me span { color: var(--ink-3); font-size: 13px; }
     .sheet-h { color: var(--ink-3); font-size: 13px; font-weight: 600; margin: 10px 4px 8px; }
     .sheet-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
     .sheet-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 10px 2px; border-radius: 16px; color: var(--ink); text-decoration: none; font-size: 12px; font-weight: 500; text-align: center; line-height: 1.2; background: none; border: 0; cursor: pointer; }
-    .sheet-item .ic { width: 54px; height: 54px; border-radius: 17px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 15%, #0F1D2E); border: 1px solid color-mix(in srgb, var(--c) 26%, transparent); }
+    .sheet-item .ic { width: 54px; height: 54px; border-radius: 17px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 15%, #FFFFFF); border: 1px solid color-mix(in srgb, var(--c) 26%, transparent); }
     .sheet-item .ic svg { width: 24px; height: 24px; } .sheet-item img.ic { padding: 0; border: 0; object-fit: cover; }
     .sheet-item.on .ic { box-shadow: 0 0 0 2px var(--c); }
-    .sheet-out { margin-top: 16px; width: 100%; min-height: 48px; border-radius: 14px; background: rgba(229,72,77,.08); border: 1px solid rgba(229,72,77,.28); color: #FF8A8D; font-weight: 600; cursor: pointer; }
+    .sheet-out { margin-top: 16px; width: 100%; min-height: 48px; border-radius: 14px; background: rgba(229,72,77,.08); border: 1px solid rgba(229,72,77,.28); color: #C8363C; font-weight: 600; cursor: pointer; }
   }
   @media (max-width: 760px) and (prefers-reduced-motion: reduce) {
     main.enter > * { animation: none; } .msheet .pane, .msheet .scr, .mtitle { transition: none; }
   }
-.flag { width: 20px; height: 15px; border-radius: 3px; object-fit: cover; vertical-align: -2px; margin-right: 4px; box-shadow: 0 0 0 1px rgba(255,255,255,.12); }
+.flag { width: 20px; height: 15px; border-radius: 3px; object-fit: cover; vertical-align: -2px; margin-right: 4px; box-shadow: 0 0 0 1px rgba(16,42,72,.12); }
+  /* ================= Intranet design (2026-11-05) ================= */
+  :root {
+    --night: #EEF2F6; --card: #FFFFFF; --card-2: #F1F5F9; --edge: #DCE3EA; --edge-2: #C3CFDA;
+    --ink: #13202E; --ink-2: #4E6276; --ink-3: #7B8C9D; --navy: #FFFFFF;
+    --orange: #E8640F; --orange-2: #C9540A;
+    --ixblue: #0B63C5; --ixblue-2: #0A4F9E; --ixdeep: #0B2545;
+  }
+  html, body { background: var(--night); color: var(--ink); }
+  body { background: var(--night) !important; }
+  input:not([type]), input[type=email], input[type=password], input[type=text], input[type=search], input[type=url], input[type=number], input[type=date], input[type=time], textarea, select { background: #fff; border-color: #C9D4DE; }
+  .btn-primary { color: #fff; }
+  .login-card { box-shadow: 0 10px 40px -18px rgba(11,37,69,.35); }
+  .hub-logo .word b { color: var(--ixdeep); }
+  .panel, .kpi, .prod, .prod2, .hero-card, .tile, .report, .tbl-wrap, .appc, .toolbar { box-shadow: 0 1px 2px rgba(11,37,69,.06); }
+  .tip, .toast { background: #fff; box-shadow: 0 8px 24px -10px rgba(11,37,69,.3); }
+  a { color: var(--ixblue); }
+  .ix { display: none; }
+
+  @media (min-width: 761px) {
+    #app { display: block; }
+    .side, .scrim, header.top { display: none !important; }
+    .ix { display: block; }
+    main { max-width: 1240px; margin: 0 auto; padding: 28px 24px 72px; }
+    main .page-title h1, main .ov-head h1 { display: none; }
+  }
+  .ix-in { max-width: 1240px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
+  .ix-util { background: var(--ixblue); color: #fff; }
+  .ix-util .ix-in { height: 52px; justify-content: flex-end; }
+  .ix-ib { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; color: #fff; background: none; border: 0; cursor: pointer; text-decoration: none; }
+  .ix-ib:hover { background: rgba(255,255,255,.14); }
+  .ix-ib svg { width: 20px; height: 20px; }
+  .ix-search { position: relative; width: 300px; margin: 0; }
+  .ix-search input { height: 36px; border-radius: 6px; border: 0; padding: 0 38px 0 14px; font-size: 15px; color: var(--ink); }
+  .ix-search svg { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #49607A; pointer-events: none; }
+  .ix-head { background: #fff; border-bottom: 1px solid var(--edge); }
+  .ix-head .ix-in { height: 92px; }
+  .ix-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; color: var(--ixdeep); }
+  .ix-logo svg { width: 46px; height: 46px; }
+  .ix-logo b { font-family: "Orbitron", var(--display); font-weight: 800; font-size: 21px; letter-spacing: .04em; line-height: 1; display: block; }
+  .ix-logo span { display: block; font-family: "Orbitron", var(--display); font-weight: 600; font-size: 8.5px; letter-spacing: .5em; color: var(--ink-3); margin-top: 6px; }
+  .ix-nav { display: flex; flex-direction: row; flex: 0 1 auto; overflow: visible; align-items: center; gap: 6px; margin: 0 auto; }
+  .ix-nav > button, .ix-nav > a { display: inline-flex; align-items: center; gap: 6px; height: 42px; padding: 0 14px; border-radius: 4px; background: none; border: 2px solid transparent; color: #2B3B4D; font-weight: 600; font-size: 18px; cursor: pointer; text-decoration: none; }
+  .ix-nav > button:hover, .ix-nav > a:hover { color: var(--ixblue); }
+  .ix-nav > button[aria-expanded=true] { color: var(--ixblue); border-color: var(--ixdeep); }
+  .ix-nav svg { width: 14px; height: 14px; transition: transform .15s; }
+  .ix-nav > button[aria-expanded=true] svg { transform: rotate(180deg); }
+  .ix-nav em { font-style: normal; font-size: 12px; font-weight: 700; background: var(--orange); color: #fff; border-radius: 999px; padding: 0 7px; line-height: 19px; }
+  .ix-nav em:empty { display: none; }
+  .ix-me { position: relative; display: flex; align-items: center; gap: 12px; background: none; border: 0; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px; }
+  .ix-me .av { width: 54px; height: 54px; font-size: 22px; background: #D8E1EA; color: #5A6E83; border: 0; }
+  .ix-me b { display: block; font-size: 16px; color: var(--ink); max-width: 210px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ix-me small { display: block; font-size: 13px; color: var(--ink-2); }
+  .ix-drop { position: absolute; right: 0; top: calc(100% + 8px); background: #fff; border: 1px solid var(--edge); border-radius: 10px; box-shadow: 0 16px 40px -14px rgba(11,37,69,.35); padding: 8px; min-width: 200px; z-index: 60; }
+  .ix-drop a, .ix-drop button { display: flex; width: 100%; padding: 10px 12px; border-radius: 6px; background: none; border: 0; color: var(--ink); text-decoration: none; font-size: 15px; cursor: pointer; }
+  .ix-drop a:hover, .ix-drop button:hover { background: var(--card-2); }
+
+  .ix-mega { background: var(--card-2); border-bottom: 1px solid var(--edge); position: relative; z-index: 50; }
+  .ix-mega .ix-in { display: block; padding-top: 14px; padding-bottom: 18px; }
+  .ix-filter { position: relative; width: 640px; max-width: 100%; margin-bottom: 14px; }
+  .ix-filter input { height: 50px; font-size: 16px; padding: 0 44px 0 14px; border-radius: 6px; }
+  .ix-filter svg { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #49607A; pointer-events: none; }
+  .ix-cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .ix-col { background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(11,37,69,.08); display: flex; flex-direction: column; }
+  .ix-col header { position: relative; height: 56px; display: grid; place-items: center; background: var(--c); color: #fff; }
+  .ix-col header svg { width: 28px; height: 28px; }
+  .ix-col header i { position: absolute; right: 10px; top: 10px; font-style: normal; min-width: 22px; height: 22px; border-radius: 999px; background: #fff; color: var(--c); font-size: 12px; font-weight: 700; display: grid; place-items: center; padding: 0 6px; }
+  .ix-col h3 { font-family: var(--text); font-size: 19px; font-weight: 600; text-align: center; padding: 14px 10px 6px; color: var(--ink); }
+  .ix-col .ix-links { padding: 4px 10px 14px; display: flex; flex-direction: column; }
+  .ix-col .nav { color: #2B3B4D; font-size: 16px; font-weight: 400; padding: 8px 12px; border-radius: 4px; gap: 10px; }
+  .ix-col .nav:hover { background: var(--card-2); color: var(--ixblue); }
+  .ix-col .nav.on { background: #E6F0FB; color: var(--ixblue); }
+  .ix-col .nav.on::before { display: none; }
+  .ix-col .nav .ni { width: 18px; height: 18px; color: #6B7F93; }
+  .ix-col .nav.on .ni { color: var(--ixblue); }
+  .ix-col .nav em { background: var(--orange); color: #fff; }
+  .ix-col .nimg { width: 22px; height: 22px; border-radius: 5px; }
+  .ix-col .nav[hidden] { display: none; }
+  .ix-none { color: var(--ink-3); padding: 8px 12px; font-size: 14px; }
+
+  .ix-sub { background: #F3F5F8; border-bottom: 1px solid var(--edge); }
+  .ix-sub .ix-in { height: 60px; gap: 6px; overflow-x: auto; }
+  .ix-sub .ix-grp { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--ixdeep); padding-right: 18px; margin-right: 10px; border-right: 1px solid var(--edge-2); white-space: nowrap; }
+  .ix-sub a { color: var(--ixdeep); font-weight: 600; font-size: 16px; text-decoration: none; padding: 8px 12px; white-space: nowrap; border-bottom: 2px solid transparent; }
+  .ix-sub a:hover { color: var(--ixblue); }
+  .ix-sub a.on { color: var(--ixdeep); border-bottom-color: var(--ixdeep); }
+
+  .ix-banner { position: relative; overflow: hidden; color: #fff;
+    background:
+      radial-gradient(circle at 18px 18px, transparent 9px, rgba(255,255,255,.12) 10px, rgba(255,255,255,.12) 13px, transparent 14px) 0 0 / 36px 36px,
+      linear-gradient(90deg, #0B63C5 0%, #2D86DE 45%, rgba(45,134,222,.0) 75%),
+      linear-gradient(120deg, #6FB2EE, #CFE6FA 70%, #EAF4FD);
+  }
+  .ix-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,99,197,0) 40%, rgba(234,244,253,.6) 75%, rgba(234,244,253,.9)); pointer-events: none; }
+  .ix-banner .ix-in { position: relative; z-index: 1; height: 220px; justify-content: space-between; }
+  .ix-banner h1 { font-family: var(--text); font-weight: 600; font-size: 52px; letter-spacing: -.01em; text-shadow: 0 2px 12px rgba(11,37,69,.25); }
+  .ix-banner p { color: rgba(255,255,255,.88); font-size: 17px; margin-top: 6px; }
+  .ix-art { width: 380px; height: 200px; flex: none; }
+  @media (max-width: 1100px) { .ix-art { display: none; } .ix-search { width: 220px; } .ix-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ix-me b { max-width: 140px; } }
+  @media (max-width: 900px) { .ix-nav > button, .ix-nav > a { font-size: 16px; padding: 0 8px; } .ix-me > div { display: none; } .ix-banner .ix-in { height: 160px; } .ix-banner h1 { font-size: 40px; } }
+
+  /* Phone: same light palette */
+  @media (max-width: 760px) {
+    body { background: var(--night) !important; }
+    header.top { background: rgba(255,255,255,.82) !important; border-bottom: 1px solid var(--edge); }
+    .mtabs { background: rgba(255,255,255,.92) !important; box-shadow: 0 14px 34px -14px rgba(11,37,69,.35) !important; border-color: var(--edge) !important; }
+    .msheet .pane { background: #fff !important; }
+    .msheet .scr { background: rgba(11,37,69,.35) !important; }
+  }
+  /* ================= end intranet design ================= */
 </style>
 </head>
 <body>
@@ -656,6 +765,40 @@
   </aside>
   <div class="scrim" id="scrim"></div>
   <div class="mainwrap">
+    <div class="ix" id="ix">
+      <div class="ix-util"><div class="ix-in">
+        <a class="ix-ib" href="https://orvixstudios.net" target="_blank" rel="noopener" title="orvixstudios.net"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></a>
+        <button class="ix-ib" type="button" id="ix-refresh" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></button>
+        <a class="ix-ib" href="#/support" title="Support inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></a>
+        <label class="ix-search"><input id="ix-q" type="search" placeholder="Start searching..." autocomplete="off" aria-label="Find a page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
+      </div></div>
+      <div class="ix-head"><div class="ix-in">
+        <a class="ix-logo" href="#/"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="33" fill="none" stroke="#E8640F" stroke-width="26" stroke-dasharray="63.1 6" transform="rotate(155.2 50 50)"/></svg><div><b>ORVIX</b><span>CENTRAL HUB</span></div></a>
+        <nav class="ix-nav" aria-label="Sections">
+          <button type="button" data-mega="all" aria-expanded="false">Departments <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button type="button" data-mega="Products" aria-expanded="false">Products <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <a href="#/support">Support <em id="ix-bugs"></em></a>
+          <a href="#/health">Health</a>
+        </nav>
+        <div class="ix-me" id="ix-me" role="button" tabindex="0" aria-haspopup="true"><span class="av" id="ix-av">J</span><div><b id="ix-who"></b><small>Admin, Orvix Studios</small></div>
+          <div class="ix-drop hidden" id="ix-drop"><a href="#/settings">Settings</a><a href="https://orvixstudios.net" target="_blank" rel="noopener">orvixstudios.net</a><button type="button" id="ix-out">Sign out</button></div>
+        </div>
+      </div></div>
+      <div class="ix-mega hidden" id="ix-mega"><div class="ix-in">
+        <label class="ix-filter"><input id="ix-filter" type="search" placeholder="Type to filter..." autocomplete="off" aria-label="Filter pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
+        <div class="ix-cols" id="ix-cols"></div>
+      </div></div>
+      <div class="ix-sub"><div class="ix-in" id="ix-sub"></div></div>
+      <div class="ix-banner"><div class="ix-in">
+        <div><h1 id="ix-title">Overview</h1><p id="ix-sec">Orvix Central Hub</p></div>
+        <svg class="ix-art" viewBox="0 0 380 200" aria-hidden="true">
+          <circle cx="250" cy="100" r="80" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2" stroke-dasharray="6 10"/>
+          <circle cx="250" cy="100" r="46" fill="none" stroke="#E8640F" stroke-width="16" stroke-dasharray="63 6" transform="rotate(155 250 100)" opacity=".92"/>
+          <path d="M60 150 C 140 160, 240 150, 360 40" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="3" stroke-linecap="round"/>
+          <g transform="translate(330 62) rotate(-38)" fill="#fff"><path d="M-30 0 L22 -3 Q30 0 22 3 L-30 0Z"/><path d="M-4 -2 L-14 -22 L-8 -22 L8 -2Z"/><path d="M-4 2 L-14 22 L-8 22 L8 2Z"/><path d="M-26 -1 L-32 -9 L-28 -9 L-20 -1Z"/><path d="M-26 1 L-32 9 L-28 9 L-20 1Z"/></g>
+        </svg>
+      </div></div>
+    </div>
     <header class="top" id="top">
       <svg class="mlogo" viewBox="0 0 100 100" aria-hidden="true" data-go="#/"><circle cx="50" cy="50" r="33" fill="none" stroke="#F76E19" stroke-width="26" stroke-dasharray="63.1 6" transform="rotate(155.2 50 50)"/></svg>
       <div class="mtitle" id="mtitle" aria-hidden="true">Overview</div>
@@ -681,22 +824,22 @@
       <div class="sheet-me"><span class="av" id="sheet-av">J</span><div style="min-width:0"><b id="sheet-who"></b><span>Hub admin</span></div></div>
       <div class="sheet-h">Tools</div>
       <div class="sheet-grid">
-        <a class="sheet-item" data-nav="analytics" href="#/analytics" style="--c:#8FB8F0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Analytics</a>
-        <a class="sheet-item" data-nav="insights" href="#/insights" style="--c:#F2C46D"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span>Insights</a>
-        <a class="sheet-item" data-nav="announce" href="#/announce" style="--c:#FF9F5E"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l6 4V6L7 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span>Announce</a>
-        <a class="sheet-item" data-nav="audit" href="#/audit" style="--c:#C3B0FF"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>Audit log</a>
-        <a class="sheet-item" data-nav="costs" href="#/costs" style="--c:#5ED79A"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/></svg></span>Costs</a>
-        <a class="sheet-item" data-nav="releases" href="#/releases" style="--c:#8ED8FF"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/></svg></span>Releases</a>
-        <a class="sheet-item" data-nav="gifts" href="#/gifts" style="--c:#FF8A8D"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg></span>Gift codes</a>
-        <a class="sheet-item" data-nav="discord" href="#/discord" style="--c:#8B93F8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg></span>Discord</a>
-        <a class="sheet-item" data-nav="settings" href="#/settings" style="--c:#A3B6C8"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 6.2l2.1 2.1M17.7 15.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 17.8l2.1-2.1M17.7 8.3l2.1-2.1"/></svg></span>Settings</a>
+        <a class="sheet-item" data-nav="analytics" href="#/analytics" style="--c:#2462AE"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Analytics</a>
+        <a class="sheet-item" data-nav="insights" href="#/insights" style="--c:#9E6D0A"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></span>Insights</a>
+        <a class="sheet-item" data-nav="announce" href="#/announce" style="--c:#C2560C"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4h4l6 4V6L7 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span>Announce</a>
+        <a class="sheet-item" data-nav="audit" href="#/audit" style="--c:#6A4BC4"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg></span>Audit log</a>
+        <a class="sheet-item" data-nav="costs" href="#/costs" style="--c:#13824B"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.6-1-1.7-1.5-3-1.5-1.7 0-3 .9-3 2.2 0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2-1.4 0-2.6-.6-3.1-1.6M12 6v2M12 16v2"/></svg></span>Costs</a>
+        <a class="sheet-item" data-nav="releases" href="#/releases" style="--c:#1A7FB0"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/></svg></span>Releases</a>
+        <a class="sheet-item" data-nav="gifts" href="#/gifts" style="--c:#C8363C"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg></span>Gift codes</a>
+        <a class="sheet-item" data-nav="discord" href="#/discord" style="--c:#4A52CF"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg></span>Discord</a>
+        <a class="sheet-item" data-nav="settings" href="#/settings" style="--c:#5B6E82"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 6.2l2.1 2.1M17.7 15.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 17.8l2.1-2.1M17.7 8.3l2.1-2.1"/></svg></span>Settings</a>
       </div>
       <div class="sheet-h">Apps</div>
       <div class="sheet-grid">
         <a class="sheet-item" data-nav="aero" href="#/aero/bugs" style="--c:#F76E19"><img class="ic" src="icon-aero.png" alt="">Orvix Aero</a>
-        <a class="sheet-item" data-nav="grid" href="#/grid" style="--c:#8ED8FF"><img class="ic" src="icon-grid.png" alt="">Orvix Grid</a>
-        <a class="sheet-item" data-nav="family" href="#/family" style="--c:#5ED79A"><img class="ic" src="icon-family.png" alt="">Orvix Family</a>
-        <a class="sheet-item" data-nav="cabin" href="#/cabin" style="--c:#F2B66D"><img class="ic" src="icon-cabin.png" alt="">Orvix Cabin</a>
+        <a class="sheet-item" data-nav="grid" href="#/grid" style="--c:#1A7FB0"><img class="ic" src="icon-grid.png" alt="">Orvix Grid</a>
+        <a class="sheet-item" data-nav="family" href="#/family" style="--c:#13824B"><img class="ic" src="icon-family.png" alt="">Orvix Family</a>
+        <a class="sheet-item" data-nav="cabin" href="#/cabin" style="--c:#AD6610"><img class="ic" src="icon-cabin.png" alt="">Orvix Cabin</a>
       </div>
       <button class="sheet-out" id="sheet-out" type="button">Sign out</button>
     </div>
@@ -958,6 +1101,7 @@ const crumb = (html) => {
   $('#crumb').innerHTML = '<span>Central Hub</span>' + (html ? '<i>/</i>' + html : '<i>/</i><b>Overview</b>');
   const t = document.createElement('div'); t.innerHTML = html || '<b>Overview</b>';
   $('#mtitle').textContent = ($('b', t) || t).textContent.trim();
+  const ixt = $('#ix-title'); if (ixt) ixt.textContent = $('#mtitle').textContent;
 };
 // Phone tab bar: four main places, everything else lives under More.
 const TAB_OF = { home: 'home', support: 'support', users: 'users', health: 'health' };
@@ -966,6 +1110,7 @@ function setNav(key) {
   document.querySelectorAll('.mtab').forEach((a) => a.classList.toggle('on', a.dataset.tab === (TAB_OF[key] || 'more')));
   $('#app').classList.remove('open');
   closeSheet();
+  if (typeof ixUpdate === 'function') { ixUpdate(key); ixMega(false); }
   const v = $('#view'); v.classList.remove('enter'); void v.offsetWidth; v.classList.add('enter');
 }
 function openSheet() {
@@ -985,6 +1130,68 @@ addEventListener('scroll', () => { const y = scrollY, t = $('#top'); t.classList
 $('#menu').addEventListener('click', () => $('#app').classList.toggle('open'));
 $('#scrim').addEventListener('click', () => $('#app').classList.remove('open'));
 $('#refresh-all').addEventListener('click', () => { cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {}, outside: {}, checklist: null }; health.last = null; route(); });
+// ---------- Intranet header (computer layout) ----------
+const IX_GROUPS = [
+  { name: 'Operations', c: '#0B63C5', icon: '<path d="M3 12h4l2.5-6 5 12 2.5-6h4"/>', keys: ['home', 'users', 'analytics', 'insights', 'health'] },
+  { name: 'Support', c: '#0E8A4A', icon: '<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>', keys: ['support', 'announce', 'discord', 'gifts'] },
+  { name: 'Admin', c: '#5D6F82', icon: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.2-6 8-6s7 2 8 6"/>', keys: ['audit', 'costs', 'releases', 'cityphotos', 'settings'] },
+  { name: 'Products', c: '#0B2545', icon: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/>', keys: ['aero', 'grid', 'family', 'cabin'] },
+];
+const ixLink = (key) => document.querySelector('#side a.nav[data-nav="' + key + '"], #ix-cols a.nav[data-nav="' + key + '"]');
+(function buildIx() {
+  const cols = $('#ix-cols');
+  IX_GROUPS.forEach((g) => {
+    const col = document.createElement('section'); col.className = 'ix-col'; col.style.setProperty('--c', g.c); col.dataset.group = g.name;
+    col.innerHTML = '<header><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + g.icon + '</svg><i>' + g.keys.length + '</i></header><h3>' + g.name + '</h3><div class="ix-links"></div><div class="ix-none hidden">No matches</div>';
+    const box = $('.ix-links', col);
+    g.keys.forEach((k) => { const a = ixLink(k); if (a) box.appendChild(a); });
+    cols.appendChild(col);
+  });
+  // anything left in the old sidebar still gets a home
+  document.querySelectorAll('#side nav a.nav').forEach((a) => $('.ix-links', cols.children[2]).appendChild(a));
+})();
+const ixMega = (open, which) => {
+  const m = $('#ix-mega');
+  m.classList.toggle('hidden', !open);
+  document.querySelectorAll('.ix-nav [data-mega]').forEach((b) => b.setAttribute('aria-expanded', String(open && b.dataset.mega === which)));
+  document.querySelectorAll('#ix-cols .ix-col').forEach((c) => c.classList.toggle('hidden', open && which !== 'all' && c.dataset.group !== which));
+  $('#ix-cols').style.gridTemplateColumns = open && which !== 'all' ? 'minmax(0, 360px)' : '';
+  if (!open) { $('#ix-filter').value = ''; ixFilter(''); }
+};
+function ixFilter(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#ix-cols .ix-col').forEach((c) => {
+    let n = 0;
+    c.querySelectorAll('a.nav').forEach((a) => { const hit = !q || a.textContent.toLowerCase().includes(q); a.hidden = !hit; if (hit) n++; });
+    $('.ix-none', c).classList.toggle('hidden', n > 0);
+    $('header i', c).textContent = n;
+  });
+}
+document.querySelectorAll('.ix-nav [data-mega]').forEach((b) => b.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const open = b.getAttribute('aria-expanded') !== 'true';
+  ixMega(open, b.dataset.mega);
+  if (open && b.dataset.mega === 'all') setTimeout(() => $('#ix-filter').focus(), 0);
+}));
+$('#ix-filter').addEventListener('input', (e) => ixFilter(e.target.value));
+$('#ix-q').addEventListener('input', (e) => { ixMega(true, 'all'); $('#ix-filter').value = e.target.value; ixFilter(e.target.value); });
+$('#ix-q').addEventListener('keydown', (e) => { if (e.key === 'Enter') { const a = document.querySelector('#ix-cols a.nav:not([hidden])'); if (a) { location.hash = a.getAttribute('href'); e.target.value = ''; ixMega(false); } } });
+$('#ix-mega').addEventListener('click', (e) => { if (e.target.closest('a')) { $('#ix-q').value = ''; ixMega(false); } e.stopPropagation(); });
+document.addEventListener('click', () => { ixMega(false); $('#ix-drop').classList.add('hidden'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { ixMega(false); $('#ix-drop').classList.add('hidden'); } });
+$('#ix-me').addEventListener('click', (e) => { e.stopPropagation(); if (!e.target.closest('#ix-drop')) $('#ix-drop').classList.toggle('hidden'); });
+$('#ix-out').addEventListener('click', () => $('#signout').click());
+$('#ix-refresh').addEventListener('click', () => $('#refresh-all').click());
+function ixUpdate(key) {
+  const g = IX_GROUPS.find((x) => x.keys.includes(key)) || IX_GROUPS[0];
+  const sub = $('#ix-sub');
+  sub.innerHTML = '<span class="ix-grp">' + g.name + '</span>' + g.keys.map((k) => {
+    const a = ixLink(k); if (!a) return '';
+    return '<a href="' + a.getAttribute('href') + '"' + (k === key ? ' class="on"' : '') + '>' + esc($('span', a)?.textContent || k) + '</a>';
+  }).join('');
+  $('#ix-sec').textContent = g.name + ' · Orvix Central Hub';
+  if (me) { $('#ix-who').textContent = me.email || ''; $('#ix-av').textContent = (me.email || '?')[0].toUpperCase(); }
+}
 
 const ago = (t) => {
   const m = Math.round((Date.now() - new Date(t)) / 60000);
@@ -1008,7 +1215,7 @@ const IC = {
 };
 
 let aeroOpen = 0, gridOpen = 0;
-const setBadge = () => { const n = aeroOpen + gridOpen; ['#nav-bugs', '#tab-bugs'].forEach((id) => { const el = $(id); if (el) el.textContent = n || ''; }); };
+const setBadge = () => { const n = aeroOpen + gridOpen; ['#nav-bugs', '#tab-bugs', '#ix-bugs'].forEach((id) => { const el = $(id); if (el) el.textContent = n || ''; }); };
 async function loadGrid(force) {
   if (cache.grid && !force) return cache.grid;
   const { data, error } = await sb.functions.invoke('hub-grid', { body: {} });
@@ -1080,7 +1287,7 @@ async function home() {
         <div class="p-stats"><div><span>Accounts</span><b id="ps-acc">–</b></div><div><span>Flights logged</span><b id="ps-fl">–</b></div><div><span>Subscribers</span><b id="ps-pay">–</b></div><div><span>Open bugs</span><b id="ps-bug">–</b></div></div>
         <footer><a class="btn btn-primary btn-small" href="#/aero/bugs">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/aero">Users</a><a class="btn btn-ghost btn-small" href="https://orvixaero.com" target="_blank" rel="noopener">Site ↗</a></footer>
       </article>
-      <article class="prod2" style="--acc:#8ED8FF">
+      <article class="prod2" style="--acc:#1A7FB0">
         <header><img class="app-icon" src="icon-grid.png" alt=""><div><h3>Orvix Grid</h3><div class="tag2">Star Citizen companion</div></div><span class="pillst wait" id="grid-status">Checking…</span></header>
         <div class="p-today"><div><b id="pg-today">–</b><span>players today</span><div id="pg-delta"></div></div><div class="p-spark" id="pg-spark"></div></div>
         <div class="p-stats"><div><span>Accounts</span><b id="pg-acc">–</b></div><div><span>Crews</span><b id="pg-crews">–</b></div><div><span>Upcoming ops</span><b id="pg-ops">–</b></div><div><span>Open bugs</span><b id="pg-bug">–</b></div></div>
@@ -1135,8 +1342,8 @@ async function home() {
   $('#kpis').innerHTML =
     kpi('Users today', (last(aU) + last(gU)).toLocaleString(), `${last(aU)} Aero · ${last(gU)} Grid`, aU.map((v, i) => v + gU[i]), '#F76E19', '#/analytics') +
     kpi('Website visitors today', last(vis).toLocaleString(), `${D.length ? last(D).aero_visitors : 0} aero · ${D.length ? last(D).grid_visitors : 0} grid`, vis, '#9A7BF0', '#/analytics') +
-    kpi('Paid subscribers', o ? o.paying : '–', 'Orvix Aero Pro', null, '#4ADE80', '#/users/aero') +
-    kpi('Open issues', openAero + openGrid, `${openAero} Aero · ${openGrid} Grid`, null, openAero + openGrid ? '#F2B33D' : '#4ADE80', '#/support');
+    kpi('Paid subscribers', o ? o.paying : '–', 'Orvix Aero Pro', null, '#1A9455', '#/users/aero') +
+    kpi('Open issues', openAero + openGrid, `${openAero} Aero · ${openGrid} Grid`, null, openAero + openGrid ? '#F2B33D' : '#1A9455', '#/support');
 
   if (IN_APP) toApp({ type: 'summary', users: last(aU) + last(gU), issues: openAero + openGrid, problems: bad.length });
 
@@ -1149,25 +1356,25 @@ async function home() {
   if (gOk) {
     gridOpen = g.open_bugs || 0; setBadge();
     $('#pg-acc').textContent = g.accounts.toLocaleString(); $('#pg-crews').textContent = g.crews; $('#pg-ops').textContent = g.upcoming_ops; $('#pg-bug').textContent = g.feedback_ready ? g.open_bugs : '–';
-    if (g.daily_ready) { $('#pg-today').textContent = last(gU); $('#pg-delta').innerHTML = deltaPill(last(gU), prev(gU)); $('#pg-spark').innerHTML = spark(gU, '#8ED8FF', 220, 56); }
+    if (g.daily_ready) { $('#pg-today').textContent = last(gU); $('#pg-delta').innerHTML = deltaPill(last(gU), prev(gU)); $('#pg-spark').innerHTML = spark(gU, '#1A7FB0', 220, 56); }
     else { $('#pg-today').textContent = '–'; $('#pg-delta').innerHTML = '<span class="muted" style="font-size:12px">Daily players not set up</span>'; }
   }
 
   // Daily users chart: both apps.
   if (D.length) drawLines($('#ov-users'), D.map((r, i) => ({ day: r.day, aero: aU[i], grid: gU[i], rebuilt: dl.tracking_since ? r.day < dl.tracking_since : true })),
-    [{ key: 'aero', label: 'Orvix Aero pilots', color: '#F76E19', area: true }, { key: 'grid', label: 'Orvix Grid players', color: '#8ED8FF' }], { height: 230 });
+    [{ key: 'aero', label: 'Orvix Aero pilots', color: '#F76E19', area: true }, { key: 'grid', label: 'Orvix Grid players', color: '#1A7FB0' }], { height: 230 });
   else $('#ov-users').innerHTML = '<div class="empty">No data yet.</div>';
 
   // Needs attention.
   const weekReports = gOk ? (g.by_day || []).slice(-7).reduce((x, r) => x + r.reports, 0) : 0;
   const pendingInv = (inv || []).length, emailedInv = (inv || []).filter((i) => i.emailed_at).length;
   const items = [
-    o && o.open_bugs ? [IC.bug, '#F87171', `${o.open_bugs} open Orvix Aero bug${o.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/aero/bugs'] : null,
+    o && o.open_bugs ? [IC.bug, '#D0393F', `${o.open_bugs} open Orvix Aero bug${o.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/aero/bugs'] : null,
     o && o.open_other ? [IC.msg, '#F2B33D', `${o.open_other} Orvix Aero idea${o.open_other > 1 ? 's' : ''} or message${o.open_other > 1 ? 's' : ''} to answer`, 'Waiting for a reply', '#/support'] : null,
-    gOk && g.open_bugs ? [IC.bug, '#F87171', `${g.open_bugs} open Orvix Grid bug${g.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/support'] : null,
+    gOk && g.open_bugs ? [IC.bug, '#D0393F', `${g.open_bugs} open Orvix Grid bug${g.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/support'] : null,
     weekReports ? [IC.msg, '#F2B33D', `${weekReports} Orvix Grid player report${weekReports > 1 ? 's' : ''} this week`, 'Crew posts or members flagged', '#/support'] : null,
-    pendingInv ? [IC.users, '#8ED8FF', `${pendingInv} invite${pendingInv > 1 ? 's' : ''} not accepted yet`, emailedInv ? `${emailedInv} emailed` : 'Not emailed yet', '#/users/aero'] : null,
-    ...bad.map((r) => [IC.code, '#F87171', `${r.name} has a problem`, r.why || 'Not responding', '#/health']),
+    pendingInv ? [IC.users, '#1A7FB0', `${pendingInv} invite${pendingInv > 1 ? 's' : ''} not accepted yet`, emailedInv ? `${emailedInv} emailed` : 'Not emailed yet', '#/users/aero'] : null,
+    ...bad.map((r) => [IC.code, '#D0393F', `${r.name} has a problem`, r.why || 'Not responding', '#/health']),
   ].filter(Boolean);
   $('#todo').innerHTML = items.length
     ? items.map(([icon, c, t, sub, href]) => `<a class="todo" href="${href}" style="--c:${c}"><span class="ai">${icon}</span><div class="at"><b>${esc(t)}</b><span>${esc(sub)}</span></div><span class="go">→</span></a>`).join('')
@@ -1196,7 +1403,7 @@ function drawChart(el, rows) {
   const y = (v) => T + (H - T - B) * (1 - v / top);
   const fmt = (d) => new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   let g = '';
-  for (let i = 0; i <= 4; i++) g += `<line x1="${L}" x2="${W}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#1C3048" stroke-width="1"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
+  for (let i = 0; i <= 4; i++) g += `<line x1="${L}" x2="${W}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#DCE3EA" stroke-width="1"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
   const bars = rows.map((r, i) => {
     const x = L + i * bw + bw * 0.18, w = bw * 0.64, h = y(0) - y(r.signups);
     const every = W < 480 ? 3 : 2, lbl = (n - 1 - i) % every ? '' : `<text x="${i === n - 1 ? W - 2 : x + w / 2}" y="${H - 8}" fill="#6F879B" font-size="11" text-anchor="${i === n - 1 ? 'end' : 'middle'}">${fmt(r.day)}</text>`;
@@ -1287,8 +1494,8 @@ function waitlist(w) {
   $('#pane').innerHTML = `
     <div class="kpis4" style="grid-template-columns:repeat(3,minmax(0,1fr))">
       <div class="kpi" style="--c:#F76E19"><div class="kl">On the waitlist</div><div class="kv">${w.total}</div><div class="ks">From orvixaero.com</div></div>
-      <div class="kpi" style="--c:#4ADE80"><div class="kl">Last 7 days</div><div class="kv">${w.week}</div><div class="ks">New signups</div></div>
-      <div class="kpi" style="--c:#8FB8F0"><div class="kl">Today</div><div class="kv">${w.today}</div><div class="ks">Eastern time</div></div>
+      <div class="kpi" style="--c:#1A9455"><div class="kl">Last 7 days</div><div class="kv">${w.week}</div><div class="ks">New signups</div></div>
+      <div class="kpi" style="--c:#2462AE"><div class="kl">Today</div><div class="kv">${w.today}</div><div class="ks">Eastern time</div></div>
     </div>
     <section class="panel" style="margin-bottom:18px"><div class="sec" style="margin-bottom:10px"><h3>Signups, last 30 days</h3></div>
       <div class="wl-bars">${days.map((d) => `<div class="wl-bar" title="${fmt(d.day)}: ${d.n}"><i style="height:${Math.round((d.n / max) * 100)}%"></i></div>`).join('')}</div>
@@ -1328,9 +1535,9 @@ function androidTesters(p) {
   $('#pane').innerHTML = `
     <div class="kpis4">
       <div class="kpi" style="--c:#F76E19"><div class="kl">Signed up</div><div class="kv">${all.length}</div><div class="ks">On orvixaero.com/android</div></div>
-      <div class="kpi" style="--c:#4ADE80"><div class="kl">In the closed test</div><div class="kv">${onPlay} <span style="font-size:18px;color:var(--ink-3)">of ${goal}</span></div><div class="ks">${onPlay >= goal ? 'Enough testers for Google' : `${goal - onPlay} more needed`}</div></div>
-      <div class="kpi" style="--c:#8FB8F0"><div class="kl">Testing now</div><div class="kv">${n('testing')}</div><div class="ks">${nextDone ? `Furthest along: day ${nextDone.stage.day} of 14` : 'No one yet'}</div></div>
-      <div class="kpi" style="--c:#C3B0FF"><div class="kl">Earned 6 months of Pro</div><div class="kv">${n('earned')}</div><div class="ks">Given out at launch</div></div>
+      <div class="kpi" style="--c:#1A9455"><div class="kl">In the closed test</div><div class="kv">${onPlay} <span style="font-size:18px;color:var(--ink-3)">of ${goal}</span></div><div class="ks">${onPlay >= goal ? 'Enough testers for Google' : `${goal - onPlay} more needed`}</div></div>
+      <div class="kpi" style="--c:#2462AE"><div class="kl">Testing now</div><div class="kv">${n('testing')}</div><div class="ks">${nextDone ? `Furthest along: day ${nextDone.stage.day} of 14` : 'No one yet'}</div></div>
+      <div class="kpi" style="--c:#6A4BC4"><div class="kl">Earned 6 months of Pro</div><div class="kv">${n('earned')}</div><div class="ks">Given out at launch</div></div>
     </div>
     <section class="panel" style="margin-bottom:18px">
       <div class="sec" style="margin-bottom:6px"><h3>Google’s requirement</h3><span class="spacer"></span><span class="muted">${Math.min(onPlay, goal)} of ${goal} in the test</span></div>
@@ -1544,7 +1751,7 @@ function drawBars(el, rows, series) {
   const fmt = (d) => new Date(d + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const every = Math.max(1, Math.ceil(n / (W < 480 ? 5 : 8)));
   let g = '';
-  for (let i = 0; i <= 4; i++) g += `<line x1="${L}" x2="${W}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#1C3048"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
+  for (let i = 0; i <= 4; i++) g += `<line x1="${L}" x2="${W}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#DCE3EA"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
   const bars = rows.map((r, i) => {
     const w = Math.max(2, bw * 0.64), x = L + i * bw + (bw - w) / 2;
     let base = 0, segs = '';
@@ -1759,7 +1966,7 @@ async function analyticsPage() {
       <div class="seg">${[7, 30, 90].map((d) => `<button data-d="${d}" class="${aDays === d ? 'on' : ''}">${d} days</button>`).join('')}</div></div>
     <div class="hero2">
       <section class="hero-card" style="--acc:#F76E19" id="h-aero"><div class="muted">Loading…</div></section>
-      <section class="hero-card" style="--acc:#8ED8FF" id="h-grid"><div class="muted">Loading…</div></section>
+      <section class="hero-card" style="--acc:#1A7FB0" id="h-grid"><div class="muted">Loading…</div></section>
     </div>
     <div class="sec"><h2>Websites</h2><span class="muted">Anonymous visit counts, no cookies</span></div>
     <div class="charts" style="margin-bottom:30px" id="sites"><div class="muted">Loading…</div></div>
@@ -1829,8 +2036,8 @@ async function analyticsPage() {
       <div class="two-lists"><div><h4>Top pages</h4>${pages.length ? pages.map((x) => `<div class="li"><span>${esc(x.path)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">No visits yet</div>'}</div>
         <div><h4>Top sites linking here</h4>${refs.length ? refs.map((x) => `<div class="li"><span>${esc(x.site)}</span><b>${x.visitors}</b></div>`).join('') : '<div class="muted">None yet</div>'}</div></div></section>`;
   };
-  $('#sites').innerHTML = siteCard('aero', 'orvixaero.com', 'https://orvixaero.com', '#F76E19') + siteCard('grid', 'orvixgrid.com', 'https://www.orvixgrid.com', '#8ED8FF');
-  for (const [key, color] of [['aero', '#F76E19'], ['grid', '#8ED8FF']]) {
+  $('#sites').innerHTML = siteCard('aero', 'orvixaero.com', 'https://orvixaero.com', '#F76E19') + siteCard('grid', 'orvixgrid.com', 'https://www.orvixgrid.com', '#1A7FB0');
+  for (const [key, color] of [['aero', '#F76E19'], ['grid', '#1A7FB0']]) {
     drawLines($(`#sites [data-site="${key}"]`), D.map((r) => ({ day: r.day, visitors: r[key + '_visitors'], views: r[key + '_views'] })),
       [{ key: 'visitors', label: 'Visitors', color }, { key: 'views', label: 'Page views', color: '#9A7BF0', dashed: true }], { height: 170 });
   }
@@ -1877,7 +2084,7 @@ function whereHtml(b) {
   }).join('') + (b.unknown_country ? `<div class="brs" style="margin-top:6px">${b.unknown_country} more with no location</div>` : '');
 }
 // Websites: visitors by how they arrived, with the top names in each.
-const SRC = { search: ['Search', '#4ADE80'], social: ['Social', '#F76E19'], link: ['Other websites', '#8ED8FF'], campaign: ['Your tagged links', '#9A7BF0'], email: ['Email', '#F2B33D'], direct: ['Direct or typed in', '#6F879B'] };
+const SRC = { search: ['Search', '#1A9455'], social: ['Social', '#F76E19'], link: ['Other websites', '#1A7FB0'], campaign: ['Your tagged links', '#9A7BF0'], email: ['Email', '#F2B33D'], direct: ['Direct or typed in', '#6F879B'] };
 function howHtml(b) {
   const ss = (b && b.sources) || [];
   if (!ss.length) return '<div class="muted">No visits counted yet</div>';
@@ -1924,10 +2131,10 @@ function drawLines(el, rows, series, opt = {}) {
   const every = Math.max(1, Math.ceil(n / (W < 480 ? 4 : 7)));
   const uid = 'g' + Math.random().toString(36).slice(2, 8);
   let grid = '';
-  for (let i = 0; i <= 4; i++) grid += `<line x1="${L}" x2="${W - R}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#1C3048"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
+  for (let i = 0; i <= 4; i++) grid += `<line x1="${L}" x2="${W - R}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#DCE3EA"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
   const lastRebuilt = rows.map((r) => !!r.rebuilt).lastIndexOf(true);
   const shade = lastRebuilt >= 0 && lastRebuilt < n - 1
-    ? `<rect x="${L}" y="${T}" width="${Math.max(0, x(lastRebuilt) - L + ((W - L - R) / Math.max(1, n - 1)) / 2)}" height="${H - T - B}" fill="#0B1726" opacity=".55"/><text x="${L + 6}" y="${T + 14}" fill="#56708A" font-size="10.5">rebuilt</text>`
+    ? `<rect x="${L}" y="${T}" width="${Math.max(0, x(lastRebuilt) - L + ((W - L - R) / Math.max(1, n - 1)) / 2)}" height="${H - T - B}" fill="#DCE6F0" opacity=".7"/><text x="${L + 6}" y="${T + 14}" fill="#56708A" font-size="10.5">rebuilt</text>`
     : '';
   const labels = rows.map((r, i) => ((n - 1 - i) % every ? '' : `<text x="${i === n - 1 ? W - R : i === 0 ? L : x(i)}" y="${H - 6}" fill="#6F879B" font-size="11" text-anchor="${i === n - 1 ? 'end' : i === 0 ? 'start' : 'middle'}">${fmt(r.day)}</text>`)).join('');
   const paths = series.map((s2) => {
@@ -1936,7 +2143,7 @@ function drawLines(el, rows, series, opt = {}) {
     const area = s2.area ? `<path d="${d}L${x(n - 1)},${y(0)}L${x(0)},${y(0)}Z" fill="url(#${uid}-${s2.key})"/>` : '';
     const grad = s2.area ? `<linearGradient id="${uid}-${s2.key}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s2.color}" stop-opacity=".35"/><stop offset="1" stop-color="${s2.color}" stop-opacity="0"/></linearGradient>` : '';
     const last = pts.at(-1);
-    return { grad, body: `${area}<path d="${d}" fill="none" stroke="${s2.color}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" ${s2.dashed ? 'stroke-dasharray="5 4"' : ''}/>${last ? `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${s2.color}" stroke="#0F1D2E" stroke-width="2"/>` : ''}` };
+    return { grad, body: `${area}<path d="${d}" fill="none" stroke="${s2.color}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" ${s2.dashed ? 'stroke-dasharray="5 4"' : ''}/>${last ? `<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${s2.color}" stroke="#FFFFFF" stroke-width="2"/>` : ''}` };
   });
   const legend = `<div class="legend">${series.map((s2) => `<span><i style="background:${s2.color}${s2.dashed ? ';opacity:.8' : ''}"></i>${s2.label}</span>`).join('')}</div>`;
   el.innerHTML = `${legend}<div style="position:relative"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(series.map((s2) => s2.label).join(' and '))} per day">
@@ -1963,7 +2170,7 @@ let supApp = 'all';
 const APPS = {
   aero: { name: 'Orvix Aero', icon: 'icon-aero.png', c: '#F76E19' },
   family: { name: 'Orvix Family', icon: 'icon-family.png', c: '#9A7BF0' },
-  cabin: { name: 'Orvix Cabin', icon: 'icon-cabin.png', c: '#F2B66D' },
+  cabin: { name: 'Orvix Cabin', icon: 'icon-cabin.png', c: '#AD6610' },
   grid: { name: 'Orvix Grid', icon: 'icon-grid.png', c: '#4F8FE0' },
 };
 const appBadge = (k) => `<span class="appb" style="--c:${APPS[k].c}"><img src="${APPS[k].icon}" alt="">${APPS[k].name}</span>`;
@@ -2334,7 +2541,7 @@ const fmtBytes = (b) => b >= 1e9 ? (b / 1e9).toFixed(2) + ' GB' : b >= 1e6 ? (b 
 const money = (n) => '$' + (Math.round(n * 100) / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 function meter(label, used, max, usedTxt, maxTxt, note = '') {
   const pct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
-  const c = !max ? 'var(--ink-3)' : pct >= 90 ? '#F87171' : pct >= 70 ? 'var(--amber)' : '#4ADE80';
+  const c = !max ? 'var(--ink-3)' : pct >= 90 ? '#D0393F' : pct >= 70 ? 'var(--amber)' : '#1A9455';
   return `<div class="srow" style="display:block"><div style="display:flex;justify-content:space-between;gap:10px"><b style="font-weight:600">${label}</b><span class="val">${usedTxt}${maxTxt ? ` of ${maxTxt}` : ''}</span></div>
     ${max ? `<div class="meter"><i style="width:${pct}%;background:${c}"></i></div>` : ''}${note ? `<div class="muted" style="font-size:13px;margin-top:6px">${note}</div>` : ''}</div>`;
 }
@@ -2518,9 +2725,9 @@ async function discordPage() {
   pane.innerHTML = `
     <div class="kpis4" style="margin-bottom:6px">
       <div class="kpi" style="--c:#5865F2"><div class="kl">Members</div><div class="kv">${(d.members ?? 0).toLocaleString()}</div><div class="ks">${d.online ?? 0} online now</div></div>
-      <div class="kpi" style="--c:#4ADE80"><div class="kl">Joined this week</div><div class="kv">${d.week ?? '–'}</div><div class="ks">${d.recent ? 'Newest below' : 'Needs the Server Members setting'}</div></div>
+      <div class="kpi" style="--c:#1A9455"><div class="kl">Joined this week</div><div class="kv">${d.week ?? '–'}</div><div class="ks">${d.recent ? 'Newest below' : 'Needs the Server Members setting'}</div></div>
       <div class="kpi" style="--c:#F2B33D"><div class="kl">Channels</div><div class="kv">${textCh.length}</div><div class="ks">text channels</div></div>
-      <div class="kpi" style="--c:#C3B0FF"><div class="kl">Boosts</div><div class="kv">${d.boosts ?? 0}</div><div class="ks">Server level ${d.tier ?? 0}</div></div>
+      <div class="kpi" style="--c:#6A4BC4"><div class="kl">Boosts</div><div class="kv">${d.boosts ?? 0}</div><div class="ks">Server level ${d.tier ?? 0}</div></div>
     </div>
     <div class="set">
     <section class="set-sec"><header><h2>Post a message</h2><p>Posts as the Orvix Central Hub bot. Discord formatting works (**bold**, links).</p></header><div><form class="set-card" id="dc-post" style="padding:16px 18px">
@@ -2640,7 +2847,7 @@ async function insightsPage(days = insightsPage.days || 30) {
       <section class="panel"><h3>Google search</h3><div class="sub">orvixaero.com on Google · last 4 weeks</div><div id="i-gsc-a"><div class="muted">Loading…</div></div></section>
     </div>
 
-    <div class="ins-app" style="--acc:#8ED8FF"><img src="icon-grid.png" alt=""><div><h2>Orvix Grid</h2><span>Star Citizen companion · app and orvixgrid.com</span></div></div>
+    <div class="ins-app" style="--acc:#1A7FB0"><img src="icon-grid.png" alt=""><div><h2>Orvix Grid</h2><span>Star Citizen companion · app and orvixgrid.com</span></div></div>
     <section class="panel"><h3>Players</h3><div class="sub" id="i-gp-sub">Last ${days} days</div><div id="i-gp"><div class="muted">Loading…</div></div></section>
     <div class="grid2" style="margin-top:18px">
       <section class="panel"><h3>Uptime</h3><div class="sub">Checked every 10 minutes · last 30 days</div><div id="i-up-g"><div class="muted">Loading…</div></div></section>
@@ -2760,7 +2967,7 @@ async function announcePage() {
     </div>`;
   const read = () => Object.assign(st, { subject: $('#an-subj').value, message: $('#an-msg').value, push: $('#an-push').value, email: $('#an-email').checked, pushOn: $('#an-pushon').checked });
   const prev = () => {
-    read(); const accent = st.app === 'grid' ? '#8ED8FF' : '#F76E19', name = APPNAME[st.app];
+    read(); const accent = st.app === 'grid' ? '#1A7FB0' : '#F76E19', name = APPNAME[st.app];
     const paras = st.message.trim().split(/\n{2,}/).filter(Boolean).map((p) => `<p style="margin:0 0 12px;line-height:1.6">${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
     $('#an-prev').innerHTML = (st.email ? `<div class="preview-mail"><div class="card"><div style="font-weight:800;font-size:18px;color:${accent};margin-bottom:6px">${name}</div>
         <div style="font-size:18px;font-weight:700;margin-bottom:10px">${esc(st.subject || 'Subject')}</div><div style="font-size:15px">${paras || '<p class="muted">Your message</p>'}</div></div></div>` : '') +
@@ -2915,7 +3122,7 @@ async function family() {
       <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>At a glance</h3></div>
         <div class="act"><span class="ai" style="--c:var(--blue)">${IC.users}</span><div class="at"><b>${n(f.accounts)} Orvix Family accounts</b><span>Signed up in the Family app</span></div></div>
         <div class="act"><span class="ai" style="--c:var(--green)">${IC.phone}</span><div class="at"><b>${n(f.phones)} phones with notifications on</b><span>Get landed, delay and pickup alerts</span></div></div>
-        <div class="act"><span class="ai" style="--c:${f.reports_open ? '#F87171' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.reports_open)} reported chat message${f.reports_open === 1 ? '' : 's'}</b><span>Last 30 days</span></div></div>
+        <div class="act"><span class="ai" style="--c:${f.reports_open ? '#D0393F' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.reports_open)} reported chat message${f.reports_open === 1 ? '' : 's'}</b><span>Last 30 days</span></div></div>
         <a class="act" href="#/support" onclick="supApp = 'family'" style="color:inherit;text-decoration:none"><span class="ai" style="--c:var(--orange)">${IC.bug}</span><div class="at"><b>Bug reports and ideas</b><span>Sent from Settings in the app · open in Support</span></div></a>
       </section>
     </div>
@@ -2946,7 +3153,7 @@ async function cabin() {
       <section class="panel"><div class="sec" style="margin-bottom:4px"><h3>At a glance</h3></div>
         <div class="act"><span class="ai" style="--c:var(--blue)">${IC.users}</span><div class="at"><b>${n(f.crashpads)} crashpad${f.crashpads === 1 ? '' : 's'}</b><span>${n(f.crashpad_members)} roommates in them</span></div></div>
         <div class="act"><span class="ai" style="--c:var(--orange)">${IC.card}</span><div class="at"><b>$4.99 a month or $39.99 a year</b><span>An Orvix Aero plan includes Cabin</span></div></div>
-        <a class="act" href="#/support" onclick="supApp = 'cabin'" style="color:inherit;text-decoration:none"><span class="ai" style="--c:${f.feedback_open ? '#F87171' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.feedback_open)} open bug report${f.feedback_open === 1 ? '' : 's'} and ideas</b><span>Sent from the app · open in Support</span></div></a>
+        <a class="act" href="#/support" onclick="supApp = 'cabin'" style="color:inherit;text-decoration:none"><span class="ai" style="--c:${f.feedback_open ? '#D0393F' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${n(f.feedback_open)} open bug report${f.feedback_open === 1 ? '' : 's'} and ideas</b><span>Sent from the app · open in Support</span></div></a>
         <a class="act" href="#/releases" style="color:inherit;text-decoration:none"><span class="ai" style="--c:var(--green)">${IC.phone}</span><div class="at"><b>Versions in use</b><span>Open Releases</span></div></a>
       </section>
     </div>
