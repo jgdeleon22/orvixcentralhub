@@ -719,11 +719,10 @@
   }
   /* ================= end intranet design ================= */
 
-/* Big screens: scale the whole layout up so it fills the window */
-@media (min-width: 1500px) { .ix-in, main { max-width: 1340px; } }
-@media (min-width: 1900px) { html { zoom: 1.06; } }
-@media (min-width: 2300px) { html { zoom: 1.2; } }
-@media (min-width: 3000px) { html { zoom: 1.5; } }
+/* Big screens: use the width; only very large screens scale up */
+@media (min-width: 1500px) { .ix-in, main { max-width: 1360px; } }
+@media (min-width: 2500px) { html { zoom: 1.2; } }
+@media (min-width: 3200px) { html { zoom: 1.5; } }
 </style>
 </head>
 <body>
