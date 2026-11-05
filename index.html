@@ -691,7 +691,8 @@
   .ix-pc .f i.soon { background: #FDF0E2; color: #A35A0B; } .ix-pc .f i.test { background: #E6F0FB; color: #0B63C5; }
   @media (max-width: 1100px) { .ix-pg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .ix-sub { background: #F3F5F8; border-bottom: 1px solid var(--edge); }
-  .ix-sub .ix-in { height: 60px; gap: 6px; overflow-x: auto; }
+  .ix-sub .ix-in { height: 60px; gap: 6px; overflow-x: auto; justify-content: center; }
+  @media (max-width: 900px) { .ix-sub .ix-in { justify-content: flex-start; } }
   .ix-sub .ix-grp { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--ixdeep); padding-right: 18px; margin-right: 10px; border-right: 1px solid var(--edge-2); white-space: nowrap; }
   .ix-sub a { color: var(--ixdeep); font-weight: 600; font-size: 16px; text-decoration: none; padding: 8px 12px; white-space: nowrap; border-bottom: 2px solid transparent; }
   .ix-sub a:hover { color: var(--ixblue); }
