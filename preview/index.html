@@ -2135,7 +2135,7 @@ function drawLines(el, rows, series, opt = {}) {
   for (let i = 0; i <= 4; i++) grid += `<line x1="${L}" x2="${W - R}" y1="${y(i * step)}" y2="${y(i * step)}" stroke="#DCE3EA"/><text x="${L - 8}" y="${y(i * step) + 4}" fill="#6F879B" font-size="11" text-anchor="end">${i * step}</text>`;
   const lastRebuilt = rows.map((r) => !!r.rebuilt).lastIndexOf(true);
   const shade = lastRebuilt >= 0 && lastRebuilt < n - 1
-    ? `<rect x="${L}" y="${T}" width="${Math.max(0, x(lastRebuilt) - L + ((W - L - R) / Math.max(1, n - 1)) / 2)}" height="${H - T - B}" fill="#0B1726" opacity=".55"/><text x="${L + 6}" y="${T + 14}" fill="#56708A" font-size="10.5">rebuilt</text>`
+    ? `<rect x="${L}" y="${T}" width="${Math.max(0, x(lastRebuilt) - L + ((W - L - R) / Math.max(1, n - 1)) / 2)}" height="${H - T - B}" fill="#DCE6F0" opacity=".7"/><text x="${L + 6}" y="${T + 14}" fill="#56708A" font-size="10.5">rebuilt</text>`
     : '';
   const labels = rows.map((r, i) => ((n - 1 - i) % every ? '' : `<text x="${i === n - 1 ? W - R : i === 0 ? L : x(i)}" y="${H - 6}" fill="#6F879B" font-size="11" text-anchor="${i === n - 1 ? 'end' : i === 0 ? 'start' : 'middle'}">${fmt(r.day)}</text>`)).join('');
   const paths = series.map((s2) => {
