@@ -654,6 +654,28 @@
   .ix-col .nav[hidden] { display: none; }
   .ix-none { color: var(--ink-3); padding: 8px 12px; font-size: 14px; }
 
+  .ix-prods { display: none; }
+  .ix-mega.prod-mode .ix-filter, .ix-mega.prod-mode .ix-cols { display: none; }
+  .ix-mega.prod-mode .ix-prods { display: block; margin: 16px 0 20px; }
+  .ix-mega .ix-prods { opacity: 0; transform: translateY(-10px); transition: opacity .22s ease, transform .3s cubic-bezier(.2,.8,.2,1); }
+  .ix-mega.open .ix-prods { opacity: 1; transform: none; transition-delay: .06s; }
+  .ix-ph { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+  .ix-ph b { font-size: 18px; color: var(--ixdeep); }
+  .ix-ph span { color: var(--ink-3); font-size: 14px; }
+  .ix-pg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .ix-pc { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid var(--edge); border-top: 4px solid var(--c); border-radius: 8px; padding: 18px; text-decoration: none; color: var(--ink); transition: box-shadow .15s, transform .15s; }
+  .ix-pc:hover { box-shadow: 0 12px 28px -16px rgba(11,37,69,.4); transform: translateY(-2px); }
+  .ix-pc.on { outline: 2px solid var(--ixblue); outline-offset: -1px; }
+  .ix-pc .t { display: flex; align-items: center; gap: 12px; }
+  .ix-pc img { width: 44px; height: 44px; border-radius: 11px; flex: none; }
+  .ix-pc b { display: block; font-size: 17px; color: var(--ixdeep); line-height: 1.2; }
+  .ix-pc small { display: block; font-size: 13px; color: var(--ink-3); }
+  .ix-pc p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+  .ix-pc .f { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--edge); font-size: 13.5px; }
+  .ix-pc .f span { font-weight: 600; color: var(--ixblue); }
+  .ix-pc .f i { font-style: normal; font-weight: 600; border-radius: 999px; padding: 1px 9px; font-size: 12px; background: #E3F4EA; color: #0E8A4A; }
+  .ix-pc .f i.soon { background: #FDF0E2; color: #A35A0B; } .ix-pc .f i.test { background: #E6F0FB; color: #0B63C5; }
+  @media (max-width: 1100px) { .ix-pg { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .ix-sub { background: #F3F5F8; border-bottom: 1px solid var(--edge); }
   .ix-sub .ix-in { height: 60px; gap: 6px; overflow-x: auto; }
   .ix-sub .ix-grp { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--ixdeep); padding-right: 18px; margin-right: 10px; border-right: 1px solid var(--edge-2); white-space: nowrap; }
@@ -661,13 +683,11 @@
   .ix-sub a:hover { color: var(--ixblue); }
   .ix-sub a.on { color: var(--ixdeep); border-bottom-color: var(--ixdeep); }
 
-  .ix-banner { position: relative; overflow: hidden; color: #fff;
-    background:
-      radial-gradient(circle at 18px 18px, transparent 9px, rgba(255,255,255,.12) 10px, rgba(255,255,255,.12) 13px, transparent 14px) 0 0 / 36px 36px,
-      linear-gradient(90deg, #0B63C5 0%, #2D86DE 45%, rgba(45,134,222,.0) 75%),
-      linear-gradient(120deg, #6FB2EE, #CFE6FA 70%, #EAF4FD);
-  }
-  .ix-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,99,197,0) 40%, rgba(234,244,253,.6) 75%, rgba(234,244,253,.9)); pointer-events: none; }
+  .ix-banner { position: relative; overflow: hidden; color: #fff; background:
+      radial-gradient(rgba(255,255,255,.26) 1.1px, transparent 1.6px) 0 0 / 22px 22px,
+      repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 1px, transparent 1px 28px),
+      linear-gradient(90deg, #F2F8FE 0, #F2F8FE calc((100% - 1240px) / 2 - 220px), #3F92E2 calc((100% - 1240px) / 2 + 10px), #0B63C5 calc((100% - 1240px) / 2 + 220px), #0B63C5 46%, #2F87DD 60%, #BFDDF7 74%, #F2F8FE 86%); }
+  .ix-banner::after { content: none; }
   .ix-banner .ix-in { position: relative; z-index: 1; height: 220px; justify-content: space-between; }
   .ix-banner h1 { font-family: var(--text); font-weight: 600; font-size: 52px; letter-spacing: -.01em; text-shadow: 0 2px 12px rgba(11,37,69,.25); }
   .ix-banner p { color: rgba(255,255,255,.88); font-size: 17px; margin-top: 6px; }
@@ -793,6 +813,7 @@
       <div class="ix-mega" id="ix-mega" inert><div class="ix-in">
         <label class="ix-filter"><input id="ix-filter" type="search" placeholder="Type to filter..." autocomplete="off" aria-label="Filter pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
         <div class="ix-cols" id="ix-cols"></div>
+        <div class="ix-prods" id="ix-prods"></div>
       </div></div>
       <div class="ix-sub"><div class="ix-in" id="ix-sub"></div></div>
       <div class="ix-banner"><div class="ix-in">
@@ -1156,8 +1177,24 @@ const ixLink = (key) => document.querySelector('#side a.nav[data-nav="' + key + 
   // anything left in the old sidebar still gets a home
   document.querySelectorAll('#side nav a.nav').forEach((a) => $('.ix-links', cols.children[2]).appendChild(a));
 })();
+const IX_PRODUCTS = {
+  aero: { c: '#E8640F', who: 'For airline pilots', d: 'Bug reports, testers, admins, waitlist and Android testers.', st: ['App Store', ''] },
+  grid: { c: '#0E8A4A', who: 'Star Citizen companion', d: 'Players, crews, ops and reports from orvixgrid.com.', st: ['Live', ''] },
+  family: { c: '#0B63C5', who: "For pilots' families", d: 'Circles, live trips and landing alerts for families.', st: ['In review', 'soon'] },
+  cabin: { c: '#5D6F82', who: 'For flight attendants', d: 'Testers, subscriptions and crew tools.', st: ['In testing', 'test'] },
+};
+(function buildProds() {
+  const box = $('#ix-prods');
+  box.innerHTML = '<div class="ix-ph"><b>Products</b><span>Open an app\'s admin pages</span></div><div class="ix-pg">' + Object.entries(IX_PRODUCTS).map(([k, p]) => {
+    const a = ixLink(k); if (!a) return '';
+    const img = $('img', a)?.getAttribute('src') || '';
+    return '<a class="ix-pc" data-pk="' + k + '" href="' + a.getAttribute('href') + '" style="--c:' + p.c + '"><div class="t"><img src="' + img + '" alt=""><div><b>' + esc($('span', a)?.textContent || k) + '</b><small>' + esc(p.who) + '</small></div></div><p>' + esc(p.d) + '</p><div class="f"><span>Open admin →</span><i class="' + p.st[1] + '">' + esc(p.st[0]) + '</i></div></a>';
+  }).join('') + '</div>';
+})();
 const ixMega = (open, which) => {
   const m = $('#ix-mega');
+  if (open) m.classList.toggle('prod-mode', which === 'Products');
+  document.querySelectorAll('.ix-pc').forEach((c) => c.classList.toggle('on', !!ixLink(c.dataset.pk)?.classList.contains('on')));
   m.classList.toggle('open', open); m.inert = !open;
   document.querySelectorAll('.ix-nav [data-mega]').forEach((b) => b.setAttribute('aria-expanded', String(open && b.dataset.mega === which)));
   document.querySelectorAll('#ix-cols .ix-col').forEach((c) => c.classList.toggle('hidden', open && which !== 'all' && c.dataset.group !== which));
