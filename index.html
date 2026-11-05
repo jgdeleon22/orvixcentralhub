@@ -1416,6 +1416,18 @@ async function home() {
         <div class="p-stats"><div><span>Accounts</span><b id="pg-acc">–</b></div><div><span>Crews</span><b id="pg-crews">–</b></div><div><span>Upcoming ops</span><b id="pg-ops">–</b></div><div><span>Open bugs</span><b id="pg-bug">–</b></div></div>
         <footer><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/grid">Users</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">Site ↗</a></footer>
       </article>
+      <article class="prod2" style="--acc:#13824B">
+        <header><img class="app-icon" src="icon-family.png" alt=""><div><h3>Orvix Family</h3><div class="tag2">Companion app for pilots’ families</div></div><span class="pillst wait" id="family-status">Checking…</span></header>
+        <div class="p-today"><div><b id="pf-today">–</b><span>family members today</span><div id="pf-delta"></div></div><div class="p-spark" id="pf-spark"></div></div>
+        <div class="p-stats"><div><span>Family members</span><b id="pf-mem">–</b></div><div><span>Pilots sharing</span><b id="pf-share">–</b></div><div><span>Messages this week</span><b id="pf-msg">–</b></div><div><span>Open bugs</span><b id="pf-bug">–</b></div></div>
+        <footer><a class="btn btn-primary btn-small" href="#/family">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/family">Users</a><a class="btn btn-ghost btn-small" href="#/support" onclick="supApp = 'family'">Support</a></footer>
+      </article>
+      <article class="prod2" style="--acc:#AD6610">
+        <header><img class="app-icon" src="icon-cabin.png" alt=""><div><h3>Orvix Cabin</h3><div class="tag2">Flight attendant schedule &amp; layovers</div></div><span class="pillst wait" id="cabin-status">Checking…</span></header>
+        <div class="p-today"><div><b id="pc-today">–</b><span>crew members today</span><div id="pc-delta"></div></div><div class="p-spark" id="pc-spark"></div></div>
+        <div class="p-stats"><div><span>Crew members</span><b id="pc-acc">–</b></div><div><span>Layover tips</span><b id="pc-tips">–</b></div><div><span>Subscribers</span><b id="pc-pay">–</b></div><div><span>Open bugs</span><b id="pc-bug">–</b></div></div>
+        <footer><a class="btn btn-primary btn-small" href="#/cabin">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/cabin">Users</a><a class="btn btn-ghost btn-small" href="#/support" onclick="supApp = 'cabin'">Support</a></footer>
+      </article>
     </div>
     <div class="ov-grid">
       <section class="panel ov-chart"><div class="sec" style="margin-bottom:6px"><h3>Daily users</h3><a class="muted" href="#/analytics" style="color:var(--ink-2)">Analytics →</a></div><div class="lines" id="ov-users"><div class="muted">Loading…</div></div></section>
@@ -1435,17 +1447,24 @@ async function home() {
   loadWaitlist(true).then((w) => { const el = $('#ov-wait'); if (el) el.innerHTML = `<div class="kr"><div><div class="kv" style="font-size:32px">${w.total}</div><div class="ks">${w.total === 1 ? 'person' : 'people'} on the orvixaero.com waitlist</div></div><span class="ks">${w.week ? '+' + w.week + ' this week' : 'No new signups this week'}</span></div>`; }).catch(() => { const el = $('#ov-wait'); if (el) el.innerHTML = '<div class="muted">Couldn’t load the waitlist.</div>'; });
 
   cache.daily = cache.daily || {};
-  const [ov, dl, g, inv, rs] = await Promise.all([
+  cache.apps = cache.apps || {};
+  const [ov, dl, g, inv, rs, ap, fam, cab] = await Promise.all([
     loadOverview().catch((e) => ({ error: e })),
     cache.daily[14] ? Promise.resolve(cache.daily[14]) : sb.rpc('hub_daily', { p_days: 14 }).then((r) => (r.error ? null : (cache.daily[14] = r.data))),
     loadGridFull(14),
     cache.invited ? Promise.resolve(cache.invited) : sb.rpc('hub_invited').then((r) => (cache.invited = r.data || [])),
     health(),
+    cache.apps[14] ? Promise.resolve(cache.apps[14]) : sb.rpc('hub_daily_apps', { p_days: 14 }).then((r) => (r.error ? null : (cache.apps[14] = r.data))),
+    sb.rpc('hub_family').then((r) => r.data || null, () => null),
+    sb.rpc('hub_cabin').then((r) => r.data || null, () => null),
   ]);
   if (!$('#kpis')) return;
   const o = ov && !ov.error ? ov : null, gOk = g && g.connected;
   const D = dl ? dl.series : [], gMap = new Map((gOk ? g.by_day : []).map((r) => [r.day, r]));
-  const aU = D.map((r) => r.users), gU = D.map((r) => gMap.get(r.day)?.users ?? 0);
+  const aMap = new Map((ap ? ap.series : []).map((r) => [r.day, r]));
+  // Per-app people; before the per-app numbers existed, Aero falls back to everyone signed in.
+  const aU = D.map((r) => (ap ? aMap.get(r.day)?.aero ?? 0 : r.users)), gU = D.map((r) => gMap.get(r.day)?.users ?? 0);
+  const fU = D.map((r) => aMap.get(r.day)?.family ?? 0), cU = D.map((r) => aMap.get(r.day)?.cabin ?? 0);
   const vis = D.map((r) => r.aero_visitors + r.grid_visitors);
   const last = (a) => a.at(-1) ?? 0, prev = (a) => a.at(-2) ?? 0;
 
@@ -1457,22 +1476,25 @@ async function home() {
   $('#hl').innerHTML = rs.map((r) => `<span class="chip ${r.ok ? 'ok' : 'bad'}" title="${esc(r.ok ? (r.ms ? r.ms + ' ms' : 'Healthy') : r.why || 'Problem')}"><i></i>${esc(r.name)}</span>`).join('');
   const pill = (el, list) => { const n = list.filter((r) => !r.ok).length; if (el) { el.className = 'pillst' + (n ? ' bad' : ''); el.textContent = n ? `${n} problem${n > 1 ? 's' : ''}` : 'Operational'; } };
   pill($('#aero-status'), rs.filter((r) => !isGrid(r)));
+  pill($('#family-status'), rs.filter((r) => !isGrid(r) && r.id !== 'site'));
+  pill($('#cabin-status'), rs.filter((r) => !isGrid(r) && r.id !== 'site'));
   if (gOk) pill($('#grid-status'), rs.filter(isGrid)); else { const st = $('#grid-status'); st.className = 'pillst off'; st.textContent = 'Not connected'; }
 
   // KPIs.
   const kpi = (label, value, sub, vals, color, href) => `<${href ? `a href="${href}"` : 'div'} class="kpi" style="--c:${color}"><div class="kl">${label}</div><div class="kv">${value}</div><div class="kr"><span class="ks">${sub}</span>${spark(vals, color)}</div></${href ? 'a' : 'div'}>`;
+  const openFam = o ? (o.family_open_bugs || 0) + (o.family_open_other || 0) : 0, openCab = o ? (o.cabin_open_bugs || 0) + (o.cabin_open_other || 0) : 0;
   const openAero = o ? o.open_bugs + o.open_other : 0, openGrid = gOk ? (g.feedback || []).filter((f) => ['new', 'working', 'needs-info'].includes(f.status)).length : 0;
   $('#kpis').innerHTML =
-    kpi('Users today', (last(aU) + last(gU)).toLocaleString(), `${last(aU)} Aero · ${last(gU)} Grid`, aU.map((v, i) => v + gU[i]), '#F76E19', '#/analytics') +
+    kpi('Users today', (last(aU) + last(fU) + last(cU) + last(gU)).toLocaleString(), `${last(aU)} Aero · ${last(fU)} Family · ${last(cU)} Cabin · ${last(gU)} Grid`, aU.map((v, i) => v + fU[i] + cU[i] + gU[i]), '#F76E19', '#/analytics') +
     kpi('Website visitors today', last(vis).toLocaleString(), `${D.length ? last(D).aero_visitors : 0} aero · ${D.length ? last(D).grid_visitors : 0} grid`, vis, '#9A7BF0', '#/analytics') +
-    kpi('Paid subscribers', o ? o.paying : '–', 'Orvix Aero Pro', null, '#1A9455', '#/users/aero') +
-    kpi('Open issues', openAero + openGrid, `${openAero} Aero · ${openGrid} Grid`, null, openAero + openGrid ? '#F2B33D' : '#1A9455', '#/support');
+    kpi('Paid subscribers', o ? o.paying + (o.cabin_paying || 0) : '–', o ? `${o.paying} Aero Pro · ${o.cabin_paying || 0} Cabin` : 'Aero Pro · Cabin', null, '#1A9455', '#/users/aero') +
+    kpi('Open issues', openAero + openFam + openCab + openGrid, `${openAero} Aero · ${openFam} Family · ${openCab} Cabin · ${openGrid} Grid`, null, openAero + openFam + openCab + openGrid ? '#F2B33D' : '#1A9455', '#/support');
 
-  if (IN_APP) toApp({ type: 'summary', users: last(aU) + last(gU), issues: openAero + openGrid, problems: bad.length });
+  if (IN_APP) toApp({ type: 'summary', users: last(aU) + last(fU) + last(cU) + last(gU), issues: openAero + openFam + openCab + openGrid, problems: bad.length });
 
   // Products.
   if (o) {
-    aeroOpen = o.open_bugs || 0; setBadge();
+    aeroOpen = (o.open_bugs || 0) + (o.family_open_bugs || 0) + (o.cabin_open_bugs || 0); setBadge();
     $('#ps-acc').textContent = o.accounts.toLocaleString(); $('#ps-fl').textContent = o.flights.toLocaleString(); $('#ps-pay').textContent = o.paying; $('#ps-bug').textContent = o.open_bugs;
   }
   $('#pa-today').textContent = last(aU); $('#pa-delta').innerHTML = deltaPill(last(aU), prev(aU)); $('#pa-spark').innerHTML = spark(aU, '#F76E19', 220, 56);
@@ -1483,9 +1505,15 @@ async function home() {
     else { $('#pg-today').textContent = '–'; $('#pg-delta').innerHTML = '<span class="muted" style="font-size:12px">Daily players not set up</span>'; }
   }
 
-  // Daily users chart: both apps.
-  if (D.length) drawLines($('#ov-users'), D.map((r, i) => ({ day: r.day, aero: aU[i], grid: gU[i], rebuilt: dl.tracking_since ? r.day < dl.tracking_since : true })),
-    [{ key: 'aero', label: 'Orvix Aero pilots', color: '#F76E19', area: true }, { key: 'grid', label: 'Orvix Grid players', color: '#1A7FB0' }], { height: 230 });
+  const nf = (v) => (v == null ? '–' : Number(v).toLocaleString());
+  $('#pf-today').textContent = last(fU); $('#pf-delta').innerHTML = deltaPill(last(fU), prev(fU)); $('#pf-spark').innerHTML = spark(fU, '#13824B', 220, 56);
+  $('#pc-today').textContent = last(cU); $('#pc-delta').innerHTML = deltaPill(last(cU), prev(cU)); $('#pc-spark').innerHTML = spark(cU, '#AD6610', 220, 56);
+  $('#pf-mem').textContent = nf(fam?.members); $('#pf-share').textContent = nf(fam?.pilots_sharing); $('#pf-msg').textContent = nf(fam?.messages_7d); $('#pf-bug').textContent = o ? nf(o.family_open_bugs) : '–';
+  $('#pc-acc').textContent = nf(cab?.accounts); $('#pc-tips').textContent = nf(cab?.tips); $('#pc-pay').textContent = nf(cab?.plans); $('#pc-bug').textContent = o ? nf(o.cabin_open_bugs) : '–';
+
+  // Daily users chart: every app.
+  if (D.length) drawLines($('#ov-users'), D.map((r, i) => ({ day: r.day, aero: aU[i], family: fU[i], cabin: cU[i], grid: gU[i], rebuilt: dl.tracking_since ? r.day < dl.tracking_since : true })),
+    [{ key: 'aero', label: 'Orvix Aero pilots', color: '#F76E19', area: true }, { key: 'family', label: 'Orvix Family', color: '#13824B' }, { key: 'cabin', label: 'Orvix Cabin crew', color: '#AD6610' }, { key: 'grid', label: 'Orvix Grid players', color: '#1A7FB0' }], { height: 230 });
   else $('#ov-users').innerHTML = '<div class="empty">No data yet.</div>';
 
   // Needs attention.
@@ -1494,6 +1522,12 @@ async function home() {
   const items = [
     o && o.open_bugs ? [IC.bug, '#D0393F', `${o.open_bugs} open Orvix Aero bug${o.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/aero/bugs'] : null,
     o && o.open_other ? [IC.msg, '#F2B33D', `${o.open_other} Orvix Aero idea${o.open_other > 1 ? 's' : ''} or message${o.open_other > 1 ? 's' : ''} to answer`, 'Waiting for a reply', '#/support'] : null,
+    o && o.family_open_bugs ? [IC.bug, '#D0393F', `${o.family_open_bugs} open Orvix Family bug${o.family_open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/support'] : null,
+    o && o.family_open_other ? [IC.msg, '#F2B33D', `${o.family_open_other} Orvix Family idea${o.family_open_other > 1 ? 's' : ''} or message${o.family_open_other > 1 ? 's' : ''} to answer`, 'Waiting for a reply', '#/support'] : null,
+    o && o.family_chat_reports ? [IC.msg, '#F2B33D', `${o.family_chat_reports} reported Family chat message${o.family_chat_reports > 1 ? 's' : ''} this week`, 'Check what was reported', '#/family'] : null,
+    o && o.cabin_open_bugs ? [IC.bug, '#D0393F', `${o.cabin_open_bugs} open Orvix Cabin bug${o.cabin_open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/support'] : null,
+    o && o.cabin_open_other ? [IC.msg, '#F2B33D', `${o.cabin_open_other} Orvix Cabin idea${o.cabin_open_other > 1 ? 's' : ''} or message${o.cabin_open_other > 1 ? 's' : ''} to answer`, 'Waiting for a reply', '#/support'] : null,
+    o && o.cabin_tip_reports ? [IC.msg, '#F2B33D', `${o.cabin_tip_reports} reported layover tip${o.cabin_tip_reports > 1 ? 's' : ''} this week`, 'Check what was reported', '#/cabin'] : null,
     gOk && g.open_bugs ? [IC.bug, '#D0393F', `${g.open_bugs} open Orvix Grid bug${g.open_bugs > 1 ? 's' : ''}`, 'Reported in the app', '#/support'] : null,
     weekReports ? [IC.msg, '#F2B33D', `${weekReports} Orvix Grid player report${weekReports > 1 ? 's' : ''} this week`, 'Crew posts or members flagged', '#/support'] : null,
     pendingInv ? [IC.users, '#1A7FB0', `${pendingInv} invite${pendingInv > 1 ? 's' : ''} not accepted yet`, emailedInv ? `${emailedInv} emailed` : 'Not emailed yet', '#/users/aero'] : null,
@@ -1915,14 +1949,15 @@ async function loadGridFull(days = 30, force) {
 }
 
 // ---------- Users & Access ----------
-let userQ = '', userFilter = 'all';
+let userQ = '', userFilter = 'all', usersApp = 'aero';
 async function usersPage(app) {
   crumb('<b>Users &amp; Access</b>'); setNav('users');
   $('#view').innerHTML = `
     <div class="page-title"><div><h1>Users &amp; Access</h1><div class="muted">Everyone with an account, and who can get in.</div></div>
-      <div class="seg"><button data-go="#/users/aero" class="${app === 'aero' ? 'on' : ''}">Orvix Aero</button><button data-go="#/users/grid" class="${app === 'grid' ? 'on' : ''}">Orvix Grid</button></div></div>
+      <div class="seg">${[['aero', 'Orvix Aero'], ['family', 'Orvix Family'], ['cabin', 'Orvix Cabin'], ['grid', 'Orvix Grid']].map(([k, l]) => `<button data-go="#/users/${k}" class="${app === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
     <div id="upane"><div class="muted">Loading…</div></div>`;
   if (app === 'grid') return usersGrid();
+  usersApp = ['family', 'cabin'].includes(app) ? app : 'aero';
   try {
     if (!cache.users) { const { data, error } = await sb.rpc('hub_users'); if (error) throw error; cache.users = data; }
     if (!cache.invited) { const { data } = await sb.rpc('hub_invited'); cache.invited = data || []; }
@@ -1934,6 +1969,7 @@ function accessBadges(u) {
   if (u.admin) b.push('<span class="b orange">Admin</span>');
   if (u.tester) b.push('<span class="b blue">Tester</span>');
   if (u.plan) b.push(`<span class="b green">Paying · ${esc((u.plan.product || '').replace('orvix_pro_', '').replace('_', ' '))}</span>`);
+  if (u.cabin_plan) b.push('<span class="b green">Paying · Cabin</span>');
   if (u.gift) b.push(`<span class="b violet">Free ${u.gift.until ? 'until ' + esc(day(u.gift.until)) : 'for good'}</span>`);
   if (!b.length) b.push('<span class="b gray">No access</span>');
   return b.join('');
@@ -1957,17 +1993,20 @@ async function reloadUsers() {
   cache.users = u.data || cache.users; cache.invited = i.data || []; cache.people = null; cache.overview = null; renderAeroUsers();
 }
 function renderAeroUsers() {
-  const all = cache.users, q = userQ.toLowerCase();
-  const F = { all: () => true, testers: (u) => u.tester, admins: (u) => u.admin, free: (u) => !!u.gift, paying: (u) => !!u.plan, none: (u) => !u.tester && !u.admin && !u.gift && !u.plan };
+  // Orvix Family is free, so everyone there can use it.
+  const canUse = (u) => usersApp === 'family' || u.tester || u.admin || u.gift || u.plan || u.cabin_plan;
+  // Older hub_users has no app field: everyone stays under Orvix Aero.
+  const all = cache.users.filter((u) => (u.app || 'aero') === usersApp), q = userQ.toLowerCase();
+  const F = { all: () => true, testers: (u) => u.tester, admins: (u) => u.admin, free: (u) => !!u.gift, paying: (u) => !!u.plan || !!u.cabin_plan, none: (u) => !canUse(u) };
   const list = all.filter((u) => F[userFilter](u) && (!q || u.email.includes(q)));
   // People added who haven't signed up yet (shown under Everyone, Testers, Admins and Free access).
   const IF = { all: () => true, testers: (i) => i.access === 'tester', admins: (i) => i.access === 'admin', free: (i) => i.access === 'free', paying: () => false, none: () => false };
-  const invitedList = (cache.invited || []).filter((i) => IF[userFilter](i) && (!q || i.email.includes(q)));
+  const invitedList = (usersApp === 'aero' ? cache.invited || [] : []).filter((i) => IF[userFilter](i) && (!q || i.email.includes(q)));
   const cnt = (k) => all.filter(F[k]).length;
   $('#upane').innerHTML = `
     <div class="tiles">
       ${tileHtml(IC.users, 'var(--blue)', 'Accounts', all.length, `${all.filter((u) => !u.confirmed).length} not confirmed yet`)}
-      ${tileHtml(IC.key, 'var(--green)', 'Can use the app', all.filter((u) => u.tester || u.admin || u.gift || u.plan).length, 'Tester, admin, free or paying')}
+      ${tileHtml(IC.key, 'var(--green)', 'Can use the app', all.filter(canUse).length, usersApp === 'family' ? 'Orvix Family is free' : 'Tester, admin, free or paying')}
       ${tileHtml(IC.card, 'var(--violet)', 'Paying', cnt('paying'), `${cnt('free')} with free access`)}
       ${tileHtml(IC.active, 'var(--orange)', 'Active this week', all.filter((u) => u.last_sign_in_at && Date.now() - new Date(u.last_sign_in_at) < 7 * 864e5).length, 'Signed in, last 7 days')}
     </div>
@@ -2090,6 +2129,8 @@ async function analyticsPage() {
     <div class="hero2">
       <section class="hero-card" style="--acc:#F76E19" id="h-aero"><div class="muted">Loading…</div></section>
       <section class="hero-card" style="--acc:#1A7FB0" id="h-grid"><div class="muted">Loading…</div></section>
+      <section class="hero-card" style="--acc:#13824B" id="h-family"><div class="muted">Loading…</div></section>
+      <section class="hero-card" style="--acc:#AD6610" id="h-cabin"><div class="muted">Loading…</div></section>
     </div>
     <div class="sec"><h2>Websites</h2><span class="muted">Anonymous visit counts, no cookies</span></div>
     <div class="charts" style="margin-bottom:30px" id="sites"><div class="muted">Loading…</div></div>
@@ -2122,12 +2163,17 @@ async function analyticsPage() {
   const days = aDays;
   cache.daily = cache.daily || {};
   cache.sites = cache.sites || {};
-  const [an, dl, g, sbk] = await Promise.all([
+  cache.apps = cache.apps || {};
+  const [an, dl, g, sbk, apr, famr, cabr] = await Promise.all([
     cache.analytics[days] ? Promise.resolve({ data: cache.analytics[days] }) : sb.rpc('hub_analytics', { p_days: days }),
     cache.daily[days] ? Promise.resolve({ data: cache.daily[days] }) : sb.rpc('hub_daily', { p_days: days }),
     loadGridFull(days),
     cache.sites[days] ? Promise.resolve({ data: cache.sites[days] }) : sb.rpc('hub_site_breakdown', { p_days: days }),
+    cache.apps[days] ? Promise.resolve({ data: cache.apps[days] }) : sb.rpc('hub_daily_apps', { p_days: days }),
+    sb.rpc('hub_family'),
+    sb.rpc('hub_cabin'),
   ]);
+  const AP = apr && !apr.error && apr.data ? (cache.apps[days] = apr.data) : null, apMap = new Map((AP ? AP.series : []).map((r) => [r.day, r]));
   const BK = (cache.sites[days] = sbk.data || {});
   if (!$('#h-aero') || aDays !== days) return;
   if (an.error || dl.error) { $('#h-aero').innerHTML = `<div class="empty">${esc(failMsg(an.error || dl.error))}</div>`; return; }
@@ -2137,9 +2183,13 @@ async function analyticsPage() {
   const gByDay = new Map(G.map((r) => [r.day, r]));
 
   // Hero: daily users, one card per product.
-  const aeroRows = D.map((r) => ({ day: r.day, users: r.users, visitors: r.aero_visitors, rebuilt: !since || r.day < since }));
+  const aeroRows = D.map((r) => ({ day: r.day, users: AP ? apMap.get(r.day)?.aero ?? 0 : r.users, visitors: r.aero_visitors, rebuilt: !since || r.day < since }));
+  const appRows = (k) => D.map((r) => ({ day: r.day, users: apMap.get(r.day)?.[k] ?? 0, rebuilt: !since || r.day < since }));
   const gridRows = D.map((r) => ({ day: r.day, users: gByDay.get(r.day)?.users ?? 0, visitors: r.grid_visitors, rebuilt: !gOk || !g.tracking_since || r.day < g.tracking_since }));
-  heroCard($('#h-aero'), { icon: 'icon-aero.png', name: 'Orvix Aero', unit: 'pilots', rows: aeroRows, unique: d.unique_users, week: d.week_users, accounts: t.accounts, ready: true });
+  heroCard($('#h-aero'), { icon: 'icon-aero.png', name: 'Orvix Aero', unit: 'pilots', rows: aeroRows, unique: AP ? AP.unique?.aero ?? 0 : d.unique_users, week: AP ? AP.week?.aero ?? 0 : d.week_users, accounts: t.accounts, ready: true });
+  const F = famr?.data, C = cabr?.data;
+  heroCard($('#h-family'), { icon: 'icon-family.png', name: 'Orvix Family', unit: 'family members', rows: appRows('family'), unique: AP?.unique?.family ?? 0, week: AP?.week?.family ?? 0, accounts: F?.accounts || 0, ready: !!AP, noSite: true, why: 'The hub database update for per-app numbers isn’t applied yet.' });
+  heroCard($('#h-cabin'), { icon: 'icon-cabin.png', name: 'Orvix Cabin', unit: 'crew members', rows: appRows('cabin'), unique: AP?.unique?.cabin ?? 0, week: AP?.week?.cabin ?? 0, accounts: C?.accounts || 0, ready: !!AP, noSite: true, why: 'The hub database update for per-app numbers isn’t applied yet.' });
   heroCard($('#h-grid'), { icon: 'icon-grid.png', name: 'Orvix Grid', unit: 'players', rows: gridRows, unique: gOk ? g.daily_unique : 0, week: gOk ? g.daily_week : 0, accounts: gOk ? g.accounts : 0,
     ready: gOk && g.daily_ready, why: !gOk ? 'Orvix Grid isn’t connected.' : 'Daily players start counting once the tracking step has been run in Orvix Grid’s database.' });
 
@@ -2238,7 +2288,7 @@ function heroCard(el, o) {
     </div>
     <div class="lines hero-chart"></div>
     <div class="hero-foot muted">Busiest day: <b>${peak.users}</b> on ${peak.day ? esc(day(peak.day)) : '–'}</div>` : `<div class="empty" style="margin-top:16px">${esc(o.why || 'Not set up yet.')}</div>`}`;
-  if (o.ready) drawLines($('.hero-chart', el), rows, [{ key: 'users', label: `App ${o.unit}`, color: getComputedStyle(el).getPropertyValue('--acc').trim() || '#F76E19', area: true }, { key: 'visitors', label: 'Website visitors', color: '#9A7BF0', dashed: true }], { height: 200 });
+  if (o.ready) drawLines($('.hero-chart', el), rows, [{ key: 'users', label: `App ${o.unit}`, color: getComputedStyle(el).getPropertyValue('--acc').trim() || '#F76E19', area: true }, ...(o.noSite ? [] : [{ key: 'visitors', label: 'Website visitors', color: '#9A7BF0', dashed: true }])], { height: 200 });
 }
 
 // Line chart with a soft area under the first line, a crosshair and a tooltip.
