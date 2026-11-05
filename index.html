@@ -625,8 +625,14 @@
   .ix-drop a, .ix-drop button { display: flex; width: 100%; padding: 10px 12px; border-radius: 6px; background: none; border: 0; color: var(--ink); text-decoration: none; font-size: 15px; cursor: pointer; }
   .ix-drop a:hover, .ix-drop button:hover { background: var(--card-2); }
 
-  .ix-mega { background: var(--card-2); border-bottom: 1px solid var(--edge); position: relative; z-index: 50; }
-  .ix-mega .ix-in { display: block; padding-top: 14px; padding-bottom: 18px; }
+  .ix-mega { display: grid; grid-template-rows: 0fr; background: var(--card-2); border-bottom: 1px solid transparent; position: relative; z-index: 50; transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), border-color .34s; }
+  .ix-mega.open { grid-template-rows: 1fr; border-bottom-color: var(--edge); }
+  .ix-mega .ix-in { display: block; min-height: 0; overflow: hidden; padding-top: 0; padding-bottom: 0; }
+  .ix-mega .ix-filter { margin-top: 14px; }
+  .ix-mega .ix-cols { margin-bottom: 18px; }
+  .ix-mega .ix-filter, .ix-mega .ix-cols { opacity: 0; transform: translateY(-10px); transition: opacity .22s ease, transform .3s cubic-bezier(.2,.8,.2,1); }
+  .ix-mega.open .ix-filter, .ix-mega.open .ix-cols { opacity: 1; transform: none; transition-delay: .06s; }
+  @media (prefers-reduced-motion: reduce) { .ix-mega, .ix-mega .ix-filter, .ix-mega .ix-cols { transition: none; } }
   .ix-filter { position: relative; width: 640px; max-width: 100%; margin-bottom: 14px; }
   .ix-filter input { height: 50px; font-size: 16px; padding: 0 44px 0 14px; border-radius: 6px; }
   .ix-filter svg { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #49607A; pointer-events: none; }
@@ -784,7 +790,7 @@
           <div class="ix-drop hidden" id="ix-drop"><a href="#/settings">Settings</a><a href="https://orvixstudios.net" target="_blank" rel="noopener">orvixstudios.net</a><button type="button" id="ix-out">Sign out</button></div>
         </div>
       </div></div>
-      <div class="ix-mega hidden" id="ix-mega"><div class="ix-in">
+      <div class="ix-mega" id="ix-mega" inert><div class="ix-in">
         <label class="ix-filter"><input id="ix-filter" type="search" placeholder="Type to filter..." autocomplete="off" aria-label="Filter pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
         <div class="ix-cols" id="ix-cols"></div>
       </div></div>
@@ -1152,7 +1158,7 @@ const ixLink = (key) => document.querySelector('#side a.nav[data-nav="' + key + 
 })();
 const ixMega = (open, which) => {
   const m = $('#ix-mega');
-  m.classList.toggle('hidden', !open);
+  m.classList.toggle('open', open); m.inert = !open;
   document.querySelectorAll('.ix-nav [data-mega]').forEach((b) => b.setAttribute('aria-expanded', String(open && b.dataset.mega === which)));
   document.querySelectorAll('#ix-cols .ix-col').forEach((c) => c.classList.toggle('hidden', open && which !== 'all' && c.dataset.group !== which));
   $('#ix-cols').style.gridTemplateColumns = open && which !== 'all' ? 'minmax(0, 360px)' : '';
