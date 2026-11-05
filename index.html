@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
+<meta name="hub-build" content="20261105-180538">
 <script>(function(){try{var t=localStorage.getItem('hub.theme')||'light';var d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();</script>
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -747,6 +748,9 @@
   .team-links { display: grid; gap: 2px; font-size: 14px; }
   html[data-theme=dark] .team-av { background: #22344A; color: var(--ink-2); }
   .ix-head .ix-in .ix-nav { white-space: nowrap; }
+  .upd-bar { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 14px; background: #0B2545; color: #fff; padding: 10px 12px 10px 18px; border-radius: 12px; box-shadow: 0 12px 30px -10px rgba(11,37,69,.6); font-weight: 500; max-width: calc(100vw - 32px); }
+  .upd-bar button { background: #E8640F; color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  @media (max-width: 760px) { .upd-bar { bottom: 96px; } }
   /* ================= Dark theme (Settings → Appearance) ================= */
   html[data-theme=dark] { color-scheme: dark; }
   html[data-theme=dark] {
@@ -3097,6 +3101,50 @@ async function teamPage() {
     <p class="note">Add or remove admins in Users &amp; Access.</p>`;
 }
 
+
+// ---------- Launch list (orvixstudios.net "email me when it launches") ----------
+async function launchList(app) {
+  const el = $('#launch'); if (!el) return;
+  const { data, error } = await sb.from('launch_signups').select('id, created_at, email, emailed_at').eq('app', app).order('created_at', { ascending: false }).limit(2000);
+  if (!$('#launch')) return;
+  if (error) { el.innerHTML = `<section class="panel" style="margin-top:18px"><h3>Launch list</h3><div class="muted">${esc(failMsg(error))}</div></section>`; return; }
+  const week = data.filter((r) => Date.now() - new Date(r.created_at) < 7 * 864e5).length;
+  el.innerHTML = `<section class="panel" style="margin-top:18px"><div class="sec" style="margin-bottom:6px"><h3>Launch list</h3>
+      <span class="muted">${data.length} ${data.length === 1 ? 'person' : 'people'} · ${week} this week</span></div>
+    <div class="sub" style="margin-bottom:10px">People who asked on orvixstudios.net for an email when ${app === 'family' ? 'Orvix Family' : 'Orvix Cabin'} launches.</div>
+    ${data.length ? `<div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn btn-ghost btn-small" id="ll-copy">Copy all emails</button></div>
+      <table class="tbl"><thead><tr><th>Email</th><th>Signed up</th><th></th></tr></thead><tbody>${data.map((r) => `<tr><td class="em">${esc(r.email)}</td><td>${esc(ago(r.created_at))}</td><td><button class="btn btn-ghost btn-small" data-rm="${r.id}" title="Remove">✕</button></td></tr>`).join('')}</tbody></table>`
+      : '<div class="muted">No one yet. The sign-up box is on orvixstudios.net/' + app + '.html.</div>'}</section>`;
+  const cp = $('#ll-copy'); if (cp) cp.onclick = () => navigator.clipboard.writeText(data.map((r) => r.email).join(', ')).then(() => toast('Emails copied.'), () => toast('Couldn’t copy.'));
+  el.querySelectorAll('[data-rm]').forEach((b) => { b.onclick = async () => { if (!confirm('Remove this email from the launch list?')) return; const { error: e1 } = await sb.from('launch_signups').delete().eq('id', +b.dataset.rm); if (e1) return toast(e1.message); toast('Removed.'); launchList(app); }; });
+}
+
+// ---------- New version notice ----------
+// The host lets browsers keep a saved copy for a few minutes, so after an
+// update the hub checks for a newer build and offers a reload.
+(function watchBuild() {
+  const mine = document.querySelector('meta[name=hub-build]')?.content;
+  if (!mine || mine === 'dev' || location.protocol === 'file:') return;
+  let shown = false;
+  const check = async () => {
+    if (shown || document.hidden) return;
+    try {
+      const t = await (await fetch('/index.html?b=' + Date.now(), { cache: 'no-store' })).text();
+      const live = (t.match(/<meta name="hub-build" content="([^"]+)"/) || [])[1];
+      if (live && live !== mine) {
+        shown = true;
+        const bar = document.createElement('div'); bar.className = 'upd-bar';
+        bar.innerHTML = '<span>A new version of the Central Hub is ready.</span><button type="button">Reload</button>';
+        bar.querySelector('button').onclick = () => location.reload();
+        document.body.appendChild(bar);
+      }
+    } catch { /* offline */ }
+  };
+  setInterval(check, 3 * 60 * 1000);
+  document.addEventListener('visibilitychange', check);
+  setTimeout(check, 20000);
+})();
+
 // ---------- My profile ----------
 async function profilePage() {
   crumb('<b>My profile</b>'); setNav('settings');
@@ -3673,7 +3721,9 @@ async function family() {
         <a class="act" href="#/support" onclick="supApp = 'family'" style="color:inherit;text-decoration:none"><span class="ai" style="--c:var(--orange)">${IC.bug}</span><div class="at"><b>Bug reports and ideas</b><span>Sent from Settings in the app · open in Support</span></div></a>
       </section>
     </div>
-    <p class="note">Live flights, landing alerts and pickups only work for families of pilots with Orvix Aero Pro. Calendar and chat are free for everyone.</p>`;
+    <p class="note">Live flights, landing alerts and pickups only work for families of pilots with Orvix Aero Pro. Calendar and chat are free for everyone.</p>
+    <div id="launch"></div>`;
+  launchList('family');
   drawChart($('#chart'), (f.daily || []).map((d) => ({ day: d.day, signups: d.joined })));
 }
 
@@ -3704,7 +3754,9 @@ async function cabin() {
         <a class="act" href="#/releases" style="color:inherit;text-decoration:none"><span class="ai" style="--c:var(--green)">${IC.phone}</span><div class="at"><b>Versions in use</b><span>Open Releases</span></div></a>
       </section>
     </div>
-    <p class="note">Crew members who sign in to Orvix Cabin, turn on its trip alerts, or pick flight attendant in setup count here.</p>`;
+    <p class="note">Crew members who sign in to Orvix Cabin, turn on its trip alerts, or pick flight attendant in setup count here.</p>
+    <div id="launch"></div>`;
+  launchList('cabin');
   drawChart($('#chart'), (f.daily || []).map((d) => ({ day: d.day, signups: d.joined })));
 }
 
