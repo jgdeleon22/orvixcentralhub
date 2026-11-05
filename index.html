@@ -632,6 +632,7 @@
   .ix-nav em { font-style: normal; font-size: 12px; font-weight: 700; background: var(--orange); color: #fff; border-radius: 999px; padding: 0 7px; line-height: 19px; }
   .ix-nav em:empty { display: none; }
   .ix-me { position: relative; display: flex; align-items: center; gap: 12px; background: none; border: 0; cursor: pointer; text-align: left; padding: 4px; border-radius: 8px; }
+  .ix-me .av, .av { overflow: hidden; }
   .ix-me .av { width: 54px; height: 54px; font-size: 22px; background: #D8E1EA; color: #5A6E83; border: 0; }
   .ix-me b { display: block; font-size: 16px; color: var(--ink); max-width: 210px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ix-me small { display: block; font-size: 13px; color: var(--ink-2); }
@@ -828,7 +829,7 @@
           <a href="#/health">Health</a>
         </nav>
         <div class="ix-me" id="ix-me" role="button" tabindex="0" aria-haspopup="true"><span class="av" id="ix-av">J</span><div><b id="ix-who"></b><small>Admin, Orvix Studios</small></div>
-          <div class="ix-drop hidden" id="ix-drop"><a href="#/settings">Settings</a><a href="https://orvixstudios.net" target="_blank" rel="noopener">Orvix Studios</a><button type="button" id="ix-out">Sign out</button></div>
+          <div class="ix-drop hidden" id="ix-drop"><a href="#/profile">My profile</a><a href="#/settings">Settings</a><a href="https://orvixstudios.net" target="_blank" rel="noopener">Orvix Studios</a><button type="button" id="ix-out">Sign out</button></div>
         </div>
       </div></div>
       <div class="ix-mega" id="ix-mega" inert><div class="ix-in">
@@ -925,6 +926,22 @@ const OPEN = new Set(['new', 'working', 'needs-info']);
 const statusOf = (s) => STATUSES.find((x) => x[0] === s) || [s, s, 'var(--ink-3)'];
 
 let me = null;
+// The signed-in admin's profile lives in their own account (user metadata):
+// name, job title, phone, photo (small data URL). Shown instead of the email.
+const prof = () => me?.user_metadata?.hub || {};
+const meName = () => (prof().name || '').trim() || me?.email || '';
+const meInitials = () => { const n = (prof().name || '').trim(); return (n ? n.split(/\s+/).slice(0, 2).map((w) => w[0]).join('') : (me?.email || '?')[0]).toUpperCase(); };
+function paintAv(el) {
+  if (!el) return; const ph = prof().photo;
+  el.innerHTML = ph ? `<img src="${ph}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : esc(meInitials());
+}
+function paintMe() {
+  if (!me) return;
+  const title = (prof().title || '').trim() || 'Admin';
+  [['#who', meName()], ['#ix-who', meName()], ['#sheet-who', meName()]].forEach(([id, t]) => { const el = $(id); if (el) el.textContent = t; });
+  const sub = $('#ix-me small'); if (sub) sub.textContent = title + ', Orvix Studios';
+  ['#av', '#ix-av', '#sheet-av'].forEach((id) => paintAv($(id)));
+}
 let cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {}, outside: {}, checklist: null };
 
 // ---------- Orvix Hub iPhone app ----------
@@ -1024,8 +1041,7 @@ async function checkNow() {
   if (mine?.must_change_password) return showPw(false);
   $('#pw').classList.add('hidden');
   $('#app').classList.remove('hidden');
-  $('#who').textContent = me.email;
-  $('#av').textContent = (me.email || '?')[0].toUpperCase();
+  paintMe();
   savePush();
   route();
 }
@@ -1142,6 +1158,7 @@ function route() {
   if (h.startsWith('#/releases')) return releasesPage();
   if (h.startsWith('#/gifts')) return giftsPage();
   if (h.startsWith('#/careers')) return careersPage(h.split('/')[2]);
+  if (h.startsWith('#/profile')) return profilePage();
   if (h.startsWith('#/cityphotos')) return cityPhotosPage();
   if (h.startsWith('#/discord')) return discordPage();
   return home();
@@ -1163,7 +1180,7 @@ function setNav(key) {
   const v = $('#view'); v.classList.remove('enter'); void v.offsetWidth; v.classList.add('enter');
 }
 function openSheet() {
-  const m = $('#msheet'); $('#sheet-who').textContent = me?.email || ''; $('#sheet-av').textContent = (me?.email || '?')[0].toUpperCase();
+  const m = $('#msheet'); paintMe();
   m.classList.add('open'); m.setAttribute('aria-hidden', 'false'); requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add('show')));
 }
 function closeSheet() {
@@ -1255,7 +1272,7 @@ function ixUpdate(key) {
     return '<a href="' + a.getAttribute('href') + '"' + (k === key ? ' class="on"' : '') + '>' + esc($('span', a)?.textContent || k) + '</a>';
   }).join('');
   $('#ix-sec').textContent = g.name + ' · Orvix Central Hub';
-  if (me) { $('#ix-who').textContent = me.email || ''; $('#ix-av').textContent = (me.email || '?')[0].toUpperCase(); }
+  paintMe();
 }
 
 const ago = (t) => {
@@ -2718,6 +2735,48 @@ async function giftsPage() {
   };
 }
 
+
+// ---------- My profile ----------
+async function profilePage() {
+  crumb('<b>My profile</b>'); setNav('settings');
+  const p = prof();
+  $('#view').innerHTML = `<div class="page-title"><div><h1>My profile</h1><div class="muted">How you appear in the Central Hub. Only admins see this.</div></div></div>
+  <div class="set"><section class="set-sec"><header><h2>Your details</h2><p>Your name shows at the top instead of your email. Your sign-in email stays the same.</p></header><div>
+  <form class="set-card job-form" id="pf">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:8px">
+      <span class="av" id="pf-av" style="width:84px;height:84px;font-size:32px;background:#D8E1EA;color:#5A6E83;border:0">${esc(meInitials())}</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn btn-ghost btn-small" style="margin:0;cursor:pointer">Choose photo<input type="file" id="pf-file" accept="image/*" hidden></label><button type="button" class="btn btn-ghost btn-small" id="pf-rm">Remove photo</button></div>
+    </div>
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div><label for="pf-n">Full name</label><input id="pf-n" maxlength="80" value="${esc(p.name || '')}" placeholder="e.g. Jorge Garcia"></div>
+      <div><label for="pf-t">Job title</label><input id="pf-t" maxlength="60" value="${esc(p.title || '')}" placeholder="e.g. Founder"></div>
+    </div>
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <div><label for="pf-p">Phone <span class="muted">(optional)</span></label><input id="pf-p" maxlength="30" value="${esc(p.phone || '')}"></div>
+      <div><label>Sign-in email</label><input value="${esc(me.email || '')}" disabled></div>
+    </div>
+    <div style="margin-top:14px"><button class="btn btn-primary" id="pf-save">Save profile</button></div>
+  </form></div></section></div>`;
+  let photo = p.photo || '';
+  const showAv = () => { const el = $('#pf-av'); el.innerHTML = photo ? `<img src="${photo}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : esc(meInitials()); };
+  showAv();
+  $('#pf-file').onchange = async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    const img = await createImageBitmap(f).catch(() => null); if (!img) return toast('That file isn’t a picture.');
+    const c = document.createElement('canvas'); c.width = c.height = 160; const s = Math.min(img.width, img.height);
+    c.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 160, 160);
+    photo = c.toDataURL('image/jpeg', .82); showAv();
+  };
+  $('#pf-rm').onclick = () => { photo = ''; showAv(); };
+  $('#pf').onsubmit = async (e) => {
+    e.preventDefault(); const b = $('#pf-save'); b.disabled = true; b.textContent = 'Saving…';
+    const hub = { name: $('#pf-n').value.trim(), title: $('#pf-t').value.trim(), phone: $('#pf-p').value.trim(), photo };
+    const { data, error } = await sb.auth.updateUser({ data: { hub } });
+    b.disabled = false; b.textContent = 'Save profile';
+    if (error) return toast(failMsg(error));
+    me = data.user; paintMe(); toast('Profile saved.');
+  };
+}
 
 // ---------- Careers (orvixstudios.net/careers.html) ----------
 // Jobs posted here show on the website while Open. Applications arrive by
