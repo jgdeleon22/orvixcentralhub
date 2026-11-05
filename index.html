@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
+<script>(function(){try{var t=localStorage.getItem('hub.theme')||'light';var d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();</script>
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.png" sizes="64x64">
@@ -722,6 +723,45 @@
   }
   /* ================= end intranet design ================= */
 
+
+  /* ================= Dark theme (Settings → Appearance) ================= */
+  html[data-theme=dark] { color-scheme: dark; }
+  html[data-theme=dark] {
+    --night: #0A1422; --card: #111E2E; --card-2: #17273A; --edge: #22344A; --edge-2: #2E4560;
+    --ink: #E9EFF5; --ink-2: #A9B9CA; --ink-3: #7489A0; --navy: #0D1826; --ixdeep: #E9EFF5;
+  }
+  html[data-theme=dark] body { background: var(--night) !important; }
+  html[data-theme=dark] input:not([type]), html[data-theme=dark] input[type=email], html[data-theme=dark] input[type=password], html[data-theme=dark] input[type=text], html[data-theme=dark] input[type=search], html[data-theme=dark] input[type=url], html[data-theme=dark] input[type=number], html[data-theme=dark] input[type=date], html[data-theme=dark] input[type=time], html[data-theme=dark] textarea, html[data-theme=dark] select { background: #0D1826; border-color: var(--edge-2); color: var(--ink); }
+  html[data-theme=dark] .ix-util { background: #0A3E7E; }
+  html[data-theme=dark] .ix-search input { background: #0D1826; color: var(--ink); }
+  html[data-theme=dark] .ix-head, html[data-theme=dark] .ix-drop, html[data-theme=dark] .ix-col, html[data-theme=dark] .ix-pc, html[data-theme=dark] .tip, html[data-theme=dark] .toast { background: var(--card); }
+  html[data-theme=dark] .ix-sub { background: #0E1A29; }
+  html[data-theme=dark] .ix-mega { background: #0E1A29; }
+  html[data-theme=dark] .ix-nav > button, html[data-theme=dark] .ix-nav > a, html[data-theme=dark] .ix-col .nav { color: var(--ink); }
+  html[data-theme=dark] .ix-nav > button[aria-expanded=true] { color: #6FB2F5; border-color: #6FB2F5; }
+  html[data-theme=dark] .ix-sub a { color: var(--ink-2); } html[data-theme=dark] .ix-sub a.on { color: var(--ink); border-bottom-color: #6FB2F5; }
+  html[data-theme=dark] .ix-col .nav.on { background: rgba(111,178,245,.12); color: #6FB2F5; }
+  html[data-theme=dark] .ix-me .av, html[data-theme=dark] #pf-av { background: #22344A !important; color: var(--ink-2) !important; }
+  html[data-theme=dark] .ix-logo { color: var(--ink); }
+  html[data-theme=dark] .ix-banner { background:
+      radial-gradient(rgba(255,255,255,.18) 1.1px, transparent 1.6px) 0 0 / 22px 22px,
+      repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 1px, transparent 1px 28px),
+      linear-gradient(90deg, #0A1422 0, #0A1422 calc((100% - 1240px) / 2 - 260px), #0B3A74 calc((100% - 1240px) / 2 - 60px), #0B4F9E calc((100% - 1240px) / 2 + 140px), #0B4F9E calc(100% - (100% - 1240px) / 2 - 140px), #0B3A74 calc(100% - (100% - 1240px) / 2 + 60px), #0A1422 calc(100% - (100% - 1240px) / 2 + 260px), #0A1422 100%); }
+  html[data-theme=dark] .panel, html[data-theme=dark] .kpi, html[data-theme=dark] .prod, html[data-theme=dark] .prod2, html[data-theme=dark] .hero-card, html[data-theme=dark] .tile, html[data-theme=dark] .report, html[data-theme=dark] .tbl-wrap, html[data-theme=dark] .appc, html[data-theme=dark] .toolbar, html[data-theme=dark] .login-card { box-shadow: none; }
+  html[data-theme=dark] .hub-logo .word b { color: var(--ink); }
+  html[data-theme=dark] a { color: #6FB2F5; }
+  html[data-theme=dark] .ix-pc b, html[data-theme=dark] .ix-ph b { color: var(--ink); }
+  @media (max-width: 760px) {
+    html[data-theme=dark] header.top { background: rgba(10,20,34,.86) !important; }
+    html[data-theme=dark] .mtabs { background: rgba(17,30,46,.92) !important; }
+    html[data-theme=dark] .msheet .pane { background: var(--card) !important; }
+  }
+  .theme-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 16px 18px; }
+  .theme-pick button { border: 2px solid var(--edge); border-radius: 12px; background: var(--card); color: var(--ink); padding: 10px; cursor: pointer; text-align: left; font: inherit; }
+  .theme-pick button.on { border-color: #0B63C5; box-shadow: 0 0 0 3px rgba(11,99,197,.15); }
+  .theme-pick .sw { display: block; width: 100%; height: 58px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--edge); }
+  .theme-pick b { font-size: 15px; }
+  @media (max-width: 560px) { .theme-pick { gap: 8px; padding: 12px; } .theme-pick .sw { height: 44px; } .theme-pick b { font-size: 13px; } }
 /* Big screens: use the width; only very large screens scale up */
 @media (min-width: 1500px) { .ix-in, main { max-width: 1360px; } }
 @media (min-width: 2500px) { html { zoom: 1.2; } }
@@ -2482,6 +2522,11 @@ async function settingsPage() {
         <div class="err" id="cpw-err"></div></form>
       <div class="srow"><div class="main"><b>Sign out</b><span>Signs you out of the hub on this device.</span></div><button class="btn btn-ghost btn-small" type="button" id="set-out">Sign out</button></div>
     </div>`)}
+    ${sec('Appearance', 'Saved on this device. Match my device follows your computer or phone setting.', `<div class="set-card"><div class="theme-pick" id="theme-pick">
+      <button type="button" data-t="light"><span class="sw" style="background:linear-gradient(180deg,#0B63C5 0 18%,#fff 18% 40%,#EEF2F6 40%)"></span><b>Light</b></button>
+      <button type="button" data-t="dark"><span class="sw" style="background:linear-gradient(180deg,#0A3E7E 0 18%,#111E2E 18% 40%,#0A1422 40%)"></span><b>Dark</b></button>
+      <button type="button" data-t="auto"><span class="sw" style="background:linear-gradient(90deg,#EEF2F6 0 50%,#0A1422 50%)"></span><b>Match my device</b></button>
+    </div></div>`)}
     ${sec('Notifications', 'Alerts go to every hub admin. These settings are shared by all admins.', `<div class="set-card" id="prefs"><div class="srow"><div class="main"><span>Loading…</span></div></div></div>`)}
     ${IN_APP ? sec('iPhone app', 'Orvix Hub on this phone.', `<div class="set-card">
       <div class="srow"><div class="main"><b>Version</b></div><span class="val" id="app-ver">${esc(appInfo.version || '—')}</span></div>
@@ -2510,6 +2555,8 @@ async function settingsPage() {
   $('#pw-toggle').onclick = () => { form.classList.toggle('open'); if (form.classList.contains('open')) $('#np1').focus(); };
   $('#pw-cancel').onclick = () => { form.classList.remove('open'); $('#np1').value = $('#np2').value = ''; $('#cpw-err').textContent = ''; };
   $('#set-out').onclick = () => $('#signout').click();
+  const tp = $('#theme-pick'); const markT = () => tp.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.t === themePref()));
+  markT(); tp.onclick = (e) => { const b = e.target.closest('button'); if (!b) return; try { localStorage.setItem('hub.theme', b.dataset.t); } catch {} applyTheme(b.dataset.t); markT(); toast(b.dataset.t === 'dark' ? 'Dark theme on.' : b.dataset.t === 'light' ? 'Light theme on.' : 'Matching your device.'); };
   if (IN_APP) $('#app-lock').onchange = (e) => { toApp({ type: 'lock', on: e.target.checked }); toast(e.target.checked ? 'Face ID lock on.' : 'Face ID lock off.'); };
   if (IN_APP) $('#app-update').onclick = (e) => { e.target.disabled = true; $('#app-update-msg').textContent = 'Checking…'; toApp({ type: 'update' }); };
   form.onsubmit = async (e) => {
@@ -2736,6 +2783,16 @@ async function giftsPage() {
   };
 }
 
+
+// ---------- Appearance ----------
+const themePref = () => { try { return localStorage.getItem('hub.theme') || 'light'; } catch { return 'light'; } };
+function applyTheme(t) {
+  const dark = t === 'dark' || (t === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = dark ? '#0A1422' : '#EEF2F6';
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (themePref() === 'auto') applyTheme('auto'); });
+applyTheme(themePref());
 
 // ---------- My profile ----------
 async function profilePage() {
