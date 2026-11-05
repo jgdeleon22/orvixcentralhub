@@ -605,7 +605,10 @@
   @media (min-width: 761px) {
     #app { display: block; }
     .side, .scrim, header.top { display: none !important; }
-    .ix { display: block; }
+    .ix { display: contents; }
+    /* The tab bar stays at the top while the page scrolls. */
+    .ix-sub { position: sticky; top: 0; z-index: 40; box-shadow: 0 1px 0 var(--edge); }
+    .ix-sub.stuck { box-shadow: 0 6px 16px -10px rgba(11,37,69,.35); }
     main { max-width: 1240px; margin: 0 auto; padding: 28px 24px 72px; }
     main .page-title h1, main .ov-head h1 { display: none; }
   }
@@ -1279,6 +1282,7 @@ $('#menu').addEventListener('click', () => $('#app').classList.toggle('open'));
 $('#scrim').addEventListener('click', () => $('#app').classList.remove('open'));
 $('#refresh-all').addEventListener('click', () => { cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {}, outside: {}, checklist: null }; health.last = null; route(); });
 // ---------- Intranet header (computer layout) ----------
+addEventListener('scroll', () => { const el = document.querySelector('.ix-sub'); if (el) el.classList.toggle('stuck', el.getBoundingClientRect().top <= 0 && scrollY > 0); }, { passive: true });
 const IX_GROUPS = [
   { name: 'Operations', c: '#0B63C5', icon: '<path d="M3 12h4l2.5-6 5 12 2.5-6h4"/>', keys: ['home', 'users', 'analytics', 'insights', 'health'] },
   { name: 'Support', c: '#0E8A4A', icon: '<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>', keys: ['support', 'inbox', 'announce', 'discord', 'gifts'] },
