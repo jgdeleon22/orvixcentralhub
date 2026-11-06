@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
-<meta name="hub-build" content="20261105-180538">
+<meta name="hub-build" content="20261105-203742">
 <script>(function(){try{var t=localStorage.getItem('hub.theme')||'light';var d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();</script>
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -711,6 +711,9 @@
       linear-gradient(90deg, #F2F8FE 0, #F2F8FE calc((100% - 1240px) / 2 - 260px), #9CC9F2 calc((100% - 1240px) / 2 - 130px), #3F92E2 calc((100% - 1240px) / 2 - 20px), #0B63C5 calc((100% - 1240px) / 2 + 140px), #0B63C5 calc(100% - (100% - 1240px) / 2 - 140px), #3F92E2 calc(100% - (100% - 1240px) / 2 + 20px), #9CC9F2 calc(100% - (100% - 1240px) / 2 + 130px), #F2F8FE calc(100% - (100% - 1240px) / 2 + 260px), #F2F8FE 100%); }
   .ix-banner::after { content: none; }
   .ix-banner .ix-in { position: relative; z-index: 1; height: 220px; justify-content: space-between; }
+  /* The banner's bottom edge fades into the page. */
+  .ix-banner { -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent); mask-image: linear-gradient(to bottom, #000 62%, transparent); }
+  .ix-banner .ix-in { height: 250px; padding-bottom: 30px; }
   .ix-banner h1 { font-family: var(--text); font-weight: 600; font-size: 52px; letter-spacing: -.01em; text-shadow: 0 2px 12px rgba(11,37,69,.25); }
   .ix-banner p { color: rgba(255,255,255,.88); font-size: 17px; margin-top: 6px; }
   .ix-art { width: 380px; height: 200px; flex: none; }
