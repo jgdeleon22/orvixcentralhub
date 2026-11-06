@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
-<meta name="hub-build" content="20261105-203814">
+<meta name="hub-build" content="20261105-204058">
 <script>(function(){try{var t=localStorage.getItem('hub.theme')||'light';var d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();</script>
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -610,7 +610,7 @@
     /* The tab bar stays at the top while the page scrolls. */
     .ix-sub { position: sticky; top: 0; z-index: 40; box-shadow: 0 1px 0 var(--edge); }
     .ix-sub.stuck { box-shadow: 0 6px 16px -10px rgba(11,37,69,.35); }
-    main { max-width: 1240px; margin: 0 auto; padding: 28px 24px 72px; }
+    main { max-width: 1240px; margin: 0 auto; padding: 12px 24px 72px; }
     main .page-title h1, main .ov-head h1 { display: none; }
   }
   .ix-in { max-width: 1240px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 20px; }
@@ -712,8 +712,8 @@
   .ix-banner::after { content: none; }
   .ix-banner .ix-in { position: relative; z-index: 1; height: 220px; justify-content: space-between; }
   /* The banner's top and bottom edges fade into the page. */
-  .ix-banner { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 24%, #000 66%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 24%, #000 66%, transparent 100%); }
-  .ix-banner .ix-in { height: 270px; padding-top: 24px; padding-bottom: 30px; }
+  .ix-banner { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 78%, transparent 100%); }
+  .ix-banner .ix-in { height: 230px; padding-top: 10px; padding-bottom: 14px; }
   .ix-banner h1 { font-family: var(--text); font-weight: 600; font-size: 52px; letter-spacing: -.01em; text-shadow: 0 2px 12px rgba(11,37,69,.25); }
   .ix-banner p { color: rgba(255,255,255,.88); font-size: 17px; margin-top: 6px; }
   .ix-art { width: 380px; height: 200px; flex: none; }
@@ -1540,8 +1540,8 @@ async function home() {
   const openFam = o ? (o.family_open_bugs || 0) + (o.family_open_other || 0) : 0, openCab = o ? (o.cabin_open_bugs || 0) + (o.cabin_open_other || 0) : 0;
   const openAero = o ? o.open_bugs + o.open_other : 0, openGrid = gOk ? (g.feedback || []).filter((f) => ['new', 'working', 'needs-info'].includes(f.status)).length : 0;
   $('#kpis').innerHTML =
-    kpi('Users today', (last(aU) + last(fU) + last(cU) + last(gU)).toLocaleString(), `${last(aU)} Aero · ${last(fU)} Family · ${last(cU)} Cabin · ${last(gU)} Grid`, aU.map((v, i) => v + fU[i] + cU[i] + gU[i]), '#F76E19', '#/analytics') +
-    kpi('Website visitors today', last(vis).toLocaleString(), `${D.length ? last(D).aero_visitors : 0} aero · ${D.length ? last(D).grid_visitors : 0} grid · ${D.length ? last(D).studios_visitors || 0 : 0} studios`, vis, '#9A7BF0', '#/analytics') +
+    kpi('Users today', (last(aU) + last(fU) + last(cU) + last(gU)).toLocaleString(), [['Aero', last(aU)], ['Family', last(fU)], ['Cabin', last(cU)], ['Grid', last(gU)]].filter((x) => x[1]).map(([n, v]) => `${n} ${v}`).join(' · ') || 'No one yet today', aU.map((v, i) => v + fU[i] + cU[i] + gU[i]), '#F76E19', '#/analytics') +
+    kpi('Website visitors today', last(vis).toLocaleString(), D.length ? [['Aero', last(D).aero_visitors], ['Grid', last(D).grid_visitors], ['Studios', last(D).studios_visitors || 0]].filter((x) => x[1]).map(([n, v]) => `${n} ${v}`).join(' · ') || 'No visits yet today' : '', vis, '#9A7BF0', '#/analytics') +
     kpi('Paid subscribers', o ? o.paying + (o.cabin_paying || 0) : '–', o ? `${o.paying} Aero Pro · ${o.cabin_paying || 0} Cabin` : 'Aero Pro · Cabin', null, '#1A9455', '#/users/aero') +
     kpi('Open issues', openAero + openFam + openCab + openGrid, `${openAero} Aero · ${openFam} Family · ${openCab} Cabin · ${openGrid} Grid`, null, openAero + openFam + openCab + openGrid ? '#F2B33D' : '#1A9455', '#/support');
 
