@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
-<meta name="hub-build" content="20261105-212141">
+<meta name="hub-build" content="20261106-110739">
 <script>(function(){try{var t=localStorage.getItem('hub.theme')||'light';var d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();</script>
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -727,6 +727,16 @@
     .mtabs { background: rgba(255,255,255,.92) !important; box-shadow: 0 14px 34px -14px rgba(11,37,69,.35) !important; border-color: var(--edge) !important; }
     .msheet .pane { background: #fff !important; }
     .msheet .scr { background: rgba(11,37,69,.35) !important; }
+  }
+  /* Phone: each page's title sits on the same faded blue banner as the website (2026-11-06). */
+  @media (max-width: 760px) {
+    #view > .page-title, #view > .ov-head { position: relative; margin: -6px -16px 10px; padding: 30px 16px 48px; color: #fff;
+      background: radial-gradient(rgba(255,255,255,.24) 1.1px, transparent 1.6px) 0 0 / 22px 22px, repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 1px, transparent 1px 28px), linear-gradient(160deg, #0B63C5 0%, #2F86DC 60%, #6DAEEB 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 80%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 80%, transparent 100%); }
+    #view > .page-title h1, #view > .ov-head h1 { color: #fff; text-shadow: 0 2px 12px rgba(11,37,69,.25); }
+    #view > .page-title .muted, #view > .ov-head .muted, #view > .page-title p { color: rgba(255,255,255,.9); }
+    #view > .page-title a:not(.btn) { color: #fff; }
+    html[data-theme=dark] #view > .page-title, html[data-theme=dark] #view > .ov-head { background: radial-gradient(rgba(255,255,255,.18) 1.1px, transparent 1.6px) 0 0 / 22px 22px, linear-gradient(160deg, #0A3F80 0%, #13579F 60%, #2B6FB8 100%); }
   }
   /* ================= end intranet design ================= */
 
