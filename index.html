@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#EEF2F6">
 <meta name="robots" content="noindex, nofollow">
-<meta name="hub-build" content="20261105-204058">
+<meta name="hub-build" content="20261105-212141">
 <script>(function(){try{var t=localStorage.getItem('hub.theme')||'light';var d=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();</script>
 <title>Orvix Central Hub</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -754,6 +754,17 @@
   .upd-bar { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 14px; background: #0B2545; color: #fff; padding: 10px 12px 10px 18px; border-radius: 12px; box-shadow: 0 12px 30px -10px rgba(11,37,69,.6); font-weight: 500; max-width: calc(100vw - 32px); }
   .upd-bar button { background: #E8640F; color: #fff; border: 0; border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
   @media (max-width: 760px) { .upd-bar { bottom: 96px; } }
+  .bell-wrap { position: relative; }
+  .bell-dot { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 99px; background: #E8640F; color: #fff; font: 700 10px/16px Barlow, sans-serif; font-style: normal; text-align: center; box-shadow: 0 0 0 2px #0B63C5; }
+  .bell-pane { position: absolute; right: -8px; top: 44px; z-index: 300; width: 380px; max-height: 480px; overflow: auto; background: var(--card); color: var(--ink); border: 1px solid var(--edge); border-radius: 14px; box-shadow: 0 18px 44px -14px rgba(11,37,69,.45); }
+  .bell-pane header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; border-bottom: 1px solid var(--edge); position: sticky; top: 0; background: var(--card); }
+  .bell-pane header b { font-size: 16px; } .bell-pane header button { background: none; border: 0; color: var(--ixblue, #0B63C5); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .bell-item { display: block; padding: 12px 16px; border-bottom: 1px solid var(--edge); text-decoration: none; color: inherit; }
+  .bell-item:hover { background: var(--card-2); }
+  .bell-item b { display: block; font-size: 14.5px; font-weight: 600; } .bell-item span { display: block; color: var(--ink-2); font-size: 13.5px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .bell-item time { display: block; color: var(--ink-3); font-size: 12px; margin-top: 4px; }
+  .bell-item.new b::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #E8640F; margin-right: 7px; vertical-align: 2px; }
+  .bell-empty { padding: 26px 16px; text-align: center; color: var(--ink-2); font-size: 14px; }
   /* ================= Dark theme (Settings → Appearance) ================= */
   html[data-theme=dark] { color-scheme: dark; }
   html[data-theme=dark] {
@@ -893,7 +904,7 @@
       <div class="ix-util"><div class="ix-in">
         <a class="ix-ib" href="https://orvixstudios.net" target="_blank" rel="noopener" title="Orvix Studios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></a>
         <button class="ix-ib" type="button" id="ix-refresh" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v5h-5"/></svg></button>
-        <a class="ix-ib" href="#/support" title="Support inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></a>
+        <div class="bell-wrap"><button class="ix-ib" type="button" id="bell" title="What’s new" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><i class="bell-dot hidden" id="bell-dot"></i></button><div class="bell-pane hidden" id="bell-pane" role="dialog" aria-label="What’s new"></div></div>
         <label class="ix-search"><input id="ix-q" type="search" placeholder="Start searching..." autocomplete="off" aria-label="Find a page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></label>
       </div></div>
       <div class="ix-head"><div class="ix-in">
@@ -1222,7 +1233,7 @@ window.addEventListener('hashchange', () => me && route());
 function route() {
   if (!route.started) {
     route.started = true;
-    inboxCount().catch(() => {});
+    inboxCount().catch(() => {}); loadBell();
     let st = '#/'; try { st = localStorage.getItem('hub.start') || '#/'; } catch {}
     if ((!location.hash || location.hash === '#/' || location.hash === '#') && st !== '#/') { location.replace(st); return; }
   }
@@ -3148,6 +3159,39 @@ async function launchList(app) {
   setTimeout(check, 20000);
 })();
 
+
+// ---------- Bell: the alerts hub-watch sent (new messages, bugs, sign-ups, systems) ----------
+const bellSeen = () => { try { return localStorage.getItem('hub.bellSeen') || ''; } catch { return ''; } };
+let bellItems = [];
+async function loadBell() {
+  try {
+    const { data, error } = await sb.rpc('hub_note', { p_key: 'alerts' });
+    if (error) return;
+    bellItems = data?.value?.items || [];
+    const n = bellItems.filter((x) => x.at > bellSeen()).length;
+    const dot = $('#bell-dot'); if (dot) { dot.textContent = n > 9 ? '9+' : n || ''; dot.classList.toggle('hidden', !n); }
+  } catch { /* not signed in yet */ }
+}
+function paintBell() {
+  const seen = bellSeen(), pane = $('#bell-pane');
+  pane.innerHTML = `<header><b>What’s new</b>${bellItems.length ? '<button type="button" id="bell-read">Mark all read</button>' : ''}</header>` +
+    (bellItems.length ? bellItems.slice(0, 30).map((x) => `<a class="bell-item ${x.at > seen ? 'new' : ''}" href="${esc(x.go || '#/')}"><b>${esc(x.title)}</b><span>${esc(x.text || '')}</span><time>${esc(ago(x.at))}</time></a>`).join('')
+      : '<div class="bell-empty">Nothing yet. New messages, job applications, bug reports, sign-ups and system problems show up here.</div>');
+  const rd = $('#bell-read'); if (rd) rd.onclick = () => { try { localStorage.setItem('hub.bellSeen', bellItems[0]?.at || new Date().toISOString()); } catch {} paintBell(); loadBell(); };
+}
+(function bell() {
+  const btn = $('#bell'), pane = $('#bell-pane'); if (!btn) return;
+  const close = () => { pane.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false'); };
+  btn.onclick = async (e) => {
+    e.stopPropagation();
+    if (!pane.classList.contains('hidden')) return close();
+    await loadBell(); paintBell(); pane.classList.remove('hidden'); btn.setAttribute('aria-expanded', 'true');
+  };
+  pane.addEventListener('click', (e) => { if (e.target.closest('.bell-item')) { try { localStorage.setItem('hub.bellSeen', bellItems[0]?.at || ''); } catch {} close(); loadBell(); } e.stopPropagation(); });
+  document.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  setInterval(() => { if (!document.hidden && me) loadBell(); }, 2 * 60 * 1000);
+})();
 // ---------- My profile ----------
 async function profilePage() {
   crumb('<b>My profile</b>'); setNav('settings');
