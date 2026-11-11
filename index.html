@@ -2070,6 +2070,21 @@ async function reloadUsers() {
   const [u, i] = await Promise.all([sb.rpc('hub_users'), sb.rpc('hub_invited')]);
   cache.users = u.data || cache.users; cache.invited = i.data || []; cache.people = null; cache.overview = null; renderAeroUsers();
 }
+// Accounts people deleted from inside the app: when, whether they were paying
+// and the reason they gave (if any). Nothing shows until the first one.
+async function renderDeletions() {
+  if (!cache.deletions) { const { data, error } = await sb.rpc('hub_deletions', { p_limit: 200 }); if (error) return; cache.deletions = data || []; }
+  const box = $('#udel'); if (!box) return;
+  const rows = cache.deletions.filter((d) => (d.app || 'aero') === usersApp);
+  if (!rows.length) { box.innerHTML = ''; return; }
+  const plan = (d) => d.was_paying ? `<span class="b green">Was paying · ${esc((d.plan_product || '').replace('orvix_pro_', '').replace('_', ' '))}</span>${d.plan_will_renew === false ? ' <span class="muted">renewal off</span>' : ' <span class="b orange">still renewing</span>'}` : '<span class="muted">Not paying</span>';
+  box.innerHTML = `<div class="sec" style="margin-top:30px"><h2>Deleted accounts</h2><span class="muted">${rows.length} · ${rows.filter((d) => d.was_paying).length} were paying</span></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Email</th><th>Deleted</th><th>Had the account</th><th>Flights</th><th>Plan</th><th>Why they left</th></tr></thead><tbody>
+    ${rows.map((d) => `<tr><td class="em" title="${esc(d.email || '')}">${esc(d.email || '–')}</td><td class="muted">${esc(day(d.deleted_at))}</td>
+      <td class="muted">${d.signed_up_at ? esc(Math.max(0, Math.round((new Date(d.deleted_at) - new Date(d.signed_up_at)) / 864e5)) + ' days') : '–'}</td><td>${d.flights}</td>
+      <td>${plan(d)}</td><td>${d.reason ? esc(d.reason) : '<span class="muted">No reason given</span>'}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
 function renderAeroUsers() {
   // Orvix Family is free, so everyone there can use it.
   const canUse = (u) => usersApp === 'family' || u.tester || u.admin || u.gift || u.plan || u.cabin_plan;
@@ -2132,8 +2147,10 @@ function renderAeroUsers() {
         </select></td></tr>`).join('')}
       ${list.length || invitedList.length ? '' : '<tr><td colspan="6" class="muted" style="text-align:center;padding:32px">No one matches.</td></tr>'}
     </tbody></table></div>
+    <div id="udel"></div>
     <div class="sec" style="margin-top:30px"><h2>Testers, admins &amp; sign-ups</h2></div>
     <div id="pane"><div class="muted">Loading…</div></div>`;
+  renderDeletions();
   $('#upane').querySelectorAll('[data-uf]').forEach((b) => b.onclick = () => { userFilter = b.dataset.uf; renderAeroUsers(); });
   const qi = $('#uq'); qi.oninput = () => { userQ = qi.value; clearTimeout(renderAeroUsers.t); renderAeroUsers.t = setTimeout(() => { renderAeroUsers(); const n = $('#uq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 250); };
   $('#upane').querySelectorAll('.ua').forEach((sel) => sel.onchange = async () => {
