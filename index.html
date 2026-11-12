@@ -189,6 +189,11 @@
   .pjd-done span { color: var(--ink-3); text-decoration: line-through; }
   .pjd-empty { color: var(--ink-3); font-size: 14px; padding: 10px 4px; }
   .pjd-foot { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 10px; align-items: center; margin-top: 20px; padding: 14px 0; background: linear-gradient(180deg, transparent, var(--bg) 35%); }
+  .hr-proj { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px 14px; }
+  .hr-proj label { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--ink); cursor: pointer; padding: 4px 0; }
+  .hr-proj input { width: 17px; height: 17px; accent-color: #0B63C5; }
+  .hr-proj .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .hr-proj small { color: var(--ink-3); font-size: 12px; margin-left: auto; }
   .hr-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px 14px; }
   .hr-form label { display: grid; gap: 5px; font-size: 13px; color: var(--ink-2); margin: 0; }
   .hr-acc { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
@@ -3558,13 +3563,14 @@ async function hrEmployee(id) {
   const isNew = id === 'new';
   crumb(`<span>People</span><i>/</i><a href="#/hr">Human Resources</a><i>/</i><b>${isNew ? 'New employee' : 'Employee'}</b>`); setNav('hr');
   $('#view').innerHTML = '<div id="pane"><div class="muted">Loading…</div></div>';
-  const { data, error } = await sb.rpc('hr_list');
+  const [{ data, error }, projRes, devRes] = await Promise.all([sb.rpc('hr_list'), sb.rpc('hub_projects'), sb.rpc('hr_developers')]);
+  const projList = projRes.data || [], devOf = devRes.data || {};
   const pane = $('#pane'); if (!pane) return;
   if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
   const all = data.employees || [];
   let e = isNew ? { id: '', emp_no: data.next_emp_no, first_name: '', last_name: '', preferred_name: '', email: '', personal_email: '', phone: '', job_title: '', department: '', manager_id: '', employment_type: 'full_time', work_location: '', status: 'active', hire_date: new Date().toISOString().slice(0, 10), probation_end: '', resignation_date: '', termination_date: '', last_day: '', leave_reason: '', rehire_eligible: null, pay_type: '', pay_rate: '', emergency_name: '', emergency_phone: '', emergency_relation: '', notes: '', hub_access: false, access: ['home', 'profile', 'support'], photo: null, events: [] } : all.find((x) => x.id === id);
   if (!e) { pane.innerHTML = '<div class="empty">This employee isn’t in Human Resources anymore.</div>'; return; }
-  e = { ...e, access: Array.isArray(e.access) ? e.access : [] };
+  e = { ...e, access: Array.isArray(e.access) ? e.access : [], projects: Array.isArray(e.projects) ? e.projects : [], _dev: !!(e.email && devOf[e.email]) };
   if (!isNew) crumb(`<span>People</span><i>/</i><a href="#/hr">Human Resources</a><i>/</i><b>${esc(hrName(e))}</b>`);
   const v = (k) => esc(e[k] ?? '');
   const field = (k, label, type = 'text', extra = '') => `<label>${label}<input data-k="${k}" type="${type}" value="${v(k)}" ${extra}></label>`;
@@ -3600,6 +3606,10 @@ async function hrEmployee(id) {
         <p class="muted" style="margin:0 0 12px;font-size:13px">Tick what ${esc(e.first_name || 'they')} can open. Overview and their own profile are always on. Access ends by itself on the last day after a resignation or on the termination date.</p>
         <div class="hr-acc" style="${e.hub_access ? '' : 'opacity:.45;pointer-events:none'}">${hrSections().map((g) => `<fieldset><legend>${esc(g.name)}</legend>${g.items.map((i) => `<label><input type="checkbox" data-acc="${i.k}" ${i.k === 'home' ? 'checked disabled' : e.access.includes(i.k) ? 'checked' : ''}> ${esc(i.label)}</label>`).join('')}</fieldset>`).join('')}</div>
         <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-ghost btn-small" id="hr-acc-all">Tick all</button><button class="btn btn-ghost btn-small" id="hr-acc-none">Clear</button></div></section>
+      ${isNew ? '' : `<section class="panel" style="margin-bottom:16px"><div class="sec" style="margin-bottom:6px"><h3 style="margin:0">Projects</h3>
+          <label style="display:flex;gap:8px;align-items:center;margin:0;font-weight:600"><input type="checkbox" id="hr-dev" ${e._dev ? 'checked' : ''} style="width:18px;height:18px;accent-color:#0B63C5"> Developer</label></div>
+        <p class="muted" style="margin:0 0 12px;font-size:13px">Developers open Developer → Projects. ${esc(e.first_name || 'They')} only see${e.first_name ? 's' : ''} the projects ticked here, with their checklist and project chat.${e.email ? '' : ' Add a work email first.'}</p>
+        <div class="hr-proj" style="${e._dev ? '' : 'opacity:.45;pointer-events:none'}">${projList.map((pj) => `<label><input type="checkbox" data-proj="${pj.id}" ${e.projects.includes(pj.id) ? 'checked' : ''}><span class="dot" style="background:${esc(pj.color)}"></span>${esc(pj.name)}<small>${esc(PJ_KINDS[pj.kind] || pj.kind)}</small></label>`).join('') || '<span class="muted">No projects yet.</span>'}</div></section>`}
       <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Emergency contact</h3><div class="hr-form">${field('emergency_name', 'Name')}${field('emergency_relation', 'Relationship')}${field('emergency_phone', 'Phone', 'tel')}</div></section>
       <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Notes</h3><textarea data-k="notes" rows="4" maxlength="4000" style="width:100%">${v('notes')}</textarea></section>
       ${isNew ? '' : `<section class="panel" style="margin-bottom:16px"><div class="sec" style="margin-bottom:6px"><h3 style="margin:0">History</h3></div>
@@ -3609,9 +3619,11 @@ async function hrEmployee(id) {
     const keep = () => {
       pane.querySelectorAll('[data-k]').forEach((i) => { e[i.dataset.k] = i.value; });
       e.hub_access = $('#hr-hub').checked;
+      if ($('#hr-dev')) { e._dev = $('#hr-dev').checked; e.projects = [...pane.querySelectorAll('[data-proj]')].filter((c) => c.checked).map((c) => c.dataset.proj); }
       e.access = ['home', 'profile', ...[...pane.querySelectorAll('[data-acc]')].filter((c) => c.checked && c.dataset.acc !== 'home').map((c) => c.dataset.acc)];
     };
     $('#hr-hub').onchange = () => { keep(); draw(); };
+    if ($('#hr-dev')) $('#hr-dev').onchange = () => { keep(); draw(); };
     // Title/department dropdowns: "Other…" asks for a custom name; picking a title fills an empty department.
     pane.querySelectorAll('select[data-pick]').forEach((s) => { s.onchange = () => {
       keep();
@@ -3648,9 +3660,15 @@ async function hrEmployee(id) {
     $('#hr-save').onclick = async () => {
       keep(); if (!e.first_name.trim()) { toast('Add a first name.'); return; }
       const p = { ...e, photo: e.photo || '', rehire_eligible: e.rehire_eligible === null ? '' : String(e.rehire_eligible) };
-      delete p.events; delete p.can_sign_in; delete p.has_account; delete p.last_sign_in_at;
+      delete p.events; delete p.can_sign_in; delete p.has_account; delete p.last_sign_in_at; delete p.projects; delete p._dev;
+      // Developers see the Projects section.
+      if (e._dev && !p.access.includes('projects')) p.access = [...p.access, 'projects'];
       const { data: r, error: er } = await sb.rpc('hr_save', { p });
       if (er) { toast(failMsg(er)); return; }
+      if (!isNew) {
+        const { error: e2 } = await sb.rpc('hr_set_projects', { p_id: r.id, p_developer: !!e._dev, p_projects: e.projects });
+        if (e2) { toast(failMsg(e2)); return; }
+      }
       toast(isNew ? `Added as #${r.emp_no}.` : 'Saved.'); location.hash = '#/hr/' + r.id; if (!isNew) hrEmployee(r.id);
     };
     if ($('#hr-del')) $('#hr-del').onclick = async () => {
