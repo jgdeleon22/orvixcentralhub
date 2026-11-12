@@ -118,14 +118,14 @@
   .pjc-list { height: 420px; overflow-y: auto; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; background: color-mix(in srgb, var(--pc) 3%, var(--card)); }
   .pjc-empty { color: var(--ink-3); text-align: center; margin: auto; font-size: 14px; }
   .pjc-m { max-width: 78%; align-self: flex-start; }
-  .pjc-m.me { align-self: flex-end; }
+  .pjc-m.pjc-me { align-self: flex-end; }
   .pjc-meta { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--ink-3); margin: 0 4px 3px; }
-  .pjc-m.me .pjc-meta { justify-content: flex-end; }
+  .pjc-m.pjc-me .pjc-meta { justify-content: flex-end; }
   .pjc-meta b { color: var(--ink-2); font-weight: 600; }
   .pjc-b { padding: 9px 13px; border-radius: 14px; background: #fff; border: 1px solid var(--edge); font-size: 14.5px; line-height: 1.45; color: var(--ink); word-wrap: break-word; -webkit-user-select: text; user-select: text; }
-  .pjc-m.me .pjc-b { background: var(--pc); border-color: var(--pc); color: #fff; border-bottom-right-radius: 4px; }
-  .pjc-m.me .pjc-b a { color: #fff; }
-  .pjc-m:not(.me) .pjc-b { border-bottom-left-radius: 4px; }
+  .pjc-m.pjc-me .pjc-b { background: var(--pc); border-color: var(--pc); color: #fff; border-bottom-right-radius: 4px; }
+  .pjc-m.pjc-me .pjc-b a { color: #fff; }
+  .pjc-m:not(.pjc-me) .pjc-b { border-bottom-left-radius: 4px; }
   .pjc-m.ai .pjc-b { background: #FFF6EF; border-color: #F7C9A6; }
   .pjc-m.ai .pjc-meta b { color: #C2560C; }
   .pjc-b code { background: rgba(16,42,72,.07); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
@@ -135,9 +135,9 @@
   .pjc-at { border: 1px solid #F7C9A6; background: #FFF6EF; color: #C2560C; font: 700 13px/1 inherit; border-radius: 999px; padding: 0 12px; height: 38px; cursor: pointer; flex: none; }
   .pjc-at:hover { background: #FFE9D8; }
   .pjc-tag { color: #C2560C; font-weight: 700; }
-  .pjc-m.me .pjc-tag { color: #fff; text-decoration: underline; }
+  .pjc-m.pjc-me .pjc-tag { color: #fff; text-decoration: underline; }
   .pjc-wait { font-size: 12px; color: #C2560C; margin: 4px 6px 0; }
-  .pjc-m.me .pjc-wait { text-align: right; }
+  .pjc-m.pjc-me .pjc-wait { text-align: right; }
   .pjc-form textarea { flex: 1; resize: none; min-height: 42px; max-height: 160px; padding: 10px 12px; line-height: 1.4; }
   /* Project detail */
   .pjd-hero { position: relative; border-radius: 20px; overflow: hidden; min-height: 260px; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--pc), color-mix(in srgb, var(--pc) 45%, #07182E)); color: #fff; margin-bottom: 20px; box-shadow: 0 14px 40px rgba(11,37,69,.14); }
@@ -3461,7 +3461,7 @@ async function projectChat(p) {
     const mine = !m.is_claude && m.author_email === myEmail;
     const who = m.is_claude ? 'Claude' : mine ? 'You' : (m.author_name || m.author_email);
     const t = new Date(m.created_at);
-    return `<div class="pjc-m ${m.is_claude ? 'ai' : mine ? 'me' : ''}" data-id="${m.id}">
+    return `<div class="pjc-m ${m.is_claude ? 'ai' : mine ? 'pjc-me' : ''}" data-id="${m.id}">
       <div class="pjc-meta"><b>${esc(who)}</b><span>${t.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} ${t.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span>${mine ? `<button class="pjc-x" data-del="${m.id}" title="Delete">×</button>` : ''}</div>
       <div class="pjc-b">${fmt(m.body)}</div>${m.claude_tag && !m.claude_done_at ? '<div class="pjc-wait">Waiting for Claude · it checks in every 30 minutes</div>' : ''}</div>`;
   };
