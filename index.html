@@ -110,6 +110,29 @@
   .pj-ms label.done span { color: var(--ink-3); text-decoration: line-through; } .pj-ms input[type=checkbox] { width: 18px; height: 18px; accent-color: #13824B; } .pj-ms span { flex: 1; } .pj-ms button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 18px; }
   .hr-av { width: 40px; height: 40px; border-radius: 50%; background: #E3ECF7; color: #0B2545; display: grid; place-items: center; font-weight: 700; flex: none; overflow: hidden; } .hr-av img { width: 100%; height: 100%; object-fit: cover; }
   .hr-st { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  /* Project chat */
+  .pjc { margin-top: 20px; background: var(--card); border: 1px solid var(--edge); border-radius: 18px; display: flex; flex-direction: column; overflow: hidden; }
+  .pjc-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 18px 22px 12px; border-bottom: 1px solid var(--edge); }
+  .pjc-head h3 { margin: 0; font-size: 17px; }
+  .pjc-head .muted { font-size: 13px; }
+  .pjc-list { height: 420px; overflow-y: auto; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; background: color-mix(in srgb, var(--pc) 3%, var(--card)); }
+  .pjc-empty { color: var(--ink-3); text-align: center; margin: auto; font-size: 14px; }
+  .pjc-m { max-width: 78%; align-self: flex-start; }
+  .pjc-m.me { align-self: flex-end; }
+  .pjc-meta { display: flex; gap: 8px; align-items: baseline; font-size: 12px; color: var(--ink-3); margin: 0 4px 3px; }
+  .pjc-m.me .pjc-meta { justify-content: flex-end; }
+  .pjc-meta b { color: var(--ink-2); font-weight: 600; }
+  .pjc-b { padding: 9px 13px; border-radius: 14px; background: #fff; border: 1px solid var(--edge); font-size: 14.5px; line-height: 1.45; color: var(--ink); word-wrap: break-word; -webkit-user-select: text; user-select: text; }
+  .pjc-m.me .pjc-b { background: var(--pc); border-color: var(--pc); color: #fff; border-bottom-right-radius: 4px; }
+  .pjc-m.me .pjc-b a { color: #fff; }
+  .pjc-m:not(.me) .pjc-b { border-bottom-left-radius: 4px; }
+  .pjc-m.ai .pjc-b { background: #FFF6EF; border-color: #F7C9A6; }
+  .pjc-m.ai .pjc-meta b { color: #C2560C; }
+  .pjc-b code { background: rgba(16,42,72,.07); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+  .pjc-x { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 15px; padding: 0 2px; opacity: 0; }
+  .pjc-m:hover .pjc-x { opacity: 1; }
+  .pjc-form { display: flex; gap: 10px; align-items: flex-end; padding: 12px 14px; border-top: 1px solid var(--edge); }
+  .pjc-form textarea { flex: 1; resize: none; min-height: 42px; max-height: 160px; padding: 10px 12px; line-height: 1.4; }
   /* Project detail */
   .pjd-hero { position: relative; border-radius: 20px; overflow: hidden; min-height: 260px; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--pc), color-mix(in srgb, var(--pc) 45%, #07182E)); color: #fff; margin-bottom: 20px; box-shadow: 0 14px 40px rgba(11,37,69,.14); }
   .pjd-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -3336,7 +3359,7 @@ async function projectsPage() {
 async function projectEdit(id) {
   const isNew = id === 'new';
   crumb(`<span>Developer</span><i>/</i><a href="#/projects">Projects</a><i>/</i><b>${isNew ? 'New project' : 'Project'}</b>`); setNav('projects');
-  $('#view').innerHTML = '<div id="pane"><div class="muted">Loading…</div></div>';
+  $('#view').innerHTML = '<div id="pane"><div class="muted">Loading…</div></div><div id="pj-chat"></div>';
   let p = { id: '', name: '', kind: 'app', stage: 'idea', summary: '', platforms: '', link: '', next_step: '', notes: '', milestones: [], cover: null, color: '#0B63C5', sort: 100 };
   if (!isNew) {
     const { data, error } = await sb.rpc('hub_projects');
@@ -3344,6 +3367,7 @@ async function projectEdit(id) {
     const f = (data || []).find((x) => x.id === id); if (!f) { $('#pane').innerHTML = '<div class="empty">This project isn’t in the list anymore.</div>'; return; }
     p = { ...f, link: f.link || '', milestones: f.milestones || [] };
     crumb(`<span>Developer</span><i>/</i><a href="#/projects">Projects</a><i>/</i><b>${esc(p.name)}</b>`);
+    projectChat(p);
   }
   const pane = $('#pane'); if (!pane) return;
   const opt = (o, v) => Object.entries(o).map(([k, l]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${esc(Array.isArray(l) ? l[0] : l)}</option>`).join('');
@@ -3407,6 +3431,65 @@ async function projectEdit(id) {
     };
   };
   draw();
+}
+
+// Project chat: the developers on this project, and Claude (added from Jorge's
+// Claude session when he asks it to check in). Polls every 4 s while open.
+async function projectChat(p) {
+  const box = $('#pj-chat'); if (!box) return;
+  const myEmail = (me?.email || '').toLowerCase();
+  box.innerHTML = `<section class="pjc" style="--pc:${esc(p.color)}">
+    <div class="pjc-head"><h3>Project chat</h3><span class="muted">Everyone with Developer access. Ask Jorge’s Claude to check in and it answers here.</span></div>
+    <div class="pjc-list" id="pjc-list"><div class="muted" style="padding:16px">Loading…</div></div>
+    <form class="pjc-form" id="pjc-form"><textarea id="pjc-in" rows="1" maxlength="8000" placeholder="Message the team… (Enter to send, Shift+Enter for a new line)"></textarea><button class="btn btn-primary btn-small" type="submit">Send</button></form>
+  </section>`;
+  let last = 0, first = true;
+  const list = $('#pjc-list');
+  const fmt = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+  const row = (m) => {
+    const mine = !m.is_claude && m.author_email === myEmail;
+    const who = m.is_claude ? 'Claude' : mine ? 'You' : (m.author_name || m.author_email);
+    const t = new Date(m.created_at);
+    return `<div class="pjc-m ${m.is_claude ? 'ai' : mine ? 'me' : ''}" data-id="${m.id}">
+      <div class="pjc-meta"><b>${esc(who)}</b><span>${t.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} ${t.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span>${mine ? `<button class="pjc-x" data-del="${m.id}" title="Delete">×</button>` : ''}</div>
+      <div class="pjc-b">${fmt(m.body)}</div></div>`;
+  };
+  const pull = async () => {
+    if (!document.body.contains(list)) return false;
+    const { data, error } = await sb.rpc('hub_project_chat', { p_project: p.id, p_after: last });
+    if (error) { if (first) list.innerHTML = `<div class="empty" style="margin:12px">${esc(failMsg(error))}</div>`; return true; }
+    const msgs = data || [];
+    if (first) { list.innerHTML = msgs.length ? '' : '<div class="pjc-empty">No messages yet. Say hi to the team.</div>'; first = false; }
+    if (msgs.length) {
+      const near = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+      list.querySelector('.pjc-empty')?.remove();
+      list.insertAdjacentHTML('beforeend', msgs.map(row).join(''));
+      last = msgs[msgs.length - 1].id;
+      if (near || msgs.some((m) => m.author_email === myEmail)) list.scrollTop = list.scrollHeight;
+    }
+    return true;
+  };
+  await pull(); list.scrollTop = list.scrollHeight;
+  const timer = setInterval(async () => { if (!(await pull())) clearInterval(timer); }, 4000);
+  const input = $('#pjc-in');
+  const grow = () => { input.style.height = 'auto'; input.style.height = Math.min(160, input.scrollHeight) + 'px'; };
+  input.oninput = grow;
+  input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#pjc-form').requestSubmit(); } };
+  $('#pjc-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const body = input.value.trim(); if (!body) return;
+    input.value = ''; grow();
+    const { error } = await sb.rpc('hub_project_post', { p_project: p.id, p_body: body });
+    if (error) { input.value = body; toast(failMsg(error)); return; }
+    pull();
+  };
+  list.onclick = async (e) => {
+    const b = e.target.closest('[data-del]'); if (!b) return;
+    if (!confirm('Delete this message?')) return;
+    const { error } = await sb.rpc('hub_project_chat_delete', { p_id: +b.dataset.del });
+    if (error) { toast(failMsg(error)); return; }
+    b.closest('.pjc-m').remove();
+  };
 }
 
 // ---------- HR (owner only) ----------
