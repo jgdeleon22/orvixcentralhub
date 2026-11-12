@@ -1250,6 +1250,8 @@ function route() {
   const h = location.hash || '#/';
   window.scrollTo(0, 0);
   if (h.startsWith('#/aero')) return aero(h.split('/')[2] || 'bugs');
+  if (h.startsWith('#/grid/crew/')) return gridCrew(decodeURIComponent(h.slice(12)));
+  if (h.startsWith('#/grid/crews')) return gridCrews();
   if (h.startsWith('#/grid')) return grid();
   if (h.startsWith('#/family')) return family();
   if (h.startsWith('#/cabin')) return cabin();
@@ -1487,7 +1489,7 @@ async function home() {
       <article class="prod2" style="--acc:#1A7FB0">
         <header><img class="app-icon" src="icon-grid.png" alt=""><div><h3>Orvix Grid</h3><div class="tag2">Star Citizen companion</div></div><span class="pillst wait" id="grid-status">Checking…</span></header>
         <div class="p-today"><div><b id="pg-today">–</b><span>players today</span><div id="pg-delta"></div></div><div class="p-spark" id="pg-spark"></div></div>
-        <div class="p-stats"><div><span>Accounts</span><b id="pg-acc">–</b></div><div><span>Crews</span><b id="pg-crews">–</b></div><div><span>Upcoming ops</span><b id="pg-ops">–</b></div><div><span>Open bugs</span><b id="pg-bug">–</b></div></div>
+        <div class="p-stats"><div><span>Accounts</span><b id="pg-acc">–</b></div><a href="#/grid/crews" style="color:inherit;text-decoration:none;display:block;cursor:pointer" title="Open crews"><span>Crews</span><b id="pg-crews">–</b></a><div><span>Upcoming ops</span><b id="pg-ops">–</b></div><div><span>Open bugs</span><b id="pg-bug">–</b></div></div>
         <footer><a class="btn btn-primary btn-small" href="#/grid">Open admin →</a><a class="btn btn-ghost btn-small" href="#/users/grid">Users</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/" target="_blank" rel="noopener">Site ↗</a></footer>
       </article>
       <article class="prod2" style="--acc:#13824B">
@@ -3766,6 +3768,135 @@ async function grid() {
     const [icon, c, title] = a.kind === 'signup' ? [IC.plus, 'var(--blue)', 'New account'] : a.kind === 'feedback' ? [IC.bug, 'var(--orange)', 'New bug report or idea'] : [IC.msg, 'var(--violet)', 'Player report'];
     return `<div class="act"><span class="ai" style="--c:${c}">${icon}</span><div class="at"><b>${title}</b><span>${esc(a.detail || a.who || '')}${a.detail && a.who ? ' · ' + esc(a.who) : ''}</span></div><time>${ago(a.at)}</time></div>`;
   }).join('') : '<div class="muted">Nothing yet.</div>';
+}
+
+// ---------- Orvix Grid crews (read-only, styled like Orvix Grid) ----------
+const GC_KINDS = { exec_hangar: 'Exec Hangar', mining: 'Mining', salvage: 'Salvage', cargo: 'Cargo', combat: 'Combat', bounty: 'Bounty', wikelo: 'Wikelo', valakkar: 'Valakkar Hunt', farro: 'Farro Data Center', other: 'Other' };
+const gcRank = (r) => ({ leader: 0, officer: 1 })[r] ?? 2;
+const GC_ROLE = { leader: 'Leader', officer: 'Officer', member: 'Member' };
+const gcWhen = (t) => new Date(t).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const gcCss = `<style id="gc-css">
+  .gc { --void:#121a27; --hull:#182234; --hull2:#1f2b40; --seam:#2a3850; --acc:#5aa9ff; --sig:#ffbe55; --go:#3ddc97; --bad:#ff6b6b; --tx:#eef3fa; --mu:#a9b8cf; --fa:#8193ad;
+    background: var(--void); color: var(--tx); border-radius: 18px; padding: 22px; font-family: Barlow, system-ui, sans-serif; }
+  .gc a { color: var(--acc); }
+  .gc h2, .gc h3 { color: var(--tx); margin: 0; }
+  .gc .gc-head { display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; margin-bottom:18px; }
+  .gc .gc-tag { background: rgba(90,169,255,.16); color: var(--acc); border-radius: 6px; padding: 2px 8px; font-weight: 700; font-size: 13px; }
+  .gc .gc-sub { color: var(--mu); font-size: 14px; }
+  .gc .gc-cols { display:grid; grid-template-columns: minmax(0,1.5fr) minmax(0,1fr); gap: 16px; }
+  @media (max-width: 1000px) { .gc .gc-cols { grid-template-columns: 1fr; } }
+  .gc .gc-card { background: var(--hull); border: 1px solid var(--seam); border-radius: 14px; padding: 14px 16px; display:grid; gap: 10px; align-content:start; }
+  .gc .gc-card h3 { font-size: 15px; letter-spacing: .02em; display:flex; justify-content:space-between; align-items:baseline; }
+  .gc .gc-card h3 span { color: var(--fa); font-weight: 500; font-size: 13px; }
+  .gc .gc-op { background: var(--hull2); border: 1px solid var(--seam); border-radius: 12px; padding: 12px; display:grid; gap: 8px; }
+  .gc .gc-op.past { opacity: .62; }
+  .gc .gc-kind { font-size: 12px; font-weight: 700; color: var(--sig); }
+  .gc .gc-row { display:flex; gap: 10px; align-items:center; justify-content:space-between; }
+  .gc .gc-pill { font-size: 12px; border-radius: 999px; padding: 2px 9px; background: rgba(61,220,151,.14); color: var(--go); font-weight: 700; white-space: nowrap; }
+  .gc .gc-pill.off { background: rgba(255,255,255,.06); color: var(--fa); }
+  .gc .gc-group { border-top: 1px solid var(--seam); padding-top: 8px; display:grid; gap: 4px; }
+  .gc .gc-seat { display:flex; justify-content:space-between; font-size: 14px; }
+  .gc .gc-seat .open { color: var(--fa); font-style: italic; }
+  .gc .gc-cmt { font-size: 14px; color: var(--mu); border-left: 2px solid var(--seam); padding-left: 8px; }
+  .gc .gc-cmt b { color: var(--tx); }
+  .gc .gc-mem { display:grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items:center; padding: 6px 0; border-top: 1px solid var(--seam); }
+  .gc .gc-mem:first-of-type { border-top: 0; }
+  .gc .gc-av { width: 34px; height: 34px; border-radius: 50%; display:grid; place-items:center; background: var(--hull2); color: var(--acc); font-weight: 800; }
+  .gc .gc-dot { width: 8px; height: 8px; border-radius: 50%; display:inline-block; margin-right: 6px; background: var(--fa); }
+  .gc .gc-dot.on { background: var(--go); }
+  .gc .gc-need { display:flex; gap: 8px; font-size: 14px; padding: 4px 0; border-top: 1px solid var(--seam); }
+  .gc .gc-need:first-of-type { border-top: 0; }
+  .gc .gc-k { font-size: 11px; font-weight: 800; border-radius: 5px; padding: 1px 6px; height: fit-content; }
+  .gc .gc-k.need { background: rgba(255,190,85,.15); color: var(--sig); } .gc .gc-k.have { background: rgba(61,220,151,.14); color: var(--go); }
+  .gc .gc-ship { display:inline-block; background: var(--hull2); border-radius: 6px; padding: 1px 7px; font-size: 12px; color: var(--mu); margin: 2px 4px 0 0; }
+  .gc-list { display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .gc-list a.gc-card { color: var(--tx); text-decoration: none; }
+  .gc-list a.gc-card:hover { border-color: var(--acc); }
+  .gc .gc-nums { display:grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .gc .gc-nums div { background: var(--hull2); border-radius: 8px; padding: 6px 8px; }
+  .gc .gc-nums b { display:block; font-size: 18px; } .gc .gc-nums span { color: var(--fa); font-size: 12px; }
+</style>`;
+
+async function gridCrews() {
+  crumb('<a href="#/grid">Orvix Grid</a><i>/</i><b>Crews</b>'); setNav('grid');
+  $('#view').innerHTML = `${gcCss}<div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-grid.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Crews</h1><div class="muted">Every Orvix Grid crew · open one to see it the way its members do</div></div></div></div><div id="gcpane"><div class="muted">Loading…</div></div>`;
+  const { data, error } = await sb.functions.invoke('hub-grid', { body: { action: 'crews' } });
+  const pane = $('#gcpane'); if (!pane) return;
+  if (error || !data?.ok) { pane.innerHTML = `<div class="empty">Couldn’t load crews${data?.error ? ': ' + esc(data.error) : ''}. The hub-grid service may need the new version deployed.</div>`; return; }
+  const list = data.crews || [];
+  pane.innerHTML = `<div class="gc"><div class="gc-row" style="margin-bottom:14px"><span class="gc-sub">${list.length} crew${list.length === 1 ? '' : 's'} · ${list.reduce((t, c) => t + c.members, 0)} members · ${list.reduce((t, c) => t + c.upcoming_ops, 0)} upcoming ops</span></div>
+    <div class="gc-list">${list.map((c) => `<a class="gc-card" href="#/grid/crew/${c.id}">
+      <div class="gc-row"><h3 style="display:block">${esc(c.name)} ${c.tag ? `<span class="gc-tag">${esc(c.tag)}</span>` : ''}</h3><span class="gc-pill ${Date.parse(c.last_activity) > Date.now() - 7 * 864e5 ? '' : 'off'}">${Date.parse(c.last_activity) > Date.now() - 7 * 864e5 ? 'Active' : 'Quiet'}</span></div>
+      ${c.description ? `<div class="gc-sub" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(c.description)}</div>` : ''}
+      <div class="gc-nums"><div><b>${c.members}</b><span>members</span></div><div><b>${c.upcoming_ops}</b><span>upcoming ops</span></div><div><b>${c.ops_30d}</b><span>ops, 30 days</span></div></div>
+      <div class="gc-sub" style="font-size:13px">${c.leader ? `Led by ${esc(c.leader)} · ` : ''}last activity ${esc(ago(c.last_activity))}${c.discord ? ' · Discord linked' : ''}</div>
+    </a>`).join('') || '<div class="gc-sub">No crews yet.</div>'}</div></div>`;
+}
+
+async function gridCrew(id) {
+  crumb('<a href="#/grid">Orvix Grid</a><i>/</i><a href="#/grid/crews">Crews</a><i>/</i><b>Crew</b>'); setNav('grid');
+  $('#view').innerHTML = `${gcCss}<div id="gcpane"><div class="muted">Loading…</div></div>`;
+  const { data: d, error } = await sb.functions.invoke('hub-grid', { body: { action: 'crew', crew: id } });
+  const pane = $('#gcpane'); if (!pane) return;
+  if (error || !d?.ok) { pane.innerHTML = `<div class="empty">Couldn’t load this crew${d?.error ? ': ' + esc(d.error) : ''}.</div>`; return; }
+  const c = d.crew, members = d.members || [];
+  crumb(`<a href="#/grid">Orvix Grid</a><i>/</i><a href="#/grid/crews">Crews</a><i>/</i><b>${esc(c.name)}</b>`);
+  const nameOf = new Map(members.map((m) => [m.user_id, m.display_name || m.email || 'Player']));
+  const who = (uid) => esc(nameOf.get(uid) || 'Former member');
+  const now = Date.now();
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
+  const ops = (d.ops || []).slice().sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
+  const upcoming = ops.filter((o) => o.status === 'open' && Date.parse(o.starts_at) + 3 * 3600e3 > now);
+  const past = ops.filter((o) => !upcoming.includes(o)).reverse();
+  const signupsOf = (o) => (d.signups || []).filter((s) => s.op_id === o.id);
+  const commentsOf = (o) => (d.comments || []).filter((x) => x.op_id === o.id);
+  const opCard = (o, isPast) => {
+    const sus = signupsOf(o), cm = commentsOf(o);
+    const roster = Array.isArray(o.roster) ? o.roster : [];
+    const seated = new Set(sus.filter((s) => s.seat_id).map((s) => s.seat_id));
+    const groups = roster.filter((g) => Array.isArray(g.seats) && g.seats.length).map((g) => `<div class="gc-group"><b style="font-size:14px">${esc(g.name || (g.kind === 'ship' ? 'Ship' : 'Team'))}${g.ship ? ` <span class="gc-sub">· ${esc(g.ship)}</span>` : ''}</b>
+      ${g.seats.map((st) => { const s = sus.find((x) => x.seat_id === st.id); return `<div class="gc-seat"><span>${esc(st.role || st.name || 'Seat')}</span>${s ? `<b>${who(s.user_id)}</b>` : '<span class="open">open</span>'}</div>`; }).join('')}</div>`).join('');
+    const slots = (o.slots || []).map((sl, i) => { const s = sus.find((x) => x.slot_index === i); return `<div class="gc-seat"><span>${esc(sl)}</span>${s ? `<b>${who(s.user_id)}</b>` : '<span class="open">open</span>'}</div>`; }).join('');
+    const loose = sus.filter((s) => !s.seat_id && (s.slot_index === null || s.slot_index === undefined) && !seated.has(s.seat_id));
+    return `<div class="gc-op ${isPast ? 'past' : ''}">
+      <div class="gc-row"><div><div class="gc-kind">${esc(GC_KINDS[o.kind] || o.kind || 'Op')}</div><b style="font-size:16px">${esc(o.title || 'Untitled op')}</b></div><span class="gc-pill ${o.status === 'open' && !isPast ? '' : 'off'}">${o.status === 'open' ? (isPast ? 'Done' : 'Open') : esc(o.status)}</span></div>
+      <div class="gc-sub">${esc(gcWhen(o.starts_at))}${o.location ? ` · ${esc(o.location)}` : ''} · ${sus.length} going${o.created_by ? ` · posted by ${who(o.created_by)}` : ''}</div>
+      ${o.notes ? `<div style="font-size:14px;white-space:pre-wrap">${esc(o.notes)}</div>` : ''}
+      ${groups}${slots ? `<div class="gc-group">${slots}</div>` : ''}
+      ${loose.length ? `<div class="gc-sub">Going: ${loose.map((s) => who(s.user_id)).join(', ')}</div>` : ''}
+      ${cm.length ? `<div style="display:grid;gap:6px">${cm.slice(-6).map((x) => `<div class="gc-cmt"><b>${who(x.user_id)}</b> ${esc(x.body)} <span style="color:var(--fa);font-size:12px">· ${esc(ago(x.created_at))}</span></div>`).join('')}${cm.length > 6 ? `<div class="gc-sub" style="font-size:12px">${cm.length - 6} earlier comments</div>` : ''}</div>` : ''}
+    </div>`;
+  };
+  const activeNow = members.filter((m) => m.last_active_day === today).length;
+  const memberRow = (m) => {
+    const on = m.last_active_day === today;
+    const fleet = Array.isArray(m.fleet) ? m.fleet : [];
+    return `<div class="gc-mem"><div class="gc-av">${esc((m.display_name || m.email || '?').trim().charAt(0).toUpperCase())}</div>
+      <div style="min-width:0"><b>${esc(m.display_name || 'Player')}</b> <span class="gc-sub" style="font-size:12px">${esc(GC_ROLE[m.role] || m.role || '')}</span>
+        <div class="gc-sub" style="font-size:12px;overflow:hidden;text-overflow:ellipsis">${esc(m.email || '')}</div>
+        ${fleet.length ? `<div>${fleet.slice(0, 6).map((s) => `<span class="gc-ship">${esc(typeof s === 'string' ? s : s.name || s.ship || 'Ship')}</span>`).join('')}${fleet.length > 6 ? `<span class="gc-ship">+${fleet.length - 6}</span>` : ''}</div>` : ''}</div>
+      <div style="text-align:right;font-size:12px" class="gc-sub"><span class="gc-dot ${on ? 'on' : ''}"></span>${on ? 'Played today' : m.last_active_day ? 'Last played ' + esc(m.last_active_day) : m.last_sign_in_at ? 'Signed in ' + esc(ago(m.last_sign_in_at)) : 'Not seen yet'}<br>${m.days_active_7d || 0} day${m.days_active_7d === 1 ? '' : 's'} this week · joined ${esc(new Date(m.joined_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }))}</div></div>`;
+  };
+  const needs = d.needs || [];
+  pane.innerHTML = `<div class="gc">
+    <div class="gc-head">
+      <div style="flex:1;min-width:240px"><h2 style="font-family:Saira,Barlow,sans-serif;font-size:28px">${esc(c.name)} ${c.tag ? `<span class="gc-tag" style="vertical-align:middle">${esc(c.tag)}</span>` : ''}</h2>
+        ${c.description ? `<div class="gc-sub" style="margin-top:6px;white-space:pre-wrap;max-width:70ch">${esc(c.description)}</div>` : ''}
+        <div class="gc-sub" style="margin-top:8px;font-size:13px">Created ${esc(new Date(c.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }))} · invite code <b style="color:var(--tx);letter-spacing:.08em">${esc(c.invite_code || '—')}</b>${c.discord_url ? ` · <a href="${esc(c.discord_url)}" target="_blank" rel="noopener">Discord ↗</a>` : ''}</div></div>
+      <div class="gc-nums" style="min-width:300px"><div><b>${members.length}</b><span>members</span></div><div><b>${activeNow}</b><span>played today</span></div><div><b>${upcoming.length}</b><span>upcoming ops</span></div></div>
+    </div>
+    <div class="gc-cols">
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="gc-card"><h3>Op board <span>${upcoming.length} upcoming</span></h3>${upcoming.map((o) => opCard(o, false)).join('') || '<div class="gc-sub">No upcoming ops.</div>'}</div>
+        <div class="gc-card"><h3>Recent ops <span>last 60 days</span></h3>${past.slice(0, 15).map((o) => opCard(o, true)).join('') || '<div class="gc-sub">Nothing in the last 60 days.</div>'}</div>
+      </div>
+      <div style="display:grid;gap:16px;align-content:start">
+        <div class="gc-card"><h3>Members <span>${members.length}</span></h3><div>${members.slice().sort((a, b) => gcRank(a.role) - gcRank(b.role)).map(memberRow).join('')}</div></div>
+        <div class="gc-card"><h3>Need / have <span>${needs.length}</span></h3><div>${needs.map((n) => `<div class="gc-need"><span class="gc-k ${n.kind === 'have' ? 'have' : 'need'}">${n.kind === 'have' ? 'HAVE' : 'NEED'}</span><div><b>${esc(n.item)}</b>${n.note ? ` <span class="gc-sub">${esc(n.note)}</span>` : ''}<div class="gc-sub" style="font-size:12px">${who(n.user_id)} · ${esc(ago(n.created_at))}</div></div></div>`).join('') || '<div class="gc-sub">Nothing listed.</div>'}</div></div>
+        ${(d.reports || []).length ? `<div class="gc-card" style="border-color:rgba(255,107,107,.5)"><h3>Reports <span>${d.reports.length}</span></h3>${d.reports.map((r) => `<div class="gc-cmt" style="border-color:var(--bad)"><b>${esc(r.target_type)}</b> ${esc(r.reason || 'No reason given')} <span style="color:var(--fa);font-size:12px">· from ${who(r.reporter)}${r.target_user ? ' about ' + who(r.target_user) : ''} · ${esc(ago(r.created_at))}</span></div>`).join('')}</div>` : ''}
+      </div>
+    </div></div>
+    <p class="note">Read-only: this is what the crew’s members see in Orvix Grid (app and orvixgrid.com), plus emails and activity only the hub shows. Opening a crew is written to the audit log.</p>`;
 }
 
 // ---------- Orvix Family ----------
