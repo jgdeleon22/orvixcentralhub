@@ -3450,7 +3450,7 @@ async function projectChat(p) {
   const box = $('#pj-chat'); if (!box) return;
   const myEmail = (me?.email || '').toLowerCase();
   box.innerHTML = `<section class="pjc" style="--pc:${esc(p.color)}">
-    <div class="pjc-head"><h3>Project chat</h3><span class="muted">Everyone on this project. Type <b>@Claude</b> to call Claude: it checks in every 30 minutes and answers here.</span></div>
+    <div class="pjc-head"><h3>Project chat</h3><span class="muted">Everyone on this project. Type <b>@Claude</b> to call Claude: it checks every minute and answers here.</span></div>
     <div class="pjc-list" id="pjc-list"><div class="muted" style="padding:16px">Loading…</div></div>
     <form class="pjc-form" id="pjc-form"><button class="pjc-at" type="button" id="pjc-at" title="Call Claude into this chat">@Claude</button><textarea id="pjc-in" rows="1" maxlength="8000" placeholder="Message the team… (Enter to send, Shift+Enter for a new line)"></textarea><button class="btn btn-primary btn-small" type="submit">Send</button></form>
   </section>`;
@@ -3463,7 +3463,7 @@ async function projectChat(p) {
     const t = new Date(m.created_at);
     return `<div class="pjc-m ${m.is_claude ? 'ai' : mine ? 'pjc-me' : ''}" data-id="${m.id}">
       <div class="pjc-meta"><b>${esc(who)}</b><span>${t.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} ${t.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span>${mine ? `<button class="pjc-x" data-del="${m.id}" title="Delete">×</button>` : ''}</div>
-      <div class="pjc-b">${fmt(m.body)}</div>${m.claude_tag && !m.claude_done_at ? '<div class="pjc-wait">Waiting for Claude · it checks in every 30 minutes</div>' : ''}</div>`;
+      <div class="pjc-b">${fmt(m.body)}</div>${m.claude_tag && !m.claude_done_at ? '<div class="pjc-wait">Waiting for Claude · it checks every minute</div>' : ''}</div>`;
   };
   const pull = async () => {
     if (!document.body.contains(list)) return false;
