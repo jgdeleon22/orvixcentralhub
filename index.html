@@ -132,6 +132,12 @@
   .pjc-x { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 15px; padding: 0 2px; opacity: 0; }
   .pjc-m:hover .pjc-x { opacity: 1; }
   .pjc-form { display: flex; gap: 10px; align-items: flex-end; padding: 12px 14px; border-top: 1px solid var(--edge); }
+  .pjc-at { border: 1px solid #F7C9A6; background: #FFF6EF; color: #C2560C; font: 700 13px/1 inherit; border-radius: 999px; padding: 0 12px; height: 38px; cursor: pointer; flex: none; }
+  .pjc-at:hover { background: #FFE9D8; }
+  .pjc-tag { color: #C2560C; font-weight: 700; }
+  .pjc-m.me .pjc-tag { color: #fff; text-decoration: underline; }
+  .pjc-wait { font-size: 12px; color: #C2560C; margin: 4px 6px 0; }
+  .pjc-m.me .pjc-wait { text-align: right; }
   .pjc-form textarea { flex: 1; resize: none; min-height: 42px; max-height: 160px; padding: 10px 12px; line-height: 1.4; }
   /* Project detail */
   .pjd-hero { position: relative; border-radius: 20px; overflow: hidden; min-height: 260px; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--pc), color-mix(in srgb, var(--pc) 45%, #07182E)); color: #fff; margin-bottom: 20px; box-shadow: 0 14px 40px rgba(11,37,69,.14); }
@@ -3444,20 +3450,20 @@ async function projectChat(p) {
   const box = $('#pj-chat'); if (!box) return;
   const myEmail = (me?.email || '').toLowerCase();
   box.innerHTML = `<section class="pjc" style="--pc:${esc(p.color)}">
-    <div class="pjc-head"><h3>Project chat</h3><span class="muted">Everyone with Developer access. Ask Jorge’s Claude to check in and it answers here.</span></div>
+    <div class="pjc-head"><h3>Project chat</h3><span class="muted">Everyone on this project. Type <b>@Claude</b> to call Claude: it checks in every 30 minutes and answers here.</span></div>
     <div class="pjc-list" id="pjc-list"><div class="muted" style="padding:16px">Loading…</div></div>
-    <form class="pjc-form" id="pjc-form"><textarea id="pjc-in" rows="1" maxlength="8000" placeholder="Message the team… (Enter to send, Shift+Enter for a new line)"></textarea><button class="btn btn-primary btn-small" type="submit">Send</button></form>
+    <form class="pjc-form" id="pjc-form"><button class="pjc-at" type="button" id="pjc-at" title="Call Claude into this chat">@Claude</button><textarea id="pjc-in" rows="1" maxlength="8000" placeholder="Message the team… (Enter to send, Shift+Enter for a new line)"></textarea><button class="btn btn-primary btn-small" type="submit">Send</button></form>
   </section>`;
   let last = 0, first = true;
   const list = $('#pjc-list');
-  const fmt = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+  const fmt = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/@claude\b/gi, '<span class="pjc-tag">@Claude</span>').replace(/\n/g, '<br>');
   const row = (m) => {
     const mine = !m.is_claude && m.author_email === myEmail;
     const who = m.is_claude ? 'Claude' : mine ? 'You' : (m.author_name || m.author_email);
     const t = new Date(m.created_at);
     return `<div class="pjc-m ${m.is_claude ? 'ai' : mine ? 'me' : ''}" data-id="${m.id}">
       <div class="pjc-meta"><b>${esc(who)}</b><span>${t.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} ${t.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span>${mine ? `<button class="pjc-x" data-del="${m.id}" title="Delete">×</button>` : ''}</div>
-      <div class="pjc-b">${fmt(m.body)}</div></div>`;
+      <div class="pjc-b">${fmt(m.body)}</div>${m.claude_tag && !m.claude_done_at ? '<div class="pjc-wait">Waiting for Claude · it checks in every 30 minutes</div>' : ''}</div>`;
   };
   const pull = async () => {
     if (!document.body.contains(list)) return false;
@@ -3468,6 +3474,7 @@ async function projectChat(p) {
     if (msgs.length) {
       const near = list.scrollHeight - list.scrollTop - list.clientHeight < 80;
       list.querySelector('.pjc-empty')?.remove();
+      if (msgs.some((m) => m.is_claude)) list.querySelectorAll('.pjc-wait').forEach((w) => w.remove());
       list.insertAdjacentHTML('beforeend', msgs.map(row).join(''));
       last = msgs[msgs.length - 1].id;
       if (near || msgs.some((m) => m.author_email === myEmail)) list.scrollTop = list.scrollHeight;
@@ -3479,6 +3486,7 @@ async function projectChat(p) {
   const input = $('#pjc-in');
   const grow = () => { input.style.height = 'auto'; input.style.height = Math.min(160, input.scrollHeight) + 'px'; };
   input.oninput = grow;
+  $('#pjc-at').onclick = () => { if (!/@claude\b/i.test(input.value)) input.value = '@Claude ' + input.value; input.focus(); grow(); };
   input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#pjc-form').requestSubmit(); } };
   $('#pjc-form').onsubmit = async (e) => {
     e.preventDefault();
