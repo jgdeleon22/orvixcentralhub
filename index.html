@@ -89,7 +89,8 @@
   .seg { display: inline-flex; background: var(--card); border: 1px solid var(--edge); border-radius: 10px; padding: 3px; gap: 2px; }
   .seg button { background: none; border: 0; color: var(--ink-2); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
   .seg button.on { background: var(--card-2); color: var(--ink); }
-  .dev-only[hidden], .ix-col[hidden] { display: none !important; }
+  .dev-only[hidden], .owner-only[hidden], .ix-sub[hidden], .ix-col[hidden], .nav[hidden], .sheet-item[hidden] { display: none !important; }
+  .ix-nav > a.on { color: var(--ixblue); }
   .pj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .pj { background: var(--card); border: 1px solid var(--edge); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
   .pj:hover { border-color: var(--pc); transform: translateY(-2px); }
@@ -107,6 +108,15 @@
   .pj-next { font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--edge); padding-top: 8px; margin-top: auto; }
   .pj-ms { display: grid; gap: 6px; } .pj-ms label { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 10px; background: var(--card); }
   .pj-ms label.done span { color: var(--ink-3); text-decoration: line-through; } .pj-ms input[type=checkbox] { width: 18px; height: 18px; accent-color: #13824B; } .pj-ms span { flex: 1; } .pj-ms button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 18px; }
+  .hr-av { width: 40px; height: 40px; border-radius: 50%; background: #E3ECF7; color: #0B2545; display: grid; place-items: center; font-weight: 700; flex: none; overflow: hidden; } .hr-av img { width: 100%; height: 100%; object-fit: cover; }
+  .hr-st { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .hr-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px 14px; }
+  .hr-form label { display: grid; gap: 5px; font-size: 13px; color: var(--ink-2); margin: 0; }
+  .hr-acc { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+  .hr-acc fieldset { border: 1px solid var(--edge); border-radius: 12px; padding: 10px 12px; margin: 0; display: grid; gap: 6px; }
+  .hr-acc legend { font-weight: 700; font-size: 13px; padding: 0 4px; }
+  .hr-acc label { display: flex; gap: 8px; align-items: center; font-size: 14px; margin: 0; } .hr-acc input { width: 17px; height: 17px; accent-color: #0B63C5; }
+  .hr-tl { display: grid; gap: 0; } .hr-tl > div { display: grid; grid-template-columns: 110px 1fr auto; gap: 12px; padding: 10px 0; border-top: 1px solid var(--edge); align-items: start; font-size: 14px; }
   table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
   .tbl th { text-align: left; color: var(--ink-3); font-weight: 500; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; padding: 10px 12px; border-bottom: 1px solid var(--edge); white-space: nowrap; }
   .tbl td { padding: 12px; border-bottom: 1px solid var(--edge); vertical-align: middle; }
@@ -701,7 +711,7 @@
   .ix-ph { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
   .ix-ph b { font-size: 18px; color: var(--ixdeep); }
   .ix-ph span { color: var(--ink-3); font-size: 14px; }
-  .ix-pg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .ix-pg { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
   .ix-pc { display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid var(--edge); border-top: 4px solid var(--c); border-radius: 8px; padding: 18px; text-decoration: none; color: var(--ink); transition: box-shadow .15s, transform .15s; }
   .ix-pc:hover { box-shadow: 0 12px 28px -16px rgba(11,37,69,.4); transform: translateY(-2px); }
   .ix-pc.on { outline: 2px solid var(--ixblue); outline-offset: -1px; }
@@ -853,8 +863,8 @@
   <div class="login-card">
     <div class="login-logo"><div class="hub-logo" role="img" aria-label="Orvix Central Hub"><svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="33" fill="none" stroke="#F76E19" stroke-width="26" stroke-dasharray="63.1 6" transform="rotate(155.2 50 50)"/></svg><div class="word"><b>ORVIX</b><span>CENTRAL HUB</span></div></div></div>
     <form id="login-form">
-      <label for="email" style="margin-top:0">Email</label>
-      <input id="email" type="email" autocomplete="username" required>
+      <label for="email" style="margin-top:0" id="email-label">Email or employee number</label>
+      <input id="email" type="text" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username" required>
       <label for="password">Password</label>
       <input id="password" type="password" autocomplete="current-password" required>
       <div id="pw-again" class="hidden">
@@ -914,6 +924,7 @@
       <a class="nav" data-nav="gifts" href="#/gifts"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg><span>Gift codes</span></a>
       <a class="nav" data-nav="cityphotos" href="#/cityphotos"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg><span>City photos</span></a>
       <a class="nav" data-nav="discord" href="#/discord"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg><span>Discord</span></a>
+      <a class="nav owner-only" data-nav="hr" href="#/hr" hidden><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M5.8 16c.6-1.5 1.8-2.3 3.2-2.3s2.6.8 3.2 2.3M14.5 10h4M14.5 13h3"/></svg><span>HR</span></a>
       <a class="nav dev-only" data-nav="projects" href="#/projects" hidden><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13.5 4-3 16"/></svg><span>Projects</span></a>
       <a class="nav" data-nav="settings" href="#/settings"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
       <div class="nav-group">Products</div>
@@ -921,6 +932,7 @@
       <a class="nav" data-nav="grid" href="#/grid"><img class="nimg" src="icon-grid.png" alt=""><span>Orvix Grid</span></a>
       <a class="nav" data-nav="family" href="#/family"><img class="nimg" src="icon-family.png" alt=""><span>Orvix Family</span></a>
       <a class="nav" data-nav="cabin" href="#/cabin"><img class="nimg" src="icon-cabin.png" alt=""><span>Orvix Cabin</span></a>
+      <a class="nav" data-nav="deck" href="#/deck"><img class="nimg" src="icon-deck.png" alt=""><span>Orvix Deck</span></a>
     </nav>
     <div class="side-foot">
       <div class="me"><span class="av" id="av">J</span><div class="me-t"><b id="who"></b><span>Admin</span></div></div>
@@ -943,6 +955,8 @@
           <button type="button" data-mega="Products" aria-expanded="false">Products <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
           <a href="#/support">Support <em id="ix-bugs"></em></a>
           <a href="#/health">Health</a>
+          <a href="#/projects" class="dev-only" data-top="projects" hidden>Developer</a>
+          <a href="#/hr" class="owner-only" data-top="hr" hidden>HR</a>
         </nav>
         <div class="ix-me" id="ix-me" role="button" tabindex="0" aria-haspopup="true"><span class="av" id="ix-av">J</span><div><b id="ix-who"></b><small>Admin, Orvix Studios</small></div>
           <div class="ix-drop hidden" id="ix-drop"><a href="#/profile">My profile</a><a href="#/settings">Settings</a><a href="https://orvixstudios.net" target="_blank" rel="noopener">Orvix Studios</a><button type="button" id="ix-out">Sign out</button></div>
@@ -1002,6 +1016,7 @@
         <a class="sheet-item" data-nav="revenue" href="#/revenue" style="--c:#13824B"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M6 15l4-4 3 3 5-6"/><path d="M15 8h3v3"/></svg></span>Revenue</a>
         <a class="sheet-item" data-nav="ads" href="#/ads" style="--c:#C8363C"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg></span>Ad results</a>
         <a class="sheet-item" data-nav="team" href="#/team" style="--c:#6A4BC4"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.6c2.6.1 4.4 1.8 5 4.4"/></svg></span>Team</a>
+        <a class="sheet-item owner-only" data-nav="hr" href="#/hr" style="--c:#0B2545" hidden><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M5.8 16c.6-1.5 1.8-2.3 3.2-2.3s2.6.8 3.2 2.3M14.5 10h4M14.5 13h3"/></svg></span>HR</a>
         <a class="sheet-item dev-only" data-nav="projects" href="#/projects" style="--c:#0B63C5" hidden><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13.5 4-3 16"/></svg></span>Projects</a>
         <a class="sheet-item" data-nav="settings" href="#/settings" style="--c:#5B6E82"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 6.2l2.1 2.1M17.7 15.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 17.8l2.1-2.1M17.7 8.3l2.1-2.1"/></svg></span>Settings</a>
       </div>
@@ -1011,6 +1026,7 @@
         <a class="sheet-item" data-nav="grid" href="#/grid" style="--c:#1A7FB0"><img class="ic" src="icon-grid.png" alt="">Orvix Grid</a>
         <a class="sheet-item" data-nav="family" href="#/family" style="--c:#13824B"><img class="ic" src="icon-family.png" alt="">Orvix Family</a>
         <a class="sheet-item" data-nav="cabin" href="#/cabin" style="--c:#AD6610"><img class="ic" src="icon-cabin.png" alt="">Orvix Cabin</a>
+        <a class="sheet-item" data-nav="deck" href="#/deck" style="--c:#1A7FB0"><img class="ic" src="icon-deck.png" alt="">Orvix Deck</a>
       </div>
       <button class="sheet-out" id="sheet-out" type="button">Sign out</button>
     </div>
@@ -1049,6 +1065,28 @@ const statusOf = (s) => STATUSES.find((x) => x[0] === s) || [s, s, 'var(--ink-3)
 
 let me = null;
 let isDev = false;
+let isOwner = false;
+let hubMe = {};
+// Which sections this person may open: owners everything; employees what HR
+// gave them; admins without an employee profile everything but HR.
+const SECTION_OF = (h) => { const k = (h.replace(/^#\/?/, '').split('/')[0] || 'home'); return { person: 'users' }[k] || k; };
+const ALWAYS = new Set(['home', 'profile']);
+function canSee(key) {
+  if (isOwner) return true;
+  if (key === 'hr') return false;
+  if (key === 'projects') return isDev;
+  if (ALWAYS.has(key)) return true;
+  return !Array.isArray(hubMe.sections) || hubMe.sections.includes(key);
+}
+function applyAccess() {
+  document.querySelectorAll('[data-nav]').forEach((a) => { a.hidden = !canSee(a.dataset.nav); });
+  document.querySelectorAll('.dev-only').forEach((el) => { el.hidden = !isDev; });
+  document.querySelectorAll('.owner-only').forEach((el) => { el.hidden = !isOwner; });
+  document.querySelectorAll('.ix-col').forEach((c) => { c.hidden = ![...c.querySelectorAll('a.nav')].some((a) => !a.hidden); });
+  const prods = document.querySelector('.ix-nav [data-mega="Products"]'); if (prods) prods.hidden = !['aero', 'grid', 'family', 'cabin', 'deck'].some(canSee);
+  const sup = document.querySelector('.ix-nav a[href="#/support"]'); if (sup) sup.hidden = !canSee('support');
+  const hl = document.querySelector('.ix-nav a[href="#/health"]'); if (hl) hl.hidden = !canSee('health');
+}
 // The signed-in admin's profile lives in their own account (user metadata):
 // name, job title, phone, photo (small data URL). Shown instead of the email.
 const prof = () => me?.user_metadata?.hub || {};
@@ -1062,7 +1100,8 @@ function paintMe() {
   if (!me) return;
   const title = (prof().title || '').trim() || 'Admin';
   [['#who', meName()], ['#ix-who', meName()], ['#sheet-who', meName()]].forEach(([id, t]) => { const el = $(id); if (el) el.textContent = t; });
-  const sub = $('#ix-me small'); if (sub) sub.textContent = title + ', Orvix Studios';
+  const emp = hubMe?.employee;
+  const sub = $('#ix-me small'); if (sub) sub.textContent = (emp?.title || title) + (emp ? ` · #${emp.emp_no}` : ', Orvix Studios');
   ['#av', '#ix-av', '#sheet-av'].forEach((id) => paintAv($(id)));
 }
 let cache = { feedback: null, people: null, overview: null, grid: null, gridFull: null, users: null, analytics: {}, outside: {}, checklist: null };
@@ -1164,9 +1203,10 @@ async function checkNow() {
   if (mine?.must_change_password) return showPw(false);
   $('#pw').classList.add('hidden');
   $('#app').classList.remove('hidden');
-  isDev = (await sb.rpc('is_developer').then((x) => x.data, () => false)) === true;
-  document.querySelectorAll('.dev-only').forEach((el) => { el.hidden = !isDev; });
-  document.querySelectorAll('.ix-col[data-group="Developer"]').forEach((el) => { el.hidden = !isDev; });
+  hubMe = mine || {};
+  isDev = !!hubMe.developer;
+  isOwner = !!hubMe.owner;
+  applyAccess();
   paintMe();
   savePush();
   route();
@@ -1194,6 +1234,7 @@ $('#mode').addEventListener('click', () => setMode(!creating));
 async function createAccount() {
   const email = $('#email').value.trim().toLowerCase(), pw = $('#password').value, err = $('#login-err');
   const say = (msg, ok) => { err.className = ok ? 'ok' : 'err'; err.textContent = msg; };
+  if (!email.includes('@')) return say('Create the account with your work email. After that you can sign in with your employee number.');
   if (pw !== $('#password2').value) return say('The two passwords don’t match.');
   if (pw.length < 10) return say('Use at least 10 characters.');
   const { data: allowed, error: e1 } = await sb.rpc('hub_can_register', { p_email: email });
@@ -1216,7 +1257,17 @@ $('#login-form').addEventListener('submit', async (e) => {
     return;
   }
   const b = $('#login-btn'); b.disabled = true; $('#login-err').className = 'err'; $('#login-err').textContent = '';
-  const { error } = await sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value });
+  const who = $('#email').value.trim();
+  let error = null;
+  if (/^(os-?|#)?\d{1,8}$/i.test(who)) {
+    // Employee number: the hub-login function signs in with the work email.
+    try {
+      const r = await fetch(SB_URL + '/functions/v1/hub-login', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY }, body: JSON.stringify({ emp_no: who, password: $('#password').value }) });
+      const s = await r.json().catch(() => ({}));
+      if (!r.ok || !s.access_token) error = { message: s.error || 'Couldn’t sign in. Try again.' };
+      else ({ error } = await sb.auth.setSession({ access_token: s.access_token, refresh_token: s.refresh_token }));
+    } catch { error = { message: 'Couldn’t reach the hub. Check your connection.' }; }
+  } else ({ error } = await sb.auth.signInWithPassword({ email: who, password: $('#password').value }));
   b.disabled = false;
   if (error) { $('#login-err').textContent = error.message; return; }
   $('#password').value = '';
@@ -1273,12 +1324,21 @@ function route() {
   }
   const h = location.hash || '#/';
   window.scrollTo(0, 0);
+  document.querySelectorAll('.ix-nav a[data-top]').forEach((a) => a.classList.toggle('on', h.startsWith('#/' + a.dataset.top)));
+  if (!canSee(SECTION_OF(h))) {
+    crumb('<b>No access</b>'); setNav('');
+    $('#view').innerHTML = '<div class="allclear" style="margin-top:40px"><h2 style="margin:0">You don’t have access to this section</h2><p class="muted">Ask the owner to add it to your profile in HR.</p><a class="btn btn-primary btn-small" href="#/">Go to Overview</a></div>';
+    return;
+  }
+  if (h.startsWith('#/hr/')) return hrEmployee(decodeURIComponent(h.slice(5)));
+  if (h.startsWith('#/hr')) return hrPage();
   if (h.startsWith('#/aero')) return aero(h.split('/')[2] || 'bugs');
   if (h.startsWith('#/grid/crew/')) return gridCrew(decodeURIComponent(h.slice(12)));
   if (h.startsWith('#/grid/crews')) return gridCrews();
   if (h.startsWith('#/grid')) return grid();
   if (h.startsWith('#/family')) return family();
   if (h.startsWith('#/cabin')) return cabin();
+  if (h.startsWith('#/deck')) return deckPage();
   if (h.startsWith('#/health')) return healthPage();
   if (h.startsWith('#/users')) return usersPage(h.split('/')[2] || 'aero');
   if (h.startsWith('#/analytics')) return analyticsPage();
@@ -1344,8 +1404,9 @@ const IX_GROUPS = [
   { name: 'Support', c: '#0E8A4A', icon: '<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>', keys: ['support', 'inbox', 'announce', 'discord', 'gifts'] },
   { name: 'Admin', c: '#5D6F82', icon: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.2-6 8-6s7 2 8 6"/>', keys: ['careers', 'audit', 'costs', 'releases', 'cityphotos', 'settings'] },
   { name: 'Business', c: '#6A4BC4', icon: '<path d="M4 21V5l8-3 8 3v16"/><path d="M9 21v-5h6v5"/>', keys: ['company', 'revenue', 'ads', 'team'] },
-  { name: 'Products', c: '#0B2545', icon: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/>', keys: ['aero', 'grid', 'family', 'cabin'] },
+  { name: 'Products', c: '#0B2545', icon: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/>', keys: ['aero', 'grid', 'family', 'cabin', 'deck'] },
   { name: 'Developer', c: '#0B63C5', icon: '<path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13.5 4-3 16"/>', keys: ['projects'] },
+  { name: 'People', c: '#0B2545', icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M14.5 10h4M14.5 13h3"/>', keys: ['hr'] },
 ];
 const ixLink = (key) => document.querySelector('#side a.nav[data-nav="' + key + '"], #ix-cols a.nav[data-nav="' + key + '"]');
 (function buildIx() {
@@ -1363,8 +1424,9 @@ const ixLink = (key) => document.querySelector('#side a.nav[data-nav="' + key + 
 const IX_PRODUCTS = {
   aero: { c: '#E8640F', who: 'For airline pilots', d: 'Bug reports, testers, admins, waitlist and Android testers.', st: ['App Store', ''] },
   grid: { c: '#0E8A4A', who: 'Star Citizen companion', d: 'Players, crews, ops and reports from orvixgrid.com.', st: ['Live', ''] },
-  family: { c: '#0B63C5', who: "For pilots' families", d: 'Circles, live trips and landing alerts for families.', st: ['In review', 'soon'] },
+  family: { c: '#0B63C5', who: "For pilots' families", d: 'Circles, live trips and landing alerts for families.', st: ['App Store', ''] },
   cabin: { c: '#5D6F82', who: 'For flight attendants', d: 'Testers, subscriptions and crew tools.', st: ['In testing', 'test'] },
+  deck: { c: '#1A7FB0', who: 'iPad EFB for pilots', d: 'Charts, moving map, logbook and pilot training. Testers and chart updates.', st: ['In testing', 'test'] },
 };
 (function buildProds() {
   const box = $('#ix-prods');
@@ -1411,7 +1473,10 @@ $('#ix-refresh').addEventListener('click', () => $('#refresh-all').click());
 function ixUpdate(key) {
   const g = IX_GROUPS.find((x) => x.keys.includes(key)) || IX_GROUPS[0];
   const sub = $('#ix-sub');
-  sub.innerHTML = g.keys.map((k) => {
+  // A section with one page (or one the person can see) needs no tab row.
+  const shown = g.keys.filter((k) => ixLink(k) && canSee(k));
+  sub.parentElement.hidden = shown.length < 2;
+  sub.innerHTML = shown.map((k) => {
     const a = ixLink(k); if (!a) return '';
     return '<a href="' + a.getAttribute('href') + '"' + (k === key ? ' class="on"' : '') + '>' + esc($('span', a)?.textContent || k) + '</a>';
   }).join('');
@@ -3177,7 +3242,7 @@ async function revenuePage() {
 // ---------- Developer: projects (developer role only) ----------
 const PJ_KINDS = { app: 'App', website: 'Website', software: 'Software', msfs: 'MSFS 2024 add-on', fivem: 'FiveM', game: 'Game' };
 const PJ_STAGES = { idea: ['Idea', '#5D6F82'], planning: ['Planning', '#6A4BC4'], building: ['Building', '#0B63C5'], testing: ['Testing', '#AD6610'], review: ['In review', '#C2560C'], live: ['Live', '#13824B'], paused: ['Paused', '#8A8F98'] };
-const PJ_ICON = { 'Orvix Aero': 'icon-aero.png', 'Orvix Grid': 'icon-grid.png', 'Orvix Family': 'icon-family.png', 'Orvix Cabin': 'icon-cabin.png', 'orvixaero.com': 'icon-aero.png', 'Orvix Aero for Windows': 'icon-aero.png' };
+const PJ_ICON = { 'Orvix Deck': 'icon-deck.png', 'Orvix Aero': 'icon-aero.png', 'Orvix Grid': 'icon-grid.png', 'Orvix Family': 'icon-family.png', 'Orvix Cabin': 'icon-cabin.png', 'orvixaero.com': 'icon-aero.png', 'Orvix Aero for Windows': 'icon-aero.png' };
 const PJ_SVG = { app: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>', website: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>', software: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>', msfs: '<path d="M21 15.5 13.5 11V5.5a1.5 1.5 0 0 0-3 0V11L3 15.5V17l7.5-2.2V19L8.5 20.5V22l3.5-1 3.5 1v-1.5L13.5 19v-4.2L21 17z"/>', fivem: '<path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/>', game: '<rect x="2.5" y="7" width="19" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M17.5 13.5h.01"/>' };
 const pjProgress = (p) => { const m = p.milestones || []; const d = m.filter((x) => x.done).length; return { d, n: m.length, pct: m.length ? Math.round((d / m.length) * 100) : p.stage === 'live' ? 100 : 0 }; };
 let pjKind = 'all';
@@ -3277,6 +3342,150 @@ async function projectEdit(id) {
       const { error } = await sb.rpc('hub_project_delete', { p_id: p.id });
       if (error) { toast(failMsg(error)); return; }
       toast('Deleted.'); location.hash = '#/projects';
+    };
+  };
+  draw();
+}
+
+// ---------- HR (owner only) ----------
+const HR_STATUS = { active: ['Active', '#13824B', 'rgba(19,130,75,.12)'], on_leave: ['On leave', '#AD6610', 'rgba(173,102,16,.13)'], resigned: ['Resigned', '#5D6F82', 'rgba(93,111,130,.14)'], terminated: ['Terminated', '#C8363C', 'rgba(200,54,60,.12)'] };
+const HR_TYPES = { full_time: 'Full-time', part_time: 'Part-time', contractor: 'Contractor', intern: 'Intern', volunteer: 'Volunteer' };
+const HR_EVENTS = { hired: 'Hired', title: 'Title change', pay: 'Pay change', leave: 'Leave started', returned: 'Back from leave', resigned: 'Resigned', terminated: 'Terminated', rehired: 'Rehired', review: 'Review', warning: 'Warning', note: 'Note' };
+const hrName = (e) => `${(e.preferred_name || e.first_name || '').trim()} ${(e.last_name || '').trim()}`.trim() || 'New employee';
+const hrDay = (d) => (d ? new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '–');
+const hrPill = (s) => { const x = HR_STATUS[s] || HR_STATUS.active; return `<span class="hr-st" style="color:${x[1]};background:${x[2]}">${x[0]}</span>`; };
+const hrAv = (e) => `<span class="hr-av">${e.photo ? `<img src="${esc(e.photo)}" alt="">` : esc(((e.first_name || '?')[0] + (e.last_name || '')[0] || '').toUpperCase())}</span>`;
+const hrTenure = (e) => { if (!e.hire_date) return ''; const end = e.last_day && e.status !== 'active' && e.status !== 'on_leave' ? new Date(e.last_day) : new Date(); const m = Math.max(0, Math.round((end - new Date(e.hire_date)) / (30.44 * 864e5))); return m < 12 ? `${m} month${m === 1 ? '' : 's'}` : `${Math.floor(m / 12)} yr ${m % 12} mo`; };
+// The hub's sections, grouped as in Departments, for the access boxes.
+const hrSections = () => IX_GROUPS.filter((g) => !['Developer', 'People'].includes(g.name)).map((g) => ({ name: g.name, items: g.keys.map((k) => ({ k, label: ($('span', ixLink(k) || document.createElement('a'))?.textContent || k) })) }));
+let hrFilter = 'current';
+async function hrPage() {
+  crumb('<span>People</span><i>/</i><b>HR</b>'); setNav('hr');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>HR</h1><div class="muted">Employee profiles, numbers, dates and what each person can open in the hub. Only you see this.</div></div><a class="btn btn-primary btn-small" href="#/hr/new">Add employee</a></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const { data, error } = await sb.rpc('hr_list');
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  const all = data.employees || [];
+  const yr = String(new Date().getFullYear());
+  const draw = () => {
+    const q = ($('#hr-q')?.value || '').trim().toLowerCase();
+    const list = all.filter((e) => (hrFilter === 'all' || (hrFilter === 'current' ? ['active', 'on_leave'].includes(e.status) : ['resigned', 'terminated'].includes(e.status)))
+      && (!q || `${hrName(e)} ${e.first_name} ${e.last_name} ${e.emp_no} ${e.job_title} ${e.department} ${e.email || ''}`.toLowerCase().includes(q)));
+    const cur = all.filter((e) => ['active', 'on_leave'].includes(e.status));
+    pane.innerHTML = `
+      <div class="tiles">
+        ${tileHtml(IC.users, 'var(--blue)', 'Headcount', cur.length, `${all.filter((e) => e.status === 'on_leave').length} on leave`)}
+        ${tileHtml(IC.plus, 'var(--green)', 'Hired this year', all.filter((e) => (e.hire_date || '').startsWith(yr)).length, `Next number #${data.next_emp_no}`)}
+        ${tileHtml(IC.active, 'var(--orange)', 'Left this year', all.filter((e) => ['resigned', 'terminated'].includes(e.status) && (e.last_day || e.termination_date || e.resignation_date || '').startsWith(yr)).length, `${all.filter((e) => e.status === 'resigned').length} resigned · ${all.filter((e) => e.status === 'terminated').length} terminated`)}
+        ${tileHtml(IC.key, 'var(--violet)', 'Hub access', all.filter((e) => e.can_sign_in).length, 'Can sign in today')}
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+        <div class="seg">${[['current', 'Current'], ['former', 'Former'], ['all', 'Everyone']].map(([k, l]) => `<button data-f="${k}" class="${hrFilter === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+        <input id="hr-q" placeholder="Search name, number, title…" value="${esc(q)}" style="flex:1;min-width:200px;max-width:360px">
+      </div>
+      <section class="panel" style="padding:0;overflow:auto">${list.length ? `<table class="tbl"><thead><tr><th>#</th><th>Name</th><th>Title</th><th>Type</th><th>Hired</th><th>Status</th><th>Hub</th></tr></thead><tbody>
+        ${list.map((e) => `<tr data-id="${e.id}" style="cursor:pointer"><td class="em">${e.emp_no}</td><td><div style="display:flex;gap:10px;align-items:center">${hrAv(e)}<div><b>${esc(hrName(e))}</b><div class="muted" style="font-size:12px">${esc(e.email || 'No work email')}</div></div></div></td>
+          <td>${esc(e.job_title || '–')}${e.department ? `<div class="muted" style="font-size:12px">${esc(e.department)}</div>` : ''}</td><td>${HR_TYPES[e.employment_type] || ''}</td>
+          <td>${hrDay(e.hire_date)}${e.hire_date ? `<div class="muted" style="font-size:12px">${hrTenure(e)}</div>` : ''}</td><td>${hrPill(e.status)}${e.last_day && !['active'].includes(e.status) ? `<div class="muted" style="font-size:12px">Last day ${hrDay(e.last_day)}</div>` : ''}</td>
+          <td>${e.can_sign_in ? `<span style="color:#13824B;font-weight:600">On</span><div class="muted" style="font-size:12px">${e.has_account ? (e.last_sign_in_at ? 'In ' + esc(ago(e.last_sign_in_at)) : 'Not signed in yet') : 'No account yet'}</div>` : '<span class="muted">Off</span>'}</td></tr>`).join('')}</tbody></table>` : `<div class="empty" style="margin:18px">${all.length ? 'Nobody matches.' : 'No employees yet. Add the first one.'}</div>`}</section>
+      <p class="note">Employees sign in at orvixcentralhub.com with their employee number (or work email) and their password. Their first time, they tap “Create account” with their work email to set a password.</p>`;
+    pane.querySelectorAll('[data-f]').forEach((b) => { b.onclick = () => { hrFilter = b.dataset.f; draw(); }; });
+    const qi = $('#hr-q'); qi.oninput = () => { const pos = qi.selectionStart; draw(); const n = $('#hr-q'); n.focus(); n.setSelectionRange(pos, pos); };
+    pane.querySelectorAll('tr[data-id]').forEach((r) => { r.onclick = () => { location.hash = '#/hr/' + r.dataset.id; }; });
+  };
+  draw();
+}
+
+async function hrEmployee(id) {
+  const isNew = id === 'new';
+  crumb(`<span>People</span><i>/</i><a href="#/hr">HR</a><i>/</i><b>${isNew ? 'New employee' : 'Employee'}</b>`); setNav('hr');
+  $('#view').innerHTML = '<div id="pane"><div class="muted">Loading…</div></div>';
+  const { data, error } = await sb.rpc('hr_list');
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  const all = data.employees || [];
+  let e = isNew ? { id: '', emp_no: data.next_emp_no, first_name: '', last_name: '', preferred_name: '', email: '', personal_email: '', phone: '', job_title: '', department: '', manager_id: '', employment_type: 'full_time', work_location: '', status: 'active', hire_date: new Date().toISOString().slice(0, 10), probation_end: '', resignation_date: '', termination_date: '', last_day: '', leave_reason: '', rehire_eligible: null, pay_type: '', pay_rate: '', emergency_name: '', emergency_phone: '', emergency_relation: '', notes: '', hub_access: false, access: ['home', 'profile', 'support'], photo: null, events: [] } : all.find((x) => x.id === id);
+  if (!e) { pane.innerHTML = '<div class="empty">This employee isn’t in HR anymore.</div>'; return; }
+  e = { ...e, access: Array.isArray(e.access) ? e.access : [] };
+  if (!isNew) crumb(`<span>People</span><i>/</i><a href="#/hr">HR</a><i>/</i><b>${esc(hrName(e))}</b>`);
+  const v = (k) => esc(e[k] ?? '');
+  const field = (k, label, type = 'text', extra = '') => `<label>${label}<input data-k="${k}" type="${type}" value="${v(k)}" ${extra}></label>`;
+  const sel = (k, label, opts) => `<label>${label}<select data-k="${k}">${Object.entries(opts).map(([a, b]) => `<option value="${a}" ${String(e[k] ?? '') === a ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select></label>`;
+  const draw = () => {
+    const left = ['resigned', 'terminated'].includes(e.status);
+    pane.innerHTML = `
+      <div class="page-title"><div style="display:flex;gap:16px;align-items:center">
+          <label style="cursor:pointer;margin:0" title="Change photo"><span class="hr-av" style="width:64px;height:64px;font-size:22px">${e.photo ? `<img src="${esc(e.photo)}" alt="">` : esc(((e.first_name || '?')[0] + ((e.last_name || '')[0] || '')).toUpperCase())}</span><input id="hr-photo" type="file" accept="image/*" hidden></label>
+          <div><h1 style="margin:0">${isNew ? 'New employee' : esc(hrName(e))}</h1><div class="muted">#${e.emp_no} · ${esc(e.job_title || 'No title yet')} ${hrPill(e.status)}${e.hire_date ? ` · ${hrTenure(e)}` : ''}</div></div></div>
+        <a class="btn btn-ghost btn-small" href="#/hr">All employees</a></div>
+      <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Profile</h3><div class="hr-form">
+        ${field('emp_no', 'Employee number', 'number', 'min="1"')}${field('first_name', 'First name')}${field('last_name', 'Last name')}${field('preferred_name', 'Goes by')}
+        ${field('email', 'Work email (used to sign in)', 'email')}${field('personal_email', 'Personal email', 'email')}${field('phone', 'Phone', 'tel')}${field('work_location', 'Location')}
+      </div></section>
+      <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Job</h3><div class="hr-form">
+        ${field('job_title', 'Title')}${field('department', 'Department')}${sel('employment_type', 'Type', HR_TYPES)}
+        ${sel('manager_id', 'Reports to', { '': 'Nobody', ...Object.fromEntries(all.filter((x) => x.id !== e.id).map((x) => [x.id, `#${x.emp_no} ${hrName(x)}`])) })}
+        ${field('hire_date', 'Hire date', 'date')}${field('probation_end', 'Probation ends', 'date')}${sel('pay_type', 'Pay', { '': '–', hourly: 'Hourly', salary: 'Salary (yearly)', contract: 'Contract', unpaid: 'Unpaid' })}${field('pay_rate', 'Rate ($)', 'number', 'min="0" step="0.01"')}
+      </div></section>
+      <section class="panel" style="margin-bottom:16px"><div class="sec" style="margin-bottom:10px"><h3 style="margin:0">Status and dates</h3>${isNew ? '' : `<div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${!left ? `<button class="btn btn-ghost btn-small" data-change="${e.status === 'on_leave' ? 'returned' : 'leave'}">${e.status === 'on_leave' ? 'Back from leave' : 'Start leave'}</button><button class="btn btn-ghost btn-small" data-change="resigned">Record resignation</button><button class="btn btn-ghost btn-small" data-change="terminated" style="color:#C8363C">Terminate</button>` : `<button class="btn btn-ghost btn-small" data-change="rehired">Rehire</button>`}</div>`}</div>
+        <div class="hr-form">${sel('status', 'Status', Object.fromEntries(Object.entries(HR_STATUS).map(([k, x]) => [k, x[0]])))}${field('resignation_date', 'Resignation date', 'date')}${field('termination_date', 'Termination date', 'date')}${field('last_day', 'Last day', 'date')}
+          ${sel('rehire_eligible', 'Eligible for rehire', { '': '–', true: 'Yes', false: 'No' })}<label style="grid-column:1/-1">Reason for leaving<textarea data-k="leave_reason" rows="2" maxlength="1000">${v('leave_reason')}</textarea></label></div>
+        <div id="hr-change"></div></section>
+      <section class="panel" style="margin-bottom:16px"><div class="sec" style="margin-bottom:6px"><h3 style="margin:0">Hub access</h3>
+          <label style="display:flex;gap:8px;align-items:center;margin:0;font-weight:600"><input type="checkbox" id="hr-hub" ${e.hub_access ? 'checked' : ''} style="width:18px;height:18px;accent-color:#0B63C5"> Can sign in to the Central Hub</label></div>
+        <p class="muted" style="margin:0 0 12px;font-size:13px">Tick what ${esc(e.first_name || 'they')} can open. Overview and their own profile are always on. Access ends by itself on the last day after a resignation or on the termination date.</p>
+        <div class="hr-acc" style="${e.hub_access ? '' : 'opacity:.45;pointer-events:none'}">${hrSections().map((g) => `<fieldset><legend>${esc(g.name)}</legend>${g.items.map((i) => `<label><input type="checkbox" data-acc="${i.k}" ${i.k === 'home' ? 'checked disabled' : e.access.includes(i.k) ? 'checked' : ''}> ${esc(i.label)}</label>`).join('')}</fieldset>`).join('')}</div>
+        <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-ghost btn-small" id="hr-acc-all">Tick all</button><button class="btn btn-ghost btn-small" id="hr-acc-none">Clear</button></div></section>
+      <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Emergency contact</h3><div class="hr-form">${field('emergency_name', 'Name')}${field('emergency_relation', 'Relationship')}${field('emergency_phone', 'Phone', 'tel')}</div></section>
+      <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Notes</h3><textarea data-k="notes" rows="4" maxlength="4000" style="width:100%">${v('notes')}</textarea></section>
+      ${isNew ? '' : `<section class="panel" style="margin-bottom:16px"><div class="sec" style="margin-bottom:6px"><h3 style="margin:0">History</h3></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px"><select id="hr-ev-kind">${['note', 'review', 'title', 'pay', 'warning'].map((k) => `<option value="${k}">${HR_EVENTS[k]}</option>`).join('')}</select><input id="hr-ev-date" type="date" value="${new Date().toISOString().slice(0, 10)}"><input id="hr-ev-text" placeholder="What happened" style="flex:1;min-width:200px"><button class="btn btn-ghost btn-small" id="hr-ev-add">Add</button></div>
+        <div class="hr-tl">${(e.events || []).map((x) => `<div><span class="muted">${hrDay(x.on_date)}</span><div><b>${HR_EVENTS[x.kind] || x.kind}</b>${x.detail ? ` · ${esc(x.detail)}` : ''}</div><button class="btn btn-ghost btn-small" data-del-ev="${x.id}" title="Remove">×</button></div>`).join('') || '<div class="muted" style="grid-template-columns:1fr">Nothing yet.</div>'}</div></section>`}
+      <div style="display:flex;gap:10px;margin-top:6px"><button class="btn btn-primary" id="hr-save">${isNew ? 'Add employee' : 'Save changes'}</button>${isNew ? '' : '<button class="btn btn-ghost" id="hr-del" style="margin-left:auto;color:#C8363C">Delete profile</button>'}</div>`;
+    const keep = () => {
+      pane.querySelectorAll('[data-k]').forEach((i) => { e[i.dataset.k] = i.value; });
+      e.hub_access = $('#hr-hub').checked;
+      e.access = ['home', 'profile', ...[...pane.querySelectorAll('[data-acc]')].filter((c) => c.checked && c.dataset.acc !== 'home').map((c) => c.dataset.acc)];
+    };
+    $('#hr-hub').onchange = () => { keep(); draw(); };
+    $('#hr-acc-all').onclick = () => { pane.querySelectorAll('[data-acc]').forEach((c) => { c.checked = true; }); };
+    $('#hr-acc-none').onclick = () => { pane.querySelectorAll('[data-acc]').forEach((c) => { if (!c.disabled) c.checked = false; }); };
+    $('#hr-photo').onchange = (ev) => { const f = ev.target.files[0]; if (!f) return; const img = new Image(); img.onload = () => { const s = 320, c = document.createElement('canvas'); c.width = c.height = s; const m = Math.min(img.width, img.height); c.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s); keep(); e.photo = c.toDataURL('image/jpeg', 0.8); draw(); }; img.src = URL.createObjectURL(f); };
+    pane.querySelectorAll('[data-change]').forEach((b) => { b.onclick = () => {
+      keep();
+      const kind = b.dataset.change, today = new Date().toISOString().slice(0, 10);
+      const leaving = kind === 'resigned' || kind === 'terminated';
+      $('#hr-change').innerHTML = `<div class="panel" style="margin-top:14px;background:rgba(16,42,72,.03)"><h3 style="margin:0 0 10px">${{ resigned: 'Record resignation', terminated: 'Terminate', leave: 'Start leave', returned: 'Back from leave', rehired: 'Rehire' }[kind]}</h3>
+        <div class="hr-form"><label>${{ resigned: 'Resignation date (notice given)', terminated: 'Termination date', leave: 'Leave starts', returned: 'Back on', rehired: 'New hire date' }[kind]}<input type="date" id="hc-date" value="${today}"></label>
+        ${leaving ? `<label>Last day (access ends after this day)<input type="date" id="hc-last" value="${today}"></label><label>Eligible for rehire<select id="hc-rehire"><option value="">–</option><option value="true">Yes</option><option value="false">No</option></select></label>` : ''}
+        <label style="grid-column:1/-1">${leaving ? 'Reason' : 'Note'}<textarea id="hc-reason" rows="2" maxlength="1000"></textarea></label></div>
+        <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-primary btn-small" id="hc-go" ${kind === 'terminated' ? 'style="background:#C8363C;border-color:#C8363C"' : ''}>Confirm</button><button class="btn btn-ghost btn-small" id="hc-cancel">Cancel</button></div></div>`;
+      $('#hc-cancel').onclick = () => { $('#hr-change').innerHTML = ''; };
+      $('#hc-go').onclick = async () => {
+        const { error: er } = await sb.rpc('hr_change_status', { p_id: e.id, p_kind: kind, p_date: $('#hc-date').value || null, p_last_day: leaving ? $('#hc-last').value || null : null, p_reason: $('#hc-reason').value, p_rehire: leaving && $('#hc-rehire').value ? $('#hc-rehire').value === 'true' : null });
+        if (er) { toast(failMsg(er)); return; }
+        toast('Saved.'); hrEmployee(e.id);
+      };
+    }; });
+    if ($('#hr-ev-add')) $('#hr-ev-add').onclick = async () => {
+      const text = $('#hr-ev-text').value.trim(); if (!text) { toast('Write what happened.'); return; }
+      const { error: er } = await sb.rpc('hr_add_event', { p_id: e.id, p_kind: $('#hr-ev-kind').value, p_date: $('#hr-ev-date').value || null, p_detail: text });
+      if (er) { toast(failMsg(er)); return; } hrEmployee(e.id);
+    };
+    pane.querySelectorAll('[data-del-ev]').forEach((b) => { b.onclick = async () => { const { error: er } = await sb.rpc('hr_delete_event', { p_event: +b.dataset.delEv }); if (er) toast(failMsg(er)); else hrEmployee(e.id); }; });
+    $('#hr-save').onclick = async () => {
+      keep(); if (!e.first_name.trim()) { toast('Add a first name.'); return; }
+      const p = { ...e, photo: e.photo || '', rehire_eligible: e.rehire_eligible === null ? '' : String(e.rehire_eligible) };
+      delete p.events; delete p.can_sign_in; delete p.has_account; delete p.last_sign_in_at;
+      const { data: r, error: er } = await sb.rpc('hr_save', { p });
+      if (er) { toast(failMsg(er)); return; }
+      toast(isNew ? `Added as #${r.emp_no}.` : 'Saved.'); location.hash = '#/hr/' + r.id; if (!isNew) hrEmployee(r.id);
+    };
+    if ($('#hr-del')) $('#hr-del').onclick = async () => {
+      if (!confirm(`Delete ${hrName(e)}'s profile and history? This can’t be undone. To keep the record, use Record resignation or Terminate instead.`)) return;
+      const { error: er } = await sb.rpc('hr_delete', { p_id: e.id });
+      if (er) { toast(failMsg(er)); return; } toast('Deleted.'); location.hash = '#/hr';
     };
   };
   draw();
@@ -4051,6 +4260,34 @@ async function gridCrew(id) {
       </div>
     </div></div>
     <p class="note">Read-only: this is what the crew’s members see in Orvix Grid (app and orvixgrid.com), plus emails and activity only the hub shows. Opening a crew is written to the audit log.</p>`;
+}
+
+// ---------- Orvix Deck ----------
+async function deckPage() {
+  crumb('<span>Orvix Deck</span><i>/</i><b>Overview</b>'); setNav('deck');
+  $('#view').innerHTML = `
+    <div class="page-title"><div style="display:flex;align-items:center;gap:14px"><img class="app-icon" src="icon-deck.png" alt="" style="width:52px;height:52px;border-radius:12px"><div><h1>Orvix Deck</h1><div class="muted">iPad EFB: charts and plates offline, moving map, briefing, logbook and pilot training</div></div></div><a class="btn btn-ghost btn-small" href="https://appstoreconnect.apple.com/apps/6831736637/testflight/ios" target="_blank" rel="noopener">TestFlight ↗</a></div>
+    <div id="dpane"><div class="muted">Loading…</div></div>`;
+  const [meta, fb] = await Promise.all([
+    fetch(SB_URL + '/storage/v1/object/public/deck/tpp/meta.json', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    sb.rpc('hub_feedback', { p_limit: 500 }).then((r) => r.data || [], () => []),
+  ]);
+  const pane = $('#dpane'); if (!pane) return;
+  const deckFb = fb.filter((f) => /^\[Deck/.test(f.message || ''));
+  const open = deckFb.filter((f) => ['new', 'working', 'needs-info'].includes(f.status));
+  const cyc = meta?.cycle || '';
+  const tile = (icon, c, label, value, sub) => `<div class="tile" style="--c:${c}"><div class="ti">${icon}</div><div style="min-width:0"><div class="tl">${label}</div><div class="tv">${value}</div><div class="ts">${sub}</div></div></div>`;
+  pane.innerHTML = `
+    <div class="tiles">
+      ${tile(IC.phone, 'var(--blue)', 'Stage', 'TestFlight', 'Internal testers · iPad and iPhone')}
+      ${tile(IC.db, 'var(--green)', 'Chart cycle', esc(cyc || '–'), meta ? `${esc(meta.from || '')} to ${esc(meta.to || '')}${meta.next ? ' · next ' + esc(meta.next.cycle) + ' ready' : ''}` : 'Couldn’t read the chart list')}
+      ${tile(IC.bug, 'var(--orange)', 'Question reports', deckFb.length, `${open.length} open · from Pilot training`)}
+      ${tile(IC.users, 'var(--violet)', 'Accounts', 'Shared', 'Pilots sign in with their Orvix Aero account')}
+    </div>
+    <section class="panel"><div class="sec" style="margin-bottom:6px"><h3>Reported training questions</h3><a class="muted" href="#/support" style="color:var(--ink-2)">Answer in Support →</a></div>
+      ${deckFb.length ? deckFb.slice(0, 15).map((f) => `<div class="act"><span class="ai" style="--c:${['new', 'working', 'needs-info'].includes(f.status) ? 'var(--orange)' : 'var(--ink-3)'}">${IC.bug}</span><div class="at"><b>${esc((f.message || '').split('\n')[0].slice(0, 120))}</b><span>${esc(f.status)} · ${esc(f.email || '')}</span></div><time>${esc(ago(f.created_at))}</time></div>`).join('') : '<div class="muted">No reports yet.</div>'}
+    </section>
+    <p class="note">To add a tester: App Store Connect → Users and Access → invite them with access to Orvix Deck only, then add them to the internal TestFlight group once they accept.</p>`;
 }
 
 // ---------- Orvix Family ----------
