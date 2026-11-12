@@ -89,6 +89,24 @@
   .seg { display: inline-flex; background: var(--card); border: 1px solid var(--edge); border-radius: 10px; padding: 3px; gap: 2px; }
   .seg button { background: none; border: 0; color: var(--ink-2); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
   .seg button.on { background: var(--card-2); color: var(--ink); }
+  .dev-only[hidden], .ix-col[hidden] { display: none !important; }
+  .pj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .pj { background: var(--card); border: 1px solid var(--edge); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+  .pj:hover { border-color: var(--pc); transform: translateY(-2px); }
+  .pj-top { height: 118px; position: relative; background: linear-gradient(135deg, var(--pc), color-mix(in srgb, var(--pc) 55%, #0B1830)); display: grid; place-items: center; }
+  .pj-top img.cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pj-top img.icon { width: 64px; height: 64px; border-radius: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+  .pj-top svg { width: 46px; height: 46px; color: rgba(255,255,255,.92); }
+  .pj-stage { position: absolute; top: 10px; right: 10px; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--sc); }
+  .pj-body { padding: 14px 16px 16px; display: grid; gap: 8px; flex: 1; }
+  .pj-body h3 { margin: 0; font-size: 18px; }
+  .pj-kind { font-size: 12px; color: var(--ink-3); font-weight: 600; }
+  .pj-sum { font-size: 14px; color: var(--ink-2); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pj-bar { height: 7px; border-radius: 4px; background: rgba(16,42,72,.08); overflow: hidden; } .pj-bar i { display: block; height: 100%; background: var(--pc); border-radius: 4px; }
+  .pj-meta { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-3); gap: 8px; }
+  .pj-next { font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--edge); padding-top: 8px; margin-top: auto; }
+  .pj-ms { display: grid; gap: 6px; } .pj-ms label { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 10px; background: var(--card); }
+  .pj-ms label.done span { color: var(--ink-3); text-decoration: line-through; } .pj-ms input[type=checkbox] { width: 18px; height: 18px; accent-color: #13824B; } .pj-ms span { flex: 1; } .pj-ms button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 18px; }
   table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
   .tbl th { text-align: left; color: var(--ink-3); font-weight: 500; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; padding: 10px 12px; border-bottom: 1px solid var(--edge); white-space: nowrap; }
   .tbl td { padding: 12px; border-bottom: 1px solid var(--edge); vertical-align: middle; }
@@ -896,6 +914,7 @@
       <a class="nav" data-nav="gifts" href="#/gifts"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3-5-3.5-5-1.2C7 8 9.5 8 12 8zm0 0c1.5-3 5-3.5 5-1.2C17 8 14.5 8 12 8z"/></svg><span>Gift codes</span></a>
       <a class="nav" data-nav="cityphotos" href="#/cityphotos"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.6"/></svg><span>City photos</span></a>
       <a class="nav" data-nav="discord" href="#/discord"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 7.5a12 12 0 0 1 7 0l1 1.5c1.6 2.4 2.4 5 2.3 7.6-1.5 1.2-3 1.9-4.6 2.2l-.8-1.5M8.5 7.5l-1 1.5C5.9 11.4 5.1 14 5.2 16.6c1.5 1.2 3 1.9 4.6 2.2l.8-1.5M8 15.5c2.6 1.3 5.4 1.3 8 0"/><circle cx="9.7" cy="12.3" r="1"/><circle cx="14.3" cy="12.3" r="1"/></svg><span>Discord</span></a>
+      <a class="nav dev-only" data-nav="projects" href="#/projects" hidden><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13.5 4-3 16"/></svg><span>Projects</span></a>
       <a class="nav" data-nav="settings" href="#/settings"><svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
       <div class="nav-group">Products</div>
       <a class="nav" data-nav="aero" href="#/aero/bugs"><img class="nimg" src="icon-aero.png" alt=""><span>Orvix Aero</span></a>
@@ -983,6 +1002,7 @@
         <a class="sheet-item" data-nav="revenue" href="#/revenue" style="--c:#13824B"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M6 15l4-4 3 3 5-6"/><path d="M15 8h3v3"/></svg></span>Revenue</a>
         <a class="sheet-item" data-nav="ads" href="#/ads" style="--c:#C8363C"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg></span>Ad results</a>
         <a class="sheet-item" data-nav="team" href="#/team" style="--c:#6A4BC4"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.6c2.6.1 4.4 1.8 5 4.4"/></svg></span>Team</a>
+        <a class="sheet-item dev-only" data-nav="projects" href="#/projects" style="--c:#0B63C5" hidden><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13.5 4-3 16"/></svg></span>Projects</a>
         <a class="sheet-item" data-nav="settings" href="#/settings" style="--c:#5B6E82"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.2 6.2l2.1 2.1M17.7 15.7l2.1 2.1M2.5 12h3M18.5 12h3M4.2 17.8l2.1-2.1M17.7 8.3l2.1-2.1"/></svg></span>Settings</a>
       </div>
       <div class="sheet-h">Apps</div>
@@ -1028,6 +1048,7 @@ const OPEN = new Set(['new', 'working', 'needs-info']);
 const statusOf = (s) => STATUSES.find((x) => x[0] === s) || [s, s, 'var(--ink-3)'];
 
 let me = null;
+let isDev = false;
 // The signed-in admin's profile lives in their own account (user metadata):
 // name, job title, phone, photo (small data URL). Shown instead of the email.
 const prof = () => me?.user_metadata?.hub || {};
@@ -1143,6 +1164,9 @@ async function checkNow() {
   if (mine?.must_change_password) return showPw(false);
   $('#pw').classList.add('hidden');
   $('#app').classList.remove('hidden');
+  isDev = (await sb.rpc('is_developer').then((x) => x.data, () => false)) === true;
+  document.querySelectorAll('.dev-only').forEach((el) => { el.hidden = !isDev; });
+  document.querySelectorAll('.ix-col[data-group="Developer"]').forEach((el) => { el.hidden = !isDev; });
   paintMe();
   savePush();
   route();
@@ -1276,6 +1300,8 @@ function route() {
   if (h.startsWith('#/revenue')) return revenuePage();
   if (h.startsWith('#/ads')) return adsPage();
   if (h.startsWith('#/team')) return teamPage();
+  if (h.startsWith('#/projects/')) return isDev ? projectEdit(decodeURIComponent(h.slice(11))) : home();
+  if (h.startsWith('#/projects')) return isDev ? projectsPage() : home();
   return home();
 }
 const crumb = (html) => {
@@ -1319,6 +1345,7 @@ const IX_GROUPS = [
   { name: 'Admin', c: '#5D6F82', icon: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.2-6 8-6s7 2 8 6"/>', keys: ['careers', 'audit', 'costs', 'releases', 'cityphotos', 'settings'] },
   { name: 'Business', c: '#6A4BC4', icon: '<path d="M4 21V5l8-3 8 3v16"/><path d="M9 21v-5h6v5"/>', keys: ['company', 'revenue', 'ads', 'team'] },
   { name: 'Products', c: '#0B2545', icon: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12 4 7.5"/>', keys: ['aero', 'grid', 'family', 'cabin'] },
+  { name: 'Developer', c: '#0B63C5', icon: '<path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/><path d="m13.5 4-3 16"/>', keys: ['projects'] },
 ];
 const ixLink = (key) => document.querySelector('#side a.nav[data-nav="' + key + '"], #ix-cols a.nav[data-nav="' + key + '"]');
 (function buildIx() {
@@ -3095,8 +3122,9 @@ async function adsPage() {
 // ---------- Revenue ----------
 async function revenuePage() {
   crumb('<b>Revenue</b>'); setNav('revenue');
-  $('#view').innerHTML = `<div class="page-title"><div><h1>Revenue</h1><div class="muted">Active subscriptions right now, what they bring in a month, and what’s left after your costs.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
-  const { data: r, error } = await sb.rpc('hub_revenue');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Revenue</h1><div class="muted">Everything you’ve earned, active subscriptions right now, and what’s left after your costs.</div></div></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const [{ data: r, error }, earnedRes] = await Promise.all([sb.rpc('hub_revenue'), sb.rpc('hub_earned').then((x) => x, () => ({ data: null }))]);
+  const earned = earnedRes?.data || null;
   const pane = $('#pane'); if (!pane) return;
   if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
   const prices = { fee: 15, ...(r.prices || {}) };
@@ -3107,7 +3135,23 @@ async function revenuePage() {
     const monthly = (x) => { const p = +prices[x.product]; return isNaN(p) || prices[x.product] === '' || prices[x.product] == null ? null : isYear(x.product) ? p / 12 : p; };
     const gross = plans.reduce((s, x) => s + (monthly(x) || 0) * x.active, 0), net = gross * (1 - (+prices.fee || 0) / 100);
     const missing = plans.filter((x) => monthly(x) === null).length;
-    pane.innerHTML = `
+    const PLAN = { orvix_pro_monthly: 'Pro monthly', orvix_pro_yearly: 'Pro yearly', orvix_pro_founding_yearly: 'Pro founding (yearly)', orvix_cabin_monthly: 'Cabin monthly', orvix_cabin_yearly: 'Cabin yearly' };
+    const earnedHtml = !earned ? '' : `
+      <div class="sec"><h2>Earned to date</h2><span class="muted">${earned.first_at ? 'Every sale since ' + esc(new Date(earned.first_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })) : 'Sales show here as they happen'}</span></div>
+      <div class="tiles">
+        ${tileHtml(IC.card, 'var(--green)', 'Earned to date', money(+earned.gross), `${earned.sales} sale${earned.sales === 1 ? '' : 's'}${earned.refunds ? ` · ${earned.refunds} refund${earned.refunds === 1 ? '' : 's'}` : ''}`)}
+        ${tileHtml(IC.db, 'var(--violet)', 'What you get', money(+earned.net), 'After Apple’s and Google’s cut and sales tax')}
+        ${tileHtml(IC.active, 'var(--blue)', 'This month', money(+earned.month_gross), `${money(+earned.month_net)} after fees`)}
+        ${tileHtml(IC.code, 'var(--orange)', 'By app', Object.keys(earned.by_app || {}).length ? Object.entries(earned.by_app).map(([a, v]) => `${a === 'cabin' ? 'Cabin' : 'Aero'} ${money(+v)}`).join(' · ') : '–', 'Before fees')}
+      </div>
+      <section class="panel" style="margin-bottom:24px"><div class="sec" style="margin-bottom:6px"><h3>Sales</h3><span class="muted">Newest first</span></div>
+        ${(earned.recent || []).length ? `<table class="tbl"><thead><tr><th>When</th><th>App</th><th>Plan</th><th>What</th><th>Price</th><th>You get</th><th></th></tr></thead><tbody>
+        ${earned.recent.map((x) => `<tr><td>${esc(new Date(x.at).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }))}</td><td class="em">${x.app === 'cabin' ? 'Orvix Cabin' : 'Orvix Aero'}</td>
+          <td>${esc(PLAN[x.product] || x.product || '–')}</td><td>${esc({ INITIAL_PURCHASE: 'New subscription', RENEWAL: 'Renewal', NON_RENEWING_PURCHASE: 'Purchase', PRODUCT_CHANGE: 'Plan change', CANCELLATION: 'Refund', REFUND_REVERSED: 'Refund reversed' }[x.type] || x.type)}</td>
+          <td>${money(+x.price_usd)}</td><td>${money(+x.net)}</td><td class="muted" style="font-size:12px">${[x.gone ? 'Account deleted since' : '', x.source === 'backfill' ? 'Added from RevenueCat' : ''].filter(Boolean).join(' · ')}</td></tr>`).join('')}</tbody></table>` : '<div class="muted">No sales yet.</div>'}
+      </section>
+      <div class="sec"><h2>Right now</h2><span class="muted">Active subscriptions and what they bring in a month</span></div>`;
+    pane.innerHTML = earnedHtml + `
       <div class="tiles">
         ${tileHtml(IC.card, 'var(--green)', 'Paying now', plans.reduce((s, x) => s + x.active, 0), `${r.gifts} more with free access`)}
         ${tileHtml(IC.active, 'var(--blue)', 'A month, before store fees', money(gross), missing ? `${missing} plan${missing > 1 ? 's' : ''} without a price` : 'Yearly plans divided by 12')}
@@ -3128,6 +3172,114 @@ async function revenuePage() {
     $('#rv-save').onclick = async () => { try { await setNote('prices', prices); toast('Prices saved.'); render(); } catch (e) { toast(e.message); } };
   };
   render();
+}
+
+// ---------- Developer: projects (developer role only) ----------
+const PJ_KINDS = { app: 'App', website: 'Website', software: 'Software', msfs: 'MSFS 2024 add-on', fivem: 'FiveM', game: 'Game' };
+const PJ_STAGES = { idea: ['Idea', '#5D6F82'], planning: ['Planning', '#6A4BC4'], building: ['Building', '#0B63C5'], testing: ['Testing', '#AD6610'], review: ['In review', '#C2560C'], live: ['Live', '#13824B'], paused: ['Paused', '#8A8F98'] };
+const PJ_ICON = { 'Orvix Aero': 'icon-aero.png', 'Orvix Grid': 'icon-grid.png', 'Orvix Family': 'icon-family.png', 'Orvix Cabin': 'icon-cabin.png', 'orvixaero.com': 'icon-aero.png', 'Orvix Aero for Windows': 'icon-aero.png' };
+const PJ_SVG = { app: '<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>', website: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>', software: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>', msfs: '<path d="M21 15.5 13.5 11V5.5a1.5 1.5 0 0 0-3 0V11L3 15.5V17l7.5-2.2V19L8.5 20.5V22l3.5-1 3.5 1v-1.5L13.5 19v-4.2L21 17z"/>', fivem: '<path d="m8 7-5 5 5 5"/><path d="m16 7 5 5-5 5"/>', game: '<rect x="2.5" y="7" width="19" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M17.5 13.5h.01"/>' };
+const pjProgress = (p) => { const m = p.milestones || []; const d = m.filter((x) => x.done).length; return { d, n: m.length, pct: m.length ? Math.round((d / m.length) * 100) : p.stage === 'live' ? 100 : 0 }; };
+let pjKind = 'all';
+async function projectsPage() {
+  crumb('<span>Developer</span><i>/</i><b>Projects</b>'); setNav('projects');
+  $('#view').innerHTML = `<div class="page-title"><div><h1>Projects</h1><div class="muted">Every app, website, program, MSFS 2024 add-on and game Orvix Studios is making. Developers only.</div></div><a class="btn btn-primary btn-small" href="#/projects/new">New project</a></div><div id="pane"><div class="muted">Loading…</div></div>`;
+  const [{ data, error }, devs] = await Promise.all([sb.rpc('hub_projects'), sb.rpc('hub_developers').then((x) => x.data || [], () => [])]);
+  const pane = $('#pane'); if (!pane) return;
+  if (error) { pane.innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+  const all = data || [];
+  const draw = () => {
+    const list = all.filter((p) => pjKind === 'all' || p.kind === pjKind);
+    const live = all.filter((p) => p.stage === 'live').length, active = all.filter((p) => ['building', 'testing', 'review', 'planning'].includes(p.stage)).length;
+    const withMs = all.filter((p) => (p.milestones || []).length && p.stage !== 'live');
+    const avg = withMs.length ? Math.round(withMs.reduce((s, p) => s + pjProgress(p).pct, 0) / withMs.length) : 0;
+    pane.innerHTML = `
+      <div class="tiles">
+        ${tileHtml(IC.code, 'var(--blue)', 'Projects', all.length, `${Object.keys(PJ_KINDS).filter((k) => all.some((p) => p.kind === k)).length} kinds`)}
+        ${tileHtml(IC.active, 'var(--green)', 'Live', live, 'Released and in use')}
+        ${tileHtml(IC.db, 'var(--orange)', 'In the works', active, 'Planning, building, testing or in review')}
+        ${tileHtml(IC.card, 'var(--violet)', 'Average progress', avg + '%', 'Checklist items done, unreleased projects')}
+      </div>
+      <div class="chips" style="margin:-8px 0 18px">${[['all', 'All'], ...Object.entries(PJ_KINDS)].filter(([k]) => k === 'all' || all.some((p) => p.kind === k)).map(([k, l]) => `<button class="chip" data-k="${k}" style="cursor:pointer;${pjKind === k ? 'background:var(--ink);color:#fff;border-color:var(--ink)' : ''}">${l} <b style="opacity:.6">${k === 'all' ? all.length : all.filter((p) => p.kind === k).length}</b></button>`).join('')}</div>
+      <div class="pj-grid">${list.map((p) => {
+        const pr = pjProgress(p), st = PJ_STAGES[p.stage] || PJ_STAGES.idea;
+        return `<a class="pj" href="#/projects/${p.id}" style="--pc:${esc(p.color)};--sc:${st[1]}">
+          <div class="pj-top">${p.cover ? `<img class="cover" src="${esc(p.cover)}" alt="">` : PJ_ICON[p.name] ? `<img class="icon" src="${PJ_ICON[p.name]}" alt="">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${PJ_SVG[p.kind] || ''}</svg>`}<span class="pj-stage">${st[0]}</span></div>
+          <div class="pj-body"><div class="pj-kind">${esc(PJ_KINDS[p.kind] || p.kind)}${p.platforms ? ' · ' + esc(p.platforms) : ''}</div><h3>${esc(p.name)}</h3>
+            ${p.summary ? `<div class="pj-sum">${esc(p.summary)}</div>` : ''}
+            <div class="pj-bar"><i style="width:${pr.pct}%"></i></div>
+            <div class="pj-meta"><span>${pr.n ? `${pr.d} of ${pr.n} done` : p.stage === 'live' ? 'Released' : 'No checklist yet'}</span><span>${pr.pct}% · ${esc(ago(p.updated_at))}</span></div>
+            ${p.next_step ? `<div class="pj-next"><b>Next:</b> ${esc(p.next_step)}</div>` : ''}</div></a>`;
+      }).join('') || '<div class="empty">Nothing here yet.</div>'}</div>
+      <section class="panel" style="margin-top:28px"><div class="sec" style="margin-bottom:6px"><h3>Developers</h3><span class="muted">Hub admins who can see this section</span></div>
+        <div class="rows">${devs.map((d) => `<label style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--edge)"><input type="checkbox" class="dev-t" data-e="${esc(d.email)}" ${d.developer ? 'checked' : ''} style="width:18px;height:18px;accent-color:#0B63C5"><span style="flex:1">${esc(d.email)}</span><span class="muted" style="font-size:12px">${d.developer ? 'Developer' : 'Admin only'}</span></label>`).join('')}</div></section>`;
+    pane.querySelectorAll('[data-k]').forEach((b) => { b.onclick = () => { pjKind = b.dataset.k; draw(); }; });
+    pane.querySelectorAll('.dev-t').forEach((c) => { c.onchange = async () => {
+      const { error: e } = await sb.rpc('hub_set_developer', { p_email: c.dataset.e, p_on: c.checked });
+      if (e) { c.checked = !c.checked; toast(failMsg(e)); } else { const d = devs.find((x) => x.email === c.dataset.e); if (d) d.developer = c.checked; toast(c.checked ? 'Developer role given.' : 'Developer role removed.'); draw(); }
+    }; });
+  };
+  draw();
+}
+
+async function projectEdit(id) {
+  const isNew = id === 'new';
+  crumb(`<span>Developer</span><i>/</i><a href="#/projects">Projects</a><i>/</i><b>${isNew ? 'New project' : 'Project'}</b>`); setNav('projects');
+  $('#view').innerHTML = '<div id="pane"><div class="muted">Loading…</div></div>';
+  let p = { id: '', name: '', kind: 'app', stage: 'idea', summary: '', platforms: '', link: '', next_step: '', notes: '', milestones: [], cover: null, color: '#0B63C5', sort: 100 };
+  if (!isNew) {
+    const { data, error } = await sb.rpc('hub_projects');
+    if (error) { $('#pane').innerHTML = `<div class="empty">${esc(failMsg(error))}</div>`; return; }
+    const f = (data || []).find((x) => x.id === id); if (!f) { $('#pane').innerHTML = '<div class="empty">This project isn’t in the list anymore.</div>'; return; }
+    p = { ...f, link: f.link || '', milestones: f.milestones || [] };
+    crumb(`<span>Developer</span><i>/</i><a href="#/projects">Projects</a><i>/</i><b>${esc(p.name)}</b>`);
+  }
+  const pane = $('#pane'); if (!pane) return;
+  const opt = (o, v) => Object.entries(o).map(([k, l]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${esc(Array.isArray(l) ? l[0] : l)}</option>`).join('');
+  const draw = () => {
+    const pr = pjProgress(p);
+    pane.innerHTML = `
+      <div class="page-title"><div><h1>${isNew ? 'New project' : esc(p.name)}</h1><div class="muted">${pr.n ? `${pr.d} of ${pr.n} checklist items done · ${pr.pct}%` : 'Add checklist items to track progress'}</div></div><a class="btn btn-ghost btn-small" href="#/projects">All projects</a></div>
+      <div class="ov-grid" style="margin-top:0">
+        <section class="panel" style="display:grid;gap:14px">
+          <label>Name<input id="pj-name" maxlength="80" value="${esc(p.name)}"></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr 110px;gap:12px"><label>Kind<select id="pj-kind">${opt(PJ_KINDS, p.kind)}</select></label><label>Stage<select id="pj-stage">${opt(PJ_STAGES, p.stage)}</select></label><label>Color<input id="pj-color" type="color" value="${esc(p.color)}" style="height:42px;padding:2px"></label></div>
+          <label>What it is<textarea id="pj-sum" maxlength="400" rows="2">${esc(p.summary)}</textarea></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label>Platforms<input id="pj-plat" maxlength="120" value="${esc(p.platforms)}" placeholder="iPhone · Web"></label><label>Link<input id="pj-link" maxlength="300" value="${esc(p.link)}" placeholder="https://"></label></div>
+          <label>Next step<input id="pj-next" maxlength="300" value="${esc(p.next_step)}"></label>
+          <label>Notes<textarea id="pj-notes" maxlength="4000" rows="5">${esc(p.notes)}</textarea></label>
+        </section>
+        <section class="panel" style="display:grid;gap:14px;align-content:start">
+          <div><h3 style="margin:0 0 8px">Picture</h3>
+            <div style="border-radius:12px;overflow:hidden;background:${esc(p.color)};height:140px;display:grid;place-items:center">${p.cover ? `<img src="${esc(p.cover)}" alt="" style="width:100%;height:100%;object-fit:cover">` : '<span style="color:#fff;opacity:.8">No picture</span>'}</div>
+            <div style="display:flex;gap:8px;margin-top:8px"><label class="btn btn-ghost btn-small" style="cursor:pointer">Choose picture<input id="pj-pic" type="file" accept="image/*" hidden></label>${p.cover ? '<button class="btn btn-ghost btn-small" id="pj-nopic">Remove</button>' : ''}</div></div>
+          <div><h3 style="margin:0 0 8px">Checklist</h3><div class="pj-bar" style="margin-bottom:10px;--pc:${esc(p.color)}"><i style="width:${pr.pct}%"></i></div>
+            <div class="pj-ms">${p.milestones.map((m, i) => `<label class="${m.done ? 'done' : ''}"><input type="checkbox" data-i="${i}" ${m.done ? 'checked' : ''}><span>${esc(m.t)}</span><button data-x="${i}" title="Remove">×</button></label>`).join('')}</div>
+            <div style="display:flex;gap:8px;margin-top:10px"><input id="pj-new" placeholder="Add a step…" style="flex:1"><button class="btn btn-ghost btn-small" id="pj-add">Add</button></div></div>
+        </section>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:18px"><button class="btn btn-primary" id="pj-save">${isNew ? 'Create project' : 'Save changes'}</button>${isNew ? '' : '<button class="btn btn-ghost" id="pj-del" style="margin-left:auto;color:#D0393F">Delete project</button>'}</div>`;
+    const keep = () => { p.name = $('#pj-name').value; p.kind = $('#pj-kind').value; p.stage = $('#pj-stage').value; p.color = $('#pj-color').value; p.summary = $('#pj-sum').value; p.platforms = $('#pj-plat').value; p.link = $('#pj-link').value; p.next_step = $('#pj-next').value; p.notes = $('#pj-notes').value; };
+    pane.querySelectorAll('.pj-ms input[type=checkbox]').forEach((c) => { c.onchange = () => { keep(); p.milestones[+c.dataset.i].done = c.checked; draw(); }; });
+    pane.querySelectorAll('.pj-ms button').forEach((b) => { b.onclick = (e) => { e.preventDefault(); keep(); p.milestones.splice(+b.dataset.x, 1); draw(); }; });
+    const add = () => { const v = $('#pj-new').value.trim(); if (!v) return; keep(); p.milestones.push({ t: v.slice(0, 200), done: false }); draw(); $('#pj-new').focus(); };
+    $('#pj-add').onclick = add; $('#pj-new').onkeydown = (e) => { if (e.key === 'Enter') add(); };
+    $('#pj-pic').onchange = (e) => { const f = e.target.files[0]; if (!f) return; const img = new Image(); img.onload = () => { const w = Math.min(1000, img.width), c = document.createElement('canvas'); c.width = w; c.height = Math.round(img.height * w / img.width); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); keep(); p.cover = c.toDataURL('image/jpeg', 0.75); draw(); URL.revokeObjectURL(img.src); }; img.src = URL.createObjectURL(f); };
+    if ($('#pj-nopic')) $('#pj-nopic').onclick = () => { keep(); p.cover = null; draw(); };
+    $('#pj-save').onclick = async () => {
+      keep(); if (!p.name.trim()) { toast('Give it a name.'); return; }
+      const { data: nid, error } = await sb.rpc('hub_project_save', { p: { ...p, cover: p.cover || '' } });
+      if (error) { toast(failMsg(error)); return; }
+      toast('Saved.'); location.hash = '#/projects';
+    };
+    if ($('#pj-del')) $('#pj-del').onclick = async () => {
+      if (!confirm(`Delete ${p.name}? This can’t be undone.`)) return;
+      const { error } = await sb.rpc('hub_project_delete', { p_id: p.id });
+      if (error) { toast(failMsg(error)); return; }
+      toast('Deleted.'); location.hash = '#/projects';
+    };
+  };
+  draw();
 }
 
 // ---------- Team ----------
