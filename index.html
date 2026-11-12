@@ -333,7 +333,7 @@
   .wl-bar i { display: block; width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, #FF8A3D, #F76E19); }
   .wl-axis { display: flex; justify-content: space-between; color: var(--ink-3); font-size: 12px; margin-top: 6px; }
   /* Support: one inbox for every app */
-  .apps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .apps4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
   .appc { position: relative; display: flex; flex-direction: column; gap: 10px; text-align: left; background: radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--c) 12%, transparent), transparent 60%), var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 16px 18px; color: var(--ink); cursor: pointer; font: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; min-width: 0; }
   .appc:hover { border-color: color-mix(in srgb, var(--c) 40%, var(--edge)); transform: translateY(-1px); }
   .appc.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c), 0 10px 30px -12px color-mix(in srgb, var(--c) 60%, transparent); }
@@ -1818,7 +1818,7 @@ async function aero(tab) {
     <div id="pane"><div class="muted">Loading…</div></div>`;
   try {
     const [all] = await Promise.all([loadFeedback(), loadNotified().catch(() => [])]);
-    const f = all.filter((r) => r.app !== 'family' && r.app !== 'cabin'); // Orvix Family and Cabin reports live in Support
+    const f = all.filter((r) => !['family', 'cabin', 'deck'].includes(r.app)); // Orvix Family, Cabin and Deck reports live in Support
     $('#n-bugs').textContent = f.filter((r) => OPEN.has(r.status)).length;
     aeroOpen = all.filter((r) => r.kind === 'bug' && OPEN.has(r.status)).length; setBadge();
     loadWaitlist().then((w) => { const n = $('#n-wait'); if (n) n.textContent = w.total; }).catch(() => {});
@@ -2579,6 +2579,7 @@ const APPS = {
   aero: { name: 'Orvix Aero', icon: 'icon-aero.png', c: '#F76E19' },
   family: { name: 'Orvix Family', icon: 'icon-family.png', c: '#9A7BF0' },
   cabin: { name: 'Orvix Cabin', icon: 'icon-cabin.png', c: '#AD6610' },
+  deck: { name: 'Orvix Deck', icon: 'icon-deck.png', c: '#0E8A9A' },
   grid: { name: 'Orvix Grid', icon: 'icon-grid.png', c: '#4F8FE0' },
 };
 const appBadge = (k) => `<span class="appb" style="--c:${APPS[k].c}"><img src="${APPS[k].icon}" alt="">${APPS[k].name}</span>`;
@@ -2598,9 +2599,10 @@ async function supportPage() {
   if (!$('#pane')) return;
   const gOk = g && g.connected;
   const byApp = {
-    aero: f.filter((r) => r.app !== 'family' && r.app !== 'cabin'),
+    aero: f.filter((r) => !['family', 'cabin', 'deck'].includes(r.app)),
     family: f.filter((r) => r.app === 'family'),
     cabin: f.filter((r) => r.app === 'cabin'),
+    deck: f.filter((r) => r.app === 'deck'),
     grid: gOk ? (g.feedback || []) : [],
   };
   const players = gOk ? (g.reports || []) : [];
@@ -2608,22 +2610,22 @@ async function supportPage() {
   // The app cards: open reports per app (bugs / ideas), and All apps.
   const openOf = (list) => list.filter((r) => OPEN.has(r.status));
   const tally = (list) => { const o = openOf(list); return { n: o.length, bug: o.filter((r) => r.kind === 'bug').length, idea: o.filter((r) => r.kind === 'idea').length }; };
-  const t = { aero: tally(byApp.aero), family: tally(byApp.family), cabin: tally(byApp.cabin), grid: tally(byApp.grid) };
-  const allN = t.aero.n + t.family.n + t.cabin.n + t.grid.n + players.length;
+  const t = { aero: tally(byApp.aero), family: tally(byApp.family), cabin: tally(byApp.cabin), deck: tally(byApp.deck), grid: tally(byApp.grid) };
+  const allN = t.aero.n + t.family.n + t.cabin.n + t.deck.n + t.grid.n + players.length;
   const card = (k, name, icon, c, x, extra = '') => `<button class="appc ${supApp === k ? 'on' : ''}" data-app="${k}" style="--c:${c}">
       <div class="ah">${icon}<b>${name}</b></div>
       <div class="an"><strong>${x.n}</strong><span>open</span></div>
       <div class="ab">${x.bug ? `<i class="bug">${x.bug} bug${x.bug > 1 ? 's' : ''}</i>` : ''}${x.idea ? `<i class="idea">${x.idea} idea${x.idea > 1 ? 's' : ''}</i>` : ''}${extra}${!x.n && !extra ? '<i>All clear</i>' : ''}</div></button>`;
   $('#sup-cards').innerHTML =
-    card('all', 'All apps', `<span class="aic">${INBOX_IC}</span>`, '#F2F6FA', { n: allN, bug: t.aero.bug + t.family.bug + t.cabin.bug + t.grid.bug, idea: t.aero.idea + t.family.idea + t.cabin.idea + t.grid.idea }) +
-    ['aero', 'family', 'cabin', 'grid'].map((k) => card(k, APPS[k].name, `<img src="${APPS[k].icon}" alt="">`, APPS[k].c, k === 'grid' ? { ...t.grid, n: t.grid.n + players.length } : t[k],
+    card('all', 'All apps', `<span class="aic">${INBOX_IC}</span>`, '#F2F6FA', { n: allN, bug: t.aero.bug + t.family.bug + t.cabin.bug + t.deck.bug + t.grid.bug, idea: t.aero.idea + t.family.idea + t.cabin.idea + t.deck.idea + t.grid.idea }) +
+    ['aero', 'family', 'cabin', 'deck', 'grid'].map((k) => card(k, APPS[k].name, `<img src="${APPS[k].icon}" alt="">`, APPS[k].c, k === 'grid' ? { ...t.grid, n: t.grid.n + players.length } : t[k],
       k === 'grid' && players.length ? `<i>${players.length} player report${players.length > 1 ? 's' : ''}</i>` : '')).join('');
   $('#sup-cards').querySelectorAll('[data-app]').forEach((b) => b.onclick = () => { supApp = b.dataset.app; supportPage(); });
 
   // Reports for the chosen app, then the status / type / search filters.
   const pick = (k) => supApp === 'all' || supApp === k;
   const q = bugFilter.q.toLowerCase();
-  const fb = [...(pick('aero') ? byApp.aero.map((r) => ['aero', r]) : []), ...(pick('family') ? byApp.family.map((r) => ['family', r]) : []), ...(pick('cabin') ? byApp.cabin.map((r) => ['cabin', r]) : []), ...(pick('grid') ? byApp.grid.map((r) => ['grid', r]) : [])];
+  const fb = [...(pick('aero') ? byApp.aero.map((r) => ['aero', r]) : []), ...(pick('family') ? byApp.family.map((r) => ['family', r]) : []), ...(pick('cabin') ? byApp.cabin.map((r) => ['cabin', r]) : []), ...(pick('deck') ? byApp.deck.map((r) => ['deck', r]) : []), ...(pick('grid') ? byApp.grid.map((r) => ['grid', r]) : [])];
   const showOk = (r) => bugFilter.show === 'all' || (bugFilter.show === 'open' ? OPEN.has(r.status) : !OPEN.has(r.status));
   const kindOk = (r) => bugFilter.kind === 'all' || r.kind === bugFilter.kind;
   const qOk = (r) => !q || `${r.message} ${r.email} ${r.reply} ${r.id}`.toLowerCase().includes(q);
