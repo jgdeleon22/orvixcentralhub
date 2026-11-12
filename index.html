@@ -3375,7 +3375,7 @@ async function hrPage() {
     pane.innerHTML = `
       <div class="tiles">
         ${tileHtml(IC.users, 'var(--blue)', 'Headcount', cur.length, `${all.filter((e) => e.status === 'on_leave').length} on leave`)}
-        ${tileHtml(IC.plus, 'var(--green)', 'Hired this year', all.filter((e) => (e.hire_date || '').startsWith(yr)).length, `Next number #${data.next_emp_no}`)}
+        ${tileHtml(IC.plus, 'var(--green)', 'Hired this year', all.filter((e) => (e.hire_date || '').startsWith(yr)).length, 'Numbers are never reused')}
         ${tileHtml(IC.active, 'var(--orange)', 'Left this year', all.filter((e) => ['resigned', 'terminated'].includes(e.status) && (e.last_day || e.termination_date || e.resignation_date || '').startsWith(yr)).length, `${all.filter((e) => e.status === 'resigned').length} resigned · ${all.filter((e) => e.status === 'terminated').length} terminated`)}
         ${tileHtml(IC.key, 'var(--violet)', 'Hub access', all.filter((e) => e.can_sign_in).length, 'Can sign in today')}
       </div>
@@ -3419,7 +3419,7 @@ async function hrEmployee(id) {
           <div><h1 style="margin:0">${isNew ? 'New employee' : esc(hrName(e))}</h1><div class="muted">#${e.emp_no} · ${esc(e.job_title || 'No title yet')} ${hrPill(e.status)}${e.hire_date ? ` · ${hrTenure(e)}` : ''}</div></div></div>
         <a class="btn btn-ghost btn-small" href="#/hr">All employees</a></div>
       <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Profile</h3><div class="hr-form">
-        ${field('emp_no', 'Employee number', 'number', 'min="1"')}${field('first_name', 'First name')}${field('last_name', 'Last name')}${field('preferred_name', 'Goes by')}
+        <label>Employee number<span style="display:flex;gap:6px"><input data-k="emp_no" type="number" min="1" value="${v('emp_no')}" style="flex:1;min-width:0"><button type="button" class="btn btn-ghost btn-small" id="hr-gen" title="Pick a new unused number">New</button></span></label>${field('first_name', 'First name')}${field('last_name', 'Last name')}${field('preferred_name', 'Goes by')}
         ${field('email', 'Work email (used to sign in)', 'email')}${field('personal_email', 'Personal email', 'email')}${field('phone', 'Phone', 'tel')}${field('work_location', 'Location')}
       </div></section>
       <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Job</h3><div class="hr-form">
@@ -3449,6 +3449,7 @@ async function hrEmployee(id) {
       e.access = ['home', 'profile', ...[...pane.querySelectorAll('[data-acc]')].filter((c) => c.checked && c.dataset.acc !== 'home').map((c) => c.dataset.acc)];
     };
     $('#hr-hub').onchange = () => { keep(); draw(); };
+    $('#hr-gen').onclick = async () => { const { data: n, error: er } = await sb.rpc('hr_new_emp_no'); if (er) { toast(failMsg(er)); return; } keep(); e.emp_no = n; draw(); };
     $('#hr-acc-all').onclick = () => { pane.querySelectorAll('[data-acc]').forEach((c) => { c.checked = true; }); };
     $('#hr-acc-none').onclick = () => { pane.querySelectorAll('[data-acc]').forEach((c) => { if (!c.disabled) c.checked = false; }); };
     $('#hr-photo').onchange = (ev) => { const f = ev.target.files[0]; if (!f) return; const img = new Image(); img.onload = () => { const s = 320, c = document.createElement('canvas'); c.width = c.height = s; const m = Math.min(img.width, img.height); c.getContext('2d').drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, s, s); keep(); e.photo = c.toDataURL('image/jpeg', 0.8); draw(); }; img.src = URL.createObjectURL(f); };
