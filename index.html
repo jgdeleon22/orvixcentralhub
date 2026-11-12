@@ -3418,7 +3418,7 @@ async function projectEdit(id) {
           ${done.length ? `<details class="pjd-done"${done.length <= 5 ? ' open' : ''}><summary>Done (${done.length})</summary><div class="pjd-list pj-ms">${done.map(row).join('')}</div></details>` : ''}
         </section>
       </div>
-      <div class="pjd-foot"><button class="btn btn-primary" id="pj-save">${isNew ? 'Create project' : 'Save changes'}</button>${isNew ? '' : '<button class="btn btn-ghost" id="pj-del" style="margin-left:auto;color:#D0393F">Delete project</button>'}</div>`;
+      <div class="pjd-foot"><button class="btn btn-primary" id="pj-save">${isNew ? 'Create project' : 'Save changes'}</button>${isNew || !isOwner ? '' : '<button class="btn btn-ghost" id="pj-del" style="margin-left:auto;color:#D0393F">Delete project</button>'}</div>`;
     pane.querySelectorAll('.pjd-colors button').forEach((b) => { b.onclick = () => { keep(); p.color = b.dataset.c; draw(); }; });
     const keep = () => { p.name = $('#pj-name').value; p.kind = $('#pj-kind').value; p.stage = $('#pj-stage').value; p.color = $('#pj-color').value; p.summary = $('#pj-sum').value; p.platforms = $('#pj-plat').value; p.link = $('#pj-link').value; p.next_step = $('#pj-next').value; p.notes = $('#pj-notes').value; };
     pane.querySelectorAll('.pj-ms input[type=checkbox]').forEach((c) => { c.onchange = () => { keep(); p.milestones[+c.dataset.i].done = c.checked; draw(); }; });
