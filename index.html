@@ -139,6 +139,18 @@
   .pjc-shot { position: relative; width: 96px; height: 68px; border-radius: 8px; overflow: hidden; border: 1px solid var(--edge); background: #fff; }
   .pjc-shot img { width: 100%; height: 100%; object-fit: cover; }
   .pjc-shot button { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; font-size: 13px; line-height: 1; }
+  .pjc-files { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .pjc-m.pjc-me .pjc-files { align-items: flex-end; }
+  .pjc-file { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border-radius: 12px; border: 1px solid var(--edge); background: #fff; cursor: pointer; text-align: left; max-width: 320px; font: inherit; }
+  .pjc-file:hover { border-color: var(--pc); }
+  .pjc-fi { flex: none; width: 36px; height: 36px; border-radius: 8px; background: color-mix(in srgb, var(--pc) 14%, #fff); color: var(--pc); display: grid; place-items: center; font: 800 10px/1 inherit; letter-spacing: .3px; }
+  .pjc-fn { min-width: 0; display: grid; }
+  .pjc-fn b { font-weight: 600; font-size: 13.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pjc-fn small, .pjc-chip small { color: var(--ink-3); font-size: 12px; }
+  .pjc-chip { display: flex; align-items: center; gap: 8px; padding: 6px 8px 6px 6px; border: 1px solid var(--edge); border-radius: 10px; background: #fff; font-size: 13px; max-width: 260px; }
+  .pjc-chip > span:nth-child(2) { min-width: 0; display: grid; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pjc-chip .pjc-fi { width: 30px; height: 30px; }
+  .pjc-chip button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 16px; }
   .pjc-imgs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
   .pjc-m.pjc-me .pjc-imgs { justify-content: flex-end; }
   .pjc-imgs img { max-width: 280px; max-height: 200px; border-radius: 10px; border: 1px solid var(--edge); cursor: zoom-in; display: block; }
@@ -3457,6 +3469,7 @@ async function projectEdit(id) {
   draw();
 }
 
+const pjcSize = (b) => (b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round((b || 0) / 1024))} KB`);
 // Project chat: the developers on this project, and Claude (added from Jorge's
 // Claude session when he asks it to check in). Polls every 4 s while open.
 async function projectChat(p) {
@@ -3466,7 +3479,7 @@ async function projectChat(p) {
     <div class="pjc-head"><h3>Project chat</h3><span class="muted">Everyone on this project. Type <b>@Claude</b> to call Claude: it checks every minute and answers here.</span></div>
     <div class="pjc-list" id="pjc-list"><div class="muted" style="padding:16px">Loading…</div></div>
     <div class="pjc-shots" id="pjc-shots" hidden></div>
-    <form class="pjc-form" id="pjc-form"><label class="pjc-pic" title="Add a picture (or paste one with Ctrl+V)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-7 7"/></svg><input type="file" id="pjc-file" accept="image/*" multiple hidden></label><button class="pjc-at" type="button" id="pjc-at" title="Call Claude into this chat">@Claude</button><textarea id="pjc-in" rows="1" maxlength="8000" placeholder="Message the team… Paste screenshots with Ctrl+V. Enter sends."></textarea><button class="btn btn-primary btn-small" type="submit">Send</button></form>
+    <form class="pjc-form" id="pjc-form"><label class="pjc-pic" title="Add a picture (or paste one with Ctrl+V)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-7 7"/></svg><input type="file" id="pjc-file" accept="image/*" multiple hidden></label><label class="pjc-pic" title="Attach a file (PDF, log, zip… up to 25 MB)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11.5-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9"/></svg><input type="file" id="pjc-attach" multiple hidden></label><button class="pjc-at" type="button" id="pjc-at" title="Call Claude into this chat">@Claude</button><textarea id="pjc-in" rows="1" maxlength="8000" placeholder="Message the team… Paste screenshots with Ctrl+V. Enter sends."></textarea><button class="btn btn-primary btn-small" type="submit">Send</button></form>
   </section>`;
   let last = 0, first = true;
   const list = $('#pjc-list');
@@ -3477,7 +3490,7 @@ async function projectChat(p) {
     const t = new Date(m.created_at);
     return `<div class="pjc-m ${m.is_claude ? 'ai' : mine ? 'pjc-me' : ''}" data-id="${m.id}">
       <div class="pjc-meta"><b>${esc(who)}</b><span>${t.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} ${t.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}</span>${mine ? `<button class="pjc-x" data-del="${m.id}" title="Delete">×</button>` : ''}</div>
-      ${m.body ? `<div class="pjc-b">${fmt(m.body)}</div>` : ''}${(m.images || []).length ? `<div class="pjc-imgs">${m.images.map((src) => `<img src="${src}" alt="Screenshot" data-zoom>`).join('')}</div>` : ''}${m.claude_tag && !m.claude_done_at ? '<div class="pjc-wait">Waiting for Claude · it checks every minute</div>' : ''}</div>`;
+      ${m.body ? `<div class="pjc-b">${fmt(m.body)}</div>` : ''}${(m.files || []).length ? `<div class="pjc-files">${m.files.map((f) => `<button type="button" class="pjc-file" data-path="${esc(f.path)}" data-name="${esc(f.name)}" title="Open ${esc(f.name)}"><span class="pjc-fi">${esc((f.name.split('.').pop() || 'file').slice(0, 4).toUpperCase())}</span><span class="pjc-fn"><b>${esc(f.name)}</b><small>${pjcSize(f.size)}</small></span></button>`).join('')}</div>` : ''}${(m.images || []).length ? `<div class="pjc-imgs">${m.images.map((src) => `<img src="${src}" alt="Screenshot" data-zoom>`).join('')}</div>` : ''}${m.claude_tag && !m.claude_done_at ? '<div class="pjc-wait">Waiting for Claude · it checks every minute</div>' : ''}</div>`;
   };
   const pull = async () => {
     if (!document.body.contains(list)) return false;
@@ -3502,13 +3515,22 @@ async function projectChat(p) {
   input.oninput = grow;
   // Pictures: paste (Ctrl+V a snip), drop, or the picture button. Shrunk to
   // 1600 px JPEG here, shown above the box until sent (up to 4).
-  let shots = [];
+  let shots = [], files = [];
   const shotsBox = $('#pjc-shots');
   const drawShots = () => {
-    shotsBox.hidden = !shots.length;
-    shotsBox.innerHTML = shots.map((s, i) => `<div class="pjc-shot"><img src="${s}" alt=""><button type="button" data-rm="${i}" title="Remove">×</button></div>`).join('');
+    shotsBox.hidden = !shots.length && !files.length;
+    shotsBox.innerHTML = shots.map((s, i) => `<div class="pjc-shot"><img src="${s}" alt=""><button type="button" data-rm="${i}" title="Remove">×</button></div>`).join('')
+      + files.map((f, i) => `<div class="pjc-chip"><span class="pjc-fi">${esc((f.name.split('.').pop() || 'file').slice(0, 4).toUpperCase())}</span><span>${esc(f.name)}<small>${pjcSize(f.size)}</small></span><button type="button" data-rmf="${i}" title="Remove">×</button></div>`).join('');
   };
-  shotsBox.onclick = (e) => { const b = e.target.closest('[data-rm]'); if (b) { shots.splice(+b.dataset.rm, 1); drawShots(); } };
+  shotsBox.onclick = (e) => {
+    const b = e.target.closest('[data-rm]'); if (b) { shots.splice(+b.dataset.rm, 1); drawShots(); return; }
+    const f = e.target.closest('[data-rmf]'); if (f) { files.splice(+f.dataset.rmf, 1); drawShots(); }
+  };
+  const addAttachment = (f) => {
+    if (files.length >= 4) { toast('Up to 4 files per message.'); return; }
+    if (f.size > 25 * 1024 * 1024) { toast(`${f.name} is over 25 MB.`); return; }
+    files.push(f); drawShots();
+  };
   const addFile = (f) => new Promise((done) => {
     if (!f || !f.type.startsWith('image/')) return done();
     if (shots.length >= 4) { toast('Up to 4 pictures per message.'); return done(); }
@@ -3533,20 +3555,42 @@ async function projectChat(p) {
   const box2 = box.querySelector('.pjc');
   box2.addEventListener('dragover', (e) => { if ([...(e.dataTransfer?.items || [])].some((i) => i.kind === 'file')) { e.preventDefault(); box2.classList.add('drop'); } });
   box2.addEventListener('dragleave', (e) => { if (e.target === box2) box2.classList.remove('drop'); });
-  box2.addEventListener('drop', async (e) => { e.preventDefault(); box2.classList.remove('drop'); for (const f of e.dataTransfer.files) await addFile(f); });
+  box2.addEventListener('drop', async (e) => { e.preventDefault(); box2.classList.remove('drop'); for (const f of e.dataTransfer.files) { if (f.type.startsWith('image/') && f.size < 15e6) await addFile(f); else addAttachment(f); } });
+  $('#pjc-attach').onchange = (e) => { for (const f of e.target.files) addAttachment(f); e.target.value = ''; };
   $('#pjc-file').onchange = async (e) => { for (const f of e.target.files) await addFile(f); e.target.value = ''; };
   $('#pjc-at').onclick = () => { if (!/@claude\b/i.test(input.value)) input.value = '@Claude ' + input.value; input.focus(); grow(); };
   input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#pjc-form').requestSubmit(); } };
   $('#pjc-form').onsubmit = async (e) => {
     e.preventDefault();
-    const body = input.value.trim(); if (!body && !shots.length) return;
-    const sending = shots;
-    input.value = ''; shots = []; drawShots(); grow();
-    const { error } = await sb.rpc('hub_project_post', { p_project: p.id, p_body: body, p_images: sending });
-    if (error) { input.value = body; shots = sending; drawShots(); toast(failMsg(error)); return; }
+    const body = input.value.trim(); if (!body && !shots.length && !files.length) return;
+    const sending = shots, sendingFiles = files, btn = $('#pjc-form').querySelector('[type=submit]');
+    // Files go to storage first (dev-chat/<project>/…), then the message.
+    const uploaded = [];
+    if (sendingFiles.length) {
+      btn.disabled = true; btn.textContent = 'Uploading…';
+      for (const f of sendingFiles) {
+        const safe = f.name.replace(/[^\w.\-]+/g, '_').slice(-80) || 'file';
+        const path = `${p.id}/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}-${safe}`;
+        const { error: ue } = await sb.storage.from('dev-chat').upload(path, f, { contentType: f.type || 'application/octet-stream' });
+        if (ue) { btn.disabled = false; btn.textContent = 'Send'; toast(`Couldn’t upload ${f.name}: ${ue.message}`); return; }
+        uploaded.push({ name: f.name.slice(0, 120), path, size: f.size, type: f.type || '' });
+      }
+      btn.disabled = false; btn.textContent = 'Send';
+    }
+    input.value = ''; shots = []; files = []; drawShots(); grow();
+    const { error } = await sb.rpc('hub_project_post', { p_project: p.id, p_body: body, p_images: sending, p_files: uploaded });
+    if (error) { input.value = body; shots = sending; files = sendingFiles; drawShots(); toast(failMsg(error)); return; }
     pull();
   };
   list.onclick = async (e) => {
+    const fb = e.target.closest('[data-path]');
+    if (fb) {
+      const w = window.open('', '_blank');
+      const { data: s, error: se } = await sb.storage.from('dev-chat').createSignedUrl(fb.dataset.path, 600, { download: /\.(pdf|png|jpe?g|gif|txt|log|json|mp4|mov)$/i.test(fb.dataset.name) ? false : fb.dataset.name });
+      if (se || !s?.signedUrl) { if (w) w.close(); toast(failMsg(se || { message: 'Couldn’t open the file.' })); return; }
+      if (w) w.location = s.signedUrl; else location.href = s.signedUrl;
+      return;
+    }
     const z = e.target.closest('[data-zoom]');
     if (z) { const o = document.createElement('div'); o.className = 'pjc-zoom'; o.innerHTML = `<img src="${z.src}" alt="">`; o.onclick = () => o.remove(); document.body.appendChild(o); return; }
     const b = e.target.closest('[data-del]'); if (!b) return;
