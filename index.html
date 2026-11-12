@@ -120,7 +120,7 @@
   .prod2 .app-icon { width: 46px; height: 46px; border-radius: 12px; }
   .p-today { display: flex; align-items: center; justify-content: space-between; gap: 12px; } .p-today b { font-family: var(--display, inherit); font-size: 46px; line-height: 1; color: var(--acc); }
   .p-today span { display: block; color: var(--ink-2); font-size: 13px; margin: 2px 0 4px; } .p-spark { flex: 1; display: flex; justify-content: flex-end; min-width: 0; } .p-spark svg { max-width: 100%; }
-  .p-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .p-stats > div { background: rgba(16,42,72,.03); border: 1px solid var(--edge); border-radius: 12px; padding: 9px 11px; min-width: 0; }
+  .p-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; } .p-stats > div, .p-stats > a { background: rgba(16,42,72,.03); border: 1px solid var(--edge); border-radius: 12px; padding: 9px 11px; min-width: 0; }
   .p-stats span { display: block; color: var(--ink-2); font-size: 12px; } .p-stats b { font-size: 20px; }
   .prod2 footer { display: flex; gap: 8px; flex-wrap: wrap; }
   .ov-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; margin-top: 18px; }
@@ -2230,6 +2230,8 @@ async function analyticsPage() {
       <section class="hero-card" style="--acc:#AD6610" id="h-cabin"><div class="muted">Loading…</div></section>
     </div>
     <div class="sec"><h2>Websites</h2><span class="muted">Anonymous visit counts, no cookies</span></div>
+    <div class="panel" style="margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:240px"><b>Don’t count my visits</b><div class="muted" style="font-size:13px">Open each link once on every phone, computer and browser you use. That browser stops counting as a visitor (add ?me=0 to the address to count it again). Your own app use is already left out.</div></div>
+      <a class="btn btn-ghost btn-small" href="https://orvixaero.com/?me=1" target="_blank" rel="noopener">orvixaero.com</a><a class="btn btn-ghost btn-small" href="https://www.orvixgrid.com/?me=1" target="_blank" rel="noopener">orvixgrid.com</a><a class="btn btn-ghost btn-small" href="https://orvixstudios.net/?me=1" target="_blank" rel="noopener">orvixstudios.net</a></div>
     <div class="charts" style="margin-bottom:30px" id="sites"><div class="muted">Loading…</div></div>
     <div class="sec"><h2 style="display:flex;align-items:center;gap:10px"><img class="nimg" src="icon-aero.png" alt="">Orvix Aero activity</h2></div>
     <div class="tiles" id="a-tiles"><div class="muted">Loading…</div></div>
