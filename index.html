@@ -110,6 +110,61 @@
   .pj-ms label.done span { color: var(--ink-3); text-decoration: line-through; } .pj-ms input[type=checkbox] { width: 18px; height: 18px; accent-color: #13824B; } .pj-ms span { flex: 1; } .pj-ms button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 18px; }
   .hr-av { width: 40px; height: 40px; border-radius: 50%; background: #E3ECF7; color: #0B2545; display: grid; place-items: center; font-weight: 700; flex: none; overflow: hidden; } .hr-av img { width: 100%; height: 100%; object-fit: cover; }
   .hr-st { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  /* Project detail */
+  .pjd-hero { position: relative; border-radius: 20px; overflow: hidden; min-height: 260px; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--pc), color-mix(in srgb, var(--pc) 45%, #07182E)); color: #fff; margin-bottom: 20px; box-shadow: 0 14px 40px rgba(11,37,69,.14); }
+  .pjd-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pjd-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,24,46,0) 25%, rgba(7,24,46,.86) 100%); }
+  .pjd-hero .glyph { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-62%); width: 84px; height: 84px; color: rgba(255,255,255,.9); }
+  .pjd-hero img.glyph { border-radius: 20px; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+  .pjd-in { position: relative; z-index: 1; display: flex; gap: 24px; align-items: flex-end; width: 100%; padding: 24px 28px; }
+  .pjd-txt { flex: 1; min-width: 0; display: grid; gap: 8px; }
+  .pjd-txt .k { font-size: 13px; font-weight: 600; opacity: .8; }
+  .pjd-txt h2 { margin: 0; font-size: 32px; line-height: 1.1; color: #fff; }
+  .pjd-txt p { margin: 0; max-width: 62ch; opacity: .88; line-height: 1.5; }
+  .pjd-pill { justify-self: start; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; background: #fff; color: var(--sc); }
+  .pjd-ring { position: relative; width: 92px; height: 92px; flex: none; }
+  .pjd-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .pjd-ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; }
+  .pjd-ring small { position: absolute; left: 0; right: 0; bottom: -20px; text-align: center; font-size: 12px; opacity: .8; white-space: nowrap; }
+  .pjd-pic { position: absolute; top: 14px; right: 14px; z-index: 2; display: flex; gap: 8px; }
+  .pjd-pic > * { background: rgba(255,255,255,.16); color: #fff; border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 999px; padding: 7px 14px; font: 600 13px/1 inherit; cursor: pointer; }
+  .pjd-pic > *:hover { background: rgba(255,255,255,.28); }
+  .pjd-next { display: flex; gap: 12px; align-items: center; padding: 14px 18px; border-radius: 14px; background: color-mix(in srgb, var(--pc) 9%, var(--card)); border: 1px solid color-mix(in srgb, var(--pc) 22%, transparent); margin-bottom: 20px; }
+  .pjd-next span { font-size: 12px; font-weight: 700; color: var(--pc); white-space: nowrap; }
+  .pjd-next input { flex: 1; border: 0; background: transparent; font-size: 15px; padding: 4px 0; color: var(--ink); }
+  .pjd-next input:focus { outline: none; }
+  .pjd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .pjd-grid { grid-template-columns: 1fr; } .pjd-in { flex-direction: column; align-items: flex-start; } .pjd-txt h2 { font-size: 26px; } }
+  .pjd-card { background: var(--card); border: 1px solid var(--edge); border-radius: 18px; padding: 22px; }
+  .pjd-card h3 { margin: 0 0 16px; font-size: 17px; display: flex; align-items: baseline; gap: 10px; }
+  .pjd-card h3 em { font-style: normal; font-weight: 500; font-size: 13px; color: var(--ink-3); margin-left: auto; }
+  .pjd-f { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .pjd-f label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--ink-3); margin: 0; align-content: start; }
+  .pjd-f .w { grid-column: 1 / -1; }
+  .pjd-f input, .pjd-f select, .pjd-f textarea { font-weight: 400; }
+  .pjd-colors { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pjd-colors button { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--edge); cursor: pointer; padding: 0; }
+  .pjd-colors button.on { box-shadow: 0 0 0 2px var(--ink); }
+  .pjd-colors input { width: 30px; height: 30px; padding: 0; border: 0; background: none; cursor: pointer; }
+  .pjd-add { display: flex; gap: 8px; margin-bottom: 14px; }
+  .pjd-add input { flex: 1; }
+  .pjd-list { display: grid; }
+  .pjd-list label { display: flex; gap: 12px; align-items: center; padding: 11px 4px; border-top: 1px solid var(--edge); margin: 0; cursor: pointer; font-size: 14.5px; color: var(--ink); }
+  .pjd-list label:first-child { border-top: 0; }
+  .pjd-list input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid #B5C0CD; flex: none; display: grid; place-items: center; cursor: pointer; margin: 0; transition: background .15s, border-color .15s; }
+  .pjd-list input[type=checkbox]:checked { background: #13824B; border-color: #13824B; }
+  .pjd-list input[type=checkbox]:checked::after { content: ""; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg); }
+  .pjd-list span { flex: 1; line-height: 1.4; }
+  .pjd-list button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 18px; opacity: 0; transition: opacity .15s; }
+  .pjd-list label:hover button, .pjd-list button:focus { opacity: 1; }
+  @media (hover: none) { .pjd-list button { opacity: .6; } }
+  .pjd-done { margin-top: 10px; border-top: 1px solid var(--edge); padding-top: 6px; }
+  .pjd-done summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-3); padding: 8px 4px; list-style: none; }
+  .pjd-done summary::-webkit-details-marker { display: none; }
+  .pjd-done summary::before { content: "▸ "; } .pjd-done[open] summary::before { content: "▾ "; }
+  .pjd-done span { color: var(--ink-3); text-decoration: line-through; }
+  .pjd-empty { color: var(--ink-3); font-size: 14px; padding: 10px 4px; }
+  .pjd-foot { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 10px; align-items: center; margin-top: 20px; padding: 14px 0; background: linear-gradient(180deg, transparent, var(--bg) 35%); }
   .hr-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px 14px; }
   .hr-form label { display: grid; gap: 5px; font-size: 13px; color: var(--ink-2); margin: 0; }
   .hr-acc { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
@@ -863,8 +918,8 @@
   <div class="login-card">
     <div class="login-logo"><div class="hub-logo" role="img" aria-label="Orvix Central Hub"><svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="33" fill="none" stroke="#F76E19" stroke-width="26" stroke-dasharray="63.1 6" transform="rotate(155.2 50 50)"/></svg><div class="word"><b>ORVIX</b><span>CENTRAL HUB</span></div></div></div>
     <form id="login-form">
-      <label for="email" style="margin-top:0" id="email-label">Email or employee number</label>
-      <input id="email" type="text" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username" required>
+      <label for="email" style="margin-top:0" id="email-label">Employee number</label>
+      <input id="email" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username" required>
       <label for="password">Password</label>
       <input id="password" type="password" autocomplete="current-password" required>
       <div id="pw-again" class="hidden">
@@ -876,8 +931,7 @@
     </form>
     <div class="err" id="login-err"></div>
     <div class="links">
-      <button type="button" class="forgot" id="forgot">Forgot password?</button>
-      <button type="button" class="forgot" id="mode">Create account</button>
+      <button type="button" class="forgot" id="forgot">First time or forgot password?</button>
     </div>
   </div>
 </section>
@@ -1218,48 +1272,13 @@ function showLogin(msg = '') {
   $('#login').classList.remove('hidden');
   $('#login-err').className = 'err'; $('#login-err').textContent = msg;
 }
-// Create account: only for emails already on the admins list.
-let creating = false;
-function setMode(c) {
-  creating = c;
-  $('#pw-again').classList.toggle('hidden', !c);
-  $('#password2').required = c;
-  $('#password').autocomplete = c ? 'new-password' : 'current-password';
-  $('#login-btn').textContent = c ? 'Create account' : 'Sign in';
-  $('#forgot').classList.toggle('hidden', c);
-  $('#mode').textContent = c ? 'Back to sign in' : 'Create account';
-  $('#login-err').className = 'err'; $('#login-err').textContent = '';
-}
-$('#mode').addEventListener('click', () => setMode(!creating));
-async function createAccount() {
-  const email = $('#email').value.trim().toLowerCase(), pw = $('#password').value, err = $('#login-err');
-  const say = (msg, ok) => { err.className = ok ? 'ok' : 'err'; err.textContent = msg; };
-  if (!email.includes('@')) return say('Create the account with your work email. After that you can sign in with your employee number.');
-  if (pw !== $('#password2').value) return say('The two passwords don’t match.');
-  if (pw.length < 10) return say('Use at least 10 characters.');
-  const { data: allowed, error: e1 } = await sb.rpc('hub_can_register', { p_email: email });
-  if (e1) return say(e1.message);
-  if (!allowed) return say('This email isn’t set up for the hub. Ask an admin to add it first.');
-  const { data, error } = await sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: location.origin + '/', data: { hub_signup: true } } });
-  if (error) return say(error.message);
-  $('#password').value = $('#password2').value = '';
-  if (data.session) return check();
-  // Supabase answers the same way for an email that already has an account.
-  setMode(false);
-  say('Check your email for a link to confirm the account, then sign in here. If you already had an Orvix Aero account, sign in with that password or use “Forgot password?”.', true);
-}
-
 $('#login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (creating) {
-    const b = $('#login-btn'); b.disabled = true;
-    try { await createAccount(); } finally { b.disabled = false; }
-    return;
-  }
   const b = $('#login-btn'); b.disabled = true; $('#login-err').className = 'err'; $('#login-err').textContent = '';
   const who = $('#email').value.trim();
   let error = null;
-  if (/^(os-?|#)?\d{1,8}$/i.test(who)) {
+  if (!/^(os-?|#)?\d{1,8}$/i.test(who)) error = { message: 'Sign in with your employee number (numbers only).' };
+  else {
     // Employee number: the hub-login function signs in with the work email.
     try {
       const r = await fetch(SB_URL + '/functions/v1/hub-login', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY }, body: JSON.stringify({ emp_no: who, password: $('#password').value }) });
@@ -1267,7 +1286,7 @@ $('#login-form').addEventListener('submit', async (e) => {
       if (!r.ok || !s.access_token) error = { message: s.error || 'Couldn’t sign in. Try again.' };
       else ({ error } = await sb.auth.setSession({ access_token: s.access_token, refresh_token: s.refresh_token }));
     } catch { error = { message: 'Couldn’t reach the hub. Check your connection.' }; }
-  } else ({ error } = await sb.auth.signInWithPassword({ email: who, password: $('#password').value }));
+  }
   b.disabled = false;
   if (error) { $('#login-err').textContent = error.message; return; }
   $('#password').value = '';
@@ -1290,14 +1309,16 @@ $('#pw-form').addEventListener('submit', async (e) => {
   check();
 });
 $('#forgot').addEventListener('click', async () => {
-  const email = $('#email').value.trim(), err = $('#login-err');
-  if (!email) { err.className = 'err'; err.textContent = 'Type your email above, then tap “Forgot password?” again.'; $('#email').focus(); return; }
+  const who = $('#email').value.trim(), err = $('#login-err');
+  if (!/^(os-?|#)?\d{1,8}$/i.test(who)) { err.className = 'err'; err.textContent = 'Type your employee number above, then tap this again. We’ll email a link to set your password.'; $('#email').focus(); return; }
   const b = $('#forgot'); b.disabled = true;
-  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/' });
+  try {
+    const r = await fetch(SB_URL + '/functions/v1/hub-login', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY }, body: JSON.stringify({ emp_no: who, setup: true }) });
+    const s = await r.json().catch(() => ({}));
+    err.className = r.ok ? 'ok' : 'err';
+    err.textContent = r.ok ? (s.message || 'Check your work email for a link to set your password. Open it in this browser.') : (s.error || 'Couldn’t send the link. Try again.');
+  } catch { err.className = 'err'; err.textContent = 'Couldn’t reach the hub. Check your connection.'; }
   b.disabled = false;
-  // Same answer whether or not the email has an account.
-  err.className = error ? 'err' : 'ok';
-  err.textContent = error ? error.message : 'If that email has an account, a reset link is on its way. Open it in this browser.';
 });
 $('#pw-out').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(); });
 $('#signout').addEventListener('click', async () => { await sb.auth.signOut(); location.hash = ''; showLogin(); });
@@ -3325,33 +3346,49 @@ async function projectEdit(id) {
   const opt = (o, v) => Object.entries(o).map(([k, l]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${esc(Array.isArray(l) ? l[0] : l)}</option>`).join('');
   const draw = () => {
     const pr = pjProgress(p);
+    const st = PJ_STAGES[p.stage] || PJ_STAGES.idea, C = 2 * Math.PI * 40;
+    const todo = p.milestones.map((m, i) => [m, i]).filter(([m]) => !m.done), done = p.milestones.map((m, i) => [m, i]).filter(([m]) => m.done);
+    const row = ([m, i]) => `<label><input type="checkbox" data-i="${i}" ${m.done ? 'checked' : ''}><span>${esc(m.t)}</span><button data-x="${i}" title="Remove" aria-label="Remove">×</button></label>`;
+    const swatches = ['#0B63C5', '#13824B', '#6A4BC4', '#C2560C', '#D0393F', '#0E8A9A', '#0B2545'];
     pane.innerHTML = `
-      <div class="page-title"><div><h1>${isNew ? 'New project' : esc(p.name)}</h1><div class="muted">${pr.n ? `${pr.d} of ${pr.n} checklist items done · ${pr.pct}%` : 'Add checklist items to track progress'}</div></div><a class="btn btn-ghost btn-small" href="#/projects">All projects</a></div>
-      <div class="ov-grid" style="margin-top:0">
-        <section class="panel" style="display:grid;gap:14px">
-          <label>Name<input id="pj-name" maxlength="80" value="${esc(p.name)}"></label>
-          <div style="display:grid;grid-template-columns:1fr 1fr 110px;gap:12px"><label>Kind<select id="pj-kind">${opt(PJ_KINDS, p.kind)}</select></label><label>Stage<select id="pj-stage">${opt(PJ_STAGES, p.stage)}</select></label><label>Color<input id="pj-color" type="color" value="${esc(p.color)}" style="height:42px;padding:2px"></label></div>
-          <label>What it is<textarea id="pj-sum" maxlength="400" rows="2">${esc(p.summary)}</textarea></label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label>Platforms<input id="pj-plat" maxlength="120" value="${esc(p.platforms)}" placeholder="iPhone · Web"></label><label>Link<input id="pj-link" maxlength="300" value="${esc(p.link)}" placeholder="https://"></label></div>
-          <label>Next step<input id="pj-next" maxlength="300" value="${esc(p.next_step)}"></label>
-          <label>Notes<textarea id="pj-notes" maxlength="4000" rows="5">${esc(p.notes)}</textarea></label>
+      <div class="page-title"><div><h1>${isNew ? 'New project' : esc(p.name)}</h1></div><a class="btn btn-ghost btn-small" href="#/projects">All projects</a></div>
+      <section class="pjd-hero" style="--pc:${esc(p.color)};--sc:${st[1]}">
+        ${p.cover ? `<img src="${esc(p.cover)}" alt="">` : PJ_ICON[p.name] ? `<img class="glyph" src="${PJ_ICON[p.name]}" alt="">` : `<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${PJ_SVG[p.kind] || ''}</svg>`}
+        <div class="pjd-pic"><label>${p.cover ? 'Change picture' : 'Add picture'}<input id="pj-pic" type="file" accept="image/*" hidden></label>${p.cover ? '<button id="pj-nopic">Remove</button>' : ''}</div>
+        <div class="pjd-in">
+          <div class="pjd-txt"><span class="pjd-pill">${st[0]}</span><div class="k">${esc(PJ_KINDS[p.kind] || p.kind)}${p.platforms ? ' · ' + esc(p.platforms) : ''}</div><h2>${esc(p.name || 'Untitled project')}</h2>${p.summary ? `<p>${esc(p.summary)}</p>` : ''}</div>
+          <div class="pjd-ring"><svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="40" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="7"/><circle cx="46" cy="46" r="40" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pr.pct / 100)}"/></svg><b>${pr.pct}%</b><small>${pr.n ? `${pr.d} of ${pr.n} done` : 'No checklist yet'}</small></div>
+        </div>
+      </section>
+      <div class="pjd-next" style="--pc:${esc(p.color)}"><span>Next step</span><input id="pj-next" maxlength="300" value="${esc(p.next_step)}" placeholder="What’s the next thing to do?"></div>
+      <div class="pjd-grid">
+        <section class="pjd-card"><h3>Details</h3>
+          <div class="pjd-f">
+            <label class="w">Name<input id="pj-name" maxlength="80" value="${esc(p.name)}"></label>
+            <label>Kind<select id="pj-kind">${opt(PJ_KINDS, p.kind)}</select></label>
+            <label>Stage<select id="pj-stage">${opt(PJ_STAGES, p.stage)}</select></label>
+            <label class="w">What it is<textarea id="pj-sum" maxlength="400" rows="3">${esc(p.summary)}</textarea></label>
+            <label>Platforms<input id="pj-plat" maxlength="120" value="${esc(p.platforms)}" placeholder="iPhone, Web"></label>
+            <label>Link<input id="pj-link" maxlength="300" value="${esc(p.link)}" placeholder="https://"></label>
+            <label class="w">Color<div class="pjd-colors">${swatches.map((c) => `<button type="button" data-c="${c}" class="${c.toLowerCase() === String(p.color).toLowerCase() ? 'on' : ''}" style="background:${c}" aria-label="${c}"></button>`).join('')}<input id="pj-color" type="color" value="${esc(p.color)}" title="Any color"></div></label>
+            <label class="w">Notes<textarea id="pj-notes" maxlength="4000" rows="6">${esc(p.notes)}</textarea></label>
+          </div>
         </section>
-        <section class="panel" style="display:grid;gap:14px;align-content:start">
-          <div><h3 style="margin:0 0 8px">Picture</h3>
-            <div style="border-radius:12px;overflow:hidden;background:${esc(p.color)};height:140px;display:grid;place-items:center">${p.cover ? `<img src="${esc(p.cover)}" alt="" style="width:100%;height:100%;object-fit:cover">` : '<span style="color:#fff;opacity:.8">No picture</span>'}</div>
-            <div style="display:flex;gap:8px;margin-top:8px"><label class="btn btn-ghost btn-small" style="cursor:pointer">Choose picture<input id="pj-pic" type="file" accept="image/*" hidden></label>${p.cover ? '<button class="btn btn-ghost btn-small" id="pj-nopic">Remove</button>' : ''}</div></div>
-          <div><h3 style="margin:0 0 8px">Checklist</h3><div class="pj-bar" style="margin-bottom:10px;--pc:${esc(p.color)}"><i style="width:${pr.pct}%"></i></div>
-            <div class="pj-ms">${p.milestones.map((m, i) => `<label class="${m.done ? 'done' : ''}"><input type="checkbox" data-i="${i}" ${m.done ? 'checked' : ''}><span>${esc(m.t)}</span><button data-x="${i}" title="Remove">×</button></label>`).join('')}</div>
-            <div style="display:flex;gap:8px;margin-top:10px"><input id="pj-new" placeholder="Add a step…" style="flex:1"><button class="btn btn-ghost btn-small" id="pj-add">Add</button></div></div>
+        <section class="pjd-card"><h3>Checklist<em>${todo.length} to go</em></h3>
+          <div class="pjd-add"><input id="pj-new" placeholder="Add a step and press Enter"><button class="btn btn-ghost btn-small" id="pj-add">Add</button></div>
+          <div class="pjd-list pj-ms">${todo.map(row).join('') || `<div class="pjd-empty">${p.milestones.length ? 'Everything’s done.' : 'No steps yet. Add the first one above.'}</div>`}</div>
+          ${done.length ? `<details class="pjd-done"${done.length <= 5 ? ' open' : ''}><summary>Done (${done.length})</summary><div class="pjd-list pj-ms">${done.map(row).join('')}</div></details>` : ''}
         </section>
       </div>
-      <div style="display:flex;gap:10px;margin-top:18px"><button class="btn btn-primary" id="pj-save">${isNew ? 'Create project' : 'Save changes'}</button>${isNew ? '' : '<button class="btn btn-ghost" id="pj-del" style="margin-left:auto;color:#D0393F">Delete project</button>'}</div>`;
+      <div class="pjd-foot"><button class="btn btn-primary" id="pj-save">${isNew ? 'Create project' : 'Save changes'}</button>${isNew ? '' : '<button class="btn btn-ghost" id="pj-del" style="margin-left:auto;color:#D0393F">Delete project</button>'}</div>`;
+    pane.querySelectorAll('.pjd-colors button').forEach((b) => { b.onclick = () => { keep(); p.color = b.dataset.c; draw(); }; });
     const keep = () => { p.name = $('#pj-name').value; p.kind = $('#pj-kind').value; p.stage = $('#pj-stage').value; p.color = $('#pj-color').value; p.summary = $('#pj-sum').value; p.platforms = $('#pj-plat').value; p.link = $('#pj-link').value; p.next_step = $('#pj-next').value; p.notes = $('#pj-notes').value; };
     pane.querySelectorAll('.pj-ms input[type=checkbox]').forEach((c) => { c.onchange = () => { keep(); p.milestones[+c.dataset.i].done = c.checked; draw(); }; });
     pane.querySelectorAll('.pj-ms button').forEach((b) => { b.onclick = (e) => { e.preventDefault(); keep(); p.milestones.splice(+b.dataset.x, 1); draw(); }; });
     const add = () => { const v = $('#pj-new').value.trim(); if (!v) return; keep(); p.milestones.push({ t: v.slice(0, 200), done: false }); draw(); $('#pj-new').focus(); };
     $('#pj-add').onclick = add; $('#pj-new').onkeydown = (e) => { if (e.key === 'Enter') add(); };
     $('#pj-pic').onchange = (e) => { const f = e.target.files[0]; if (!f) return; const img = new Image(); img.onload = () => { const w = Math.min(1000, img.width), c = document.createElement('canvas'); c.width = w; c.height = Math.round(img.height * w / img.width); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); keep(); p.cover = c.toDataURL('image/jpeg', 0.75); draw(); URL.revokeObjectURL(img.src); }; img.src = URL.createObjectURL(f); };
+    $('#pj-color').onchange = () => { keep(); draw(); };
     if ($('#pj-nopic')) $('#pj-nopic').onclick = () => { keep(); p.cover = null; draw(); };
     $('#pj-save').onclick = async () => {
       keep(); if (!p.name.trim()) { toast('Give it a name.'); return; }
@@ -3379,6 +3416,19 @@ const hrPill = (s) => { const x = HR_STATUS[s] || HR_STATUS.active; return `<spa
 const hrAv = (e) => `<span class="hr-av">${e.photo ? `<img src="${esc(e.photo)}" alt="">` : esc(((e.first_name || '?')[0] + (e.last_name || '')[0] || '').toUpperCase())}</span>`;
 const hrTenure = (e) => { if (!e.hire_date) return ''; const end = e.last_day && e.status !== 'active' && e.status !== 'on_leave' ? new Date(e.last_day) : new Date(); const m = Math.max(0, Math.round((end - new Date(e.hire_date)) / (30.44 * 864e5))); return m < 12 ? `${m} month${m === 1 ? '' : 's'}` : `${Math.floor(m / 12)} yr ${m % 12} mo`; };
 // The hub's sections, grouped as in Departments, for the access boxes.
+// Job titles by department (Human Resources dropdowns). "Other…" lets you type any title.
+const HR_JOBS = {
+  'Executive': ['Founder & CEO', 'Chief Operating Officer', 'Chief Technology Officer', 'Executive Assistant'],
+  'Product': ['Product Manager', 'Project Manager', 'Product Designer (UI/UX)', 'Graphic & Brand Designer'],
+  'Engineering': ['iOS Developer', 'Android Developer', 'Mobile Developer (React Native)', 'Full-Stack Developer', 'Backend Developer (Supabase)', 'Web Developer', 'Windows App Developer', 'QA Tester'],
+  'Flight Simulation': ['MSFS Systems Developer', 'Aircraft 3D Modeler', 'Texture & Livery Artist', 'Flight Model Engineer', 'Avionics & FMS Developer', 'Sound Designer', 'Sim QA Tester'],
+  'Game Development': ['Game Developer', 'Game Designer', 'FiveM Script Developer', '3D Environment Artist (MLO)'],
+  'Aviation Content': ['Aviation Subject Matter Expert (Pilot)', 'Flight Attendant Subject Matter Expert', 'Training Content Writer', 'Technical Writer'],
+  'Customer Support': ['Customer Support Specialist', 'Community Manager', 'Discord Moderator', 'Beta Test Coordinator'],
+  'Marketing': ['Marketing Manager', 'Social Media Manager', 'Content Creator / Streamer', 'App Store Optimization Specialist'],
+  'Finance & Administration': ['Office Manager', 'Bookkeeper', 'Accountant', 'HR Coordinator', 'Legal Counsel (Contract)'],
+};
+const HR_DEPTS = Object.keys(HR_JOBS);
 const hrSections = () => IX_GROUPS.filter((g) => !['Developer', 'People'].includes(g.name)).map((g) => ({ name: g.name, items: g.keys.map((k) => ({ k, label: ($('span', ixLink(k) || document.createElement('a'))?.textContent || k) })) }));
 let hrFilter = 'current';
 async function hrPage() {
@@ -3410,7 +3460,7 @@ async function hrPage() {
           <td>${esc(e.job_title || '–')}${e.department ? `<div class="muted" style="font-size:12px">${esc(e.department)}</div>` : ''}</td><td>${HR_TYPES[e.employment_type] || ''}</td>
           <td>${hrDay(e.hire_date)}${e.hire_date ? `<div class="muted" style="font-size:12px">${hrTenure(e)}</div>` : ''}</td><td>${hrPill(e.status)}${e.last_day && !['active'].includes(e.status) ? `<div class="muted" style="font-size:12px">Last day ${hrDay(e.last_day)}</div>` : ''}</td>
           <td>${e.can_sign_in ? `<span style="color:#13824B;font-weight:600">On</span><div class="muted" style="font-size:12px">${e.has_account ? (e.last_sign_in_at ? 'In ' + esc(ago(e.last_sign_in_at)) : 'Not signed in yet') : 'No account yet'}</div>` : '<span class="muted">Off</span>'}</td></tr>`).join('')}</tbody></table>` : `<div class="empty" style="margin:18px">${all.length ? 'Nobody matches.' : 'No employees yet. Add the first one.'}</div>`}</section>
-      <p class="note">Employees sign in at orvixcentralhub.com with their employee number (or work email) and their password. Their first time, they tap “Create account” with their work email to set a password.</p>`;
+      <p class="note">Employees sign in at orvixcentralhub.com with their employee number and password. Their first time, they type their number and tap “First time or forgot password?” to get a link at their work email.</p>`;
     pane.querySelectorAll('[data-f]').forEach((b) => { b.onclick = () => { hrFilter = b.dataset.f; draw(); }; });
     const qi = $('#hr-q'); qi.oninput = () => { const pos = qi.selectionStart; draw(); const n = $('#hr-q'); n.focus(); n.setSelectionRange(pos, pos); };
     pane.querySelectorAll('tr[data-id]').forEach((r) => { r.onclick = () => { location.hash = '#/hr/' + r.dataset.id; }; });
@@ -3433,6 +3483,11 @@ async function hrEmployee(id) {
   const v = (k) => esc(e[k] ?? '');
   const field = (k, label, type = 'text', extra = '') => `<label>${label}<input data-k="${k}" type="${type}" value="${v(k)}" ${extra}></label>`;
   const sel = (k, label, opts) => `<label>${label}<select data-k="${k}">${Object.entries(opts).map(([a, b]) => `<option value="${a}" ${String(e[k] ?? '') === a ? 'selected' : ''}>${esc(b)}</option>`).join('')}</select></label>`;
+  const pick = (k, label, groups) => {
+    const cur = String(e[k] ?? ''), known = Object.values(groups).flat().includes(cur);
+    const og = Object.entries(groups).map(([g, list]) => g ? `<optgroup label="${esc(g)}">${list.map((x) => `<option ${x === cur ? 'selected' : ''}>${esc(x)}</option>`).join('')}</optgroup>` : list.map((x) => `<option ${x === cur ? 'selected' : ''}>${esc(x)}</option>`).join('')).join('');
+    return `<label>${label}<select data-k="${k}" data-pick="1"><option value="" ${cur ? '' : 'selected'}>Choose…</option>${og}${cur && !known ? `<option selected>${esc(cur)}</option>` : ''}<option value="__other">Other…</option></select></label>`;
+  };
   const draw = () => {
     const left = ['resigned', 'terminated'].includes(e.status);
     pane.innerHTML = `
@@ -3445,7 +3500,7 @@ async function hrEmployee(id) {
         ${field('email', 'Work email (used to sign in)', 'email')}${field('personal_email', 'Personal email', 'email')}${field('phone', 'Phone', 'tel')}${field('work_location', 'Location')}
       </div></section>
       <section class="panel" style="margin-bottom:16px"><h3 style="margin:0 0 12px">Job</h3><div class="hr-form">
-        ${field('job_title', 'Title')}${field('department', 'Department')}${sel('employment_type', 'Type', HR_TYPES)}
+        ${pick('job_title', 'Title', HR_JOBS)}${pick('department', 'Department', { '': HR_DEPTS })}${sel('employment_type', 'Type', HR_TYPES)}
         ${sel('manager_id', 'Reports to', { '': 'Nobody', ...Object.fromEntries(all.filter((x) => x.id !== e.id).map((x) => [x.id, `#${x.emp_no} ${hrName(x)}`])) })}
         ${field('hire_date', 'Hire date', 'date')}${field('probation_end', 'Probation ends', 'date')}${sel('pay_type', 'Pay', { '': '–', hourly: 'Hourly', salary: 'Salary (yearly)', contract: 'Contract', unpaid: 'Unpaid' })}${field('pay_rate', 'Rate ($)', 'number', 'min="0" step="0.01"')}
       </div></section>
@@ -3471,6 +3526,13 @@ async function hrEmployee(id) {
       e.access = ['home', 'profile', ...[...pane.querySelectorAll('[data-acc]')].filter((c) => c.checked && c.dataset.acc !== 'home').map((c) => c.dataset.acc)];
     };
     $('#hr-hub').onchange = () => { keep(); draw(); };
+    // Title/department dropdowns: "Other…" asks for a custom name; picking a title fills an empty department.
+    pane.querySelectorAll('select[data-pick]').forEach((s) => { s.onchange = () => {
+      keep();
+      if (s.value === '__other') { const v = (prompt(s.dataset.k === 'job_title' ? 'Job title' : 'Department', '') || '').trim(); e[s.dataset.k] = v; }
+      if (s.dataset.k === 'job_title' && e.job_title) { const d = Object.keys(HR_JOBS).find((g) => HR_JOBS[g].includes(e.job_title)); if (d && !e.department) e.department = d; }
+      draw();
+    }; });
     $('#hr-gen').onclick = async () => { const { data: n, error: er } = await sb.rpc('hr_new_emp_no'); if (er) { toast(failMsg(er)); return; } keep(); e.emp_no = n; draw(); };
     $('#hr-acc-all').onclick = () => { pane.querySelectorAll('[data-acc]').forEach((c) => { c.checked = true; }); };
     $('#hr-acc-none').onclick = () => { pane.querySelectorAll('[data-acc]').forEach((c) => { if (!c.disabled) c.checked = false; }); };
