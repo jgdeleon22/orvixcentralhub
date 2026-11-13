@@ -4077,12 +4077,13 @@ async function discordPage() {
 }
 
 // ---------- Outside services (Apple, RevenueCat, Google) ----------
-async function outside(action, force) {
+async function outside(action, force, extra) {
   cache.outside = cache.outside || {};
-  if (cache.outside[action] && !force) return cache.outside[action];
-  const { data, error } = await sb.functions.invoke('hub-insights', { body: { action } });
+  const ck = action + (extra ? JSON.stringify(extra) : '');
+  if (cache.outside[ck] && !force) return cache.outside[ck];
+  const { data, error } = await sb.functions.invoke('hub-insights', { body: { action, ...(extra || {}) } });
   if (error) return { connected: false, need: 'the hub-insights service isn’t set up yet', down: true };
-  return (cache.outside[action] = data);
+  return (cache.outside[ck] = data);
 }
 const ASC_STATE = {
   READY_FOR_SALE: ['ok', 'On the App Store'], READY_FOR_DISTRIBUTION: ['ok', 'On the App Store'],
@@ -4173,6 +4174,7 @@ async function insightsPage(days = insightsPage.days || 30) {
       <section class="panel"><h3>Uptime</h3><div class="sub">Checked every 10 minutes · last 30 days</div><div id="i-up-a"><div class="muted">Loading…</div></div></section>
       <section class="panel"><h3>Google search</h3><div class="sub">orvixaero.com on Google · last 4 weeks</div><div id="i-gsc-a"><div class="muted">Loading…</div></div></section>
     </div>
+    <section class="panel" style="margin-top:18px"><h3>Website visitors (Google Analytics)</h3><div class="sub" id="i-ga-sub">orvixaero.com · last ${days} days</div><div id="i-ga"><div class="muted">Loading…</div></div></section>
 
     <div class="ins-app" style="--acc:#1A7FB0"><img src="icon-grid.png" alt=""><div><h2>Orvix Grid</h2><span>Star Citizen companion · app and orvixgrid.com</span></div></div>
     <section class="panel"><h3>Players</h3><div class="sub" id="i-gp-sub">Last ${days} days</div><div id="i-gp"><div class="muted">Loading…</div></div></section>
@@ -4248,6 +4250,23 @@ async function insightsPage(days = insightsPage.days || 30) {
       <h3 style="font-size:17px;margin-top:14px">Reviews ${d.rating ? `<span class="count">★ ${d.rating}</span>` : ''}</h3>
       ${(d.reviews || []).length ? d.reviews.slice(0, 5).map((r) => `<div class="rv"><span class="stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span> <b>${esc(r.title || '')}</b>
         <div class="muted" style="font-size:13px">${esc(r.nickname || '')} · ${esc(r.territory || '')} · ${esc(ago(r.at))}</div><div style="font-size:14px;margin-top:4px">${esc(r.body)}</div></div>`).join('') : '<div class="muted" style="margin-top:6px">No reviews yet.</div>'}`;
+  });
+
+  outside('analytics', false, { days }).then((d) => {
+    const el = $('#i-ga'); if (!el) return;
+    if (!d.connected) { el.innerHTML = d.down ? '<div class="muted">Not set up yet.</div>' : `<div class="connect">${esc(d.need || 'Not connected')}</div>`; return; }
+    if (d.error) { el.innerHTML = `<div class="muted">${esc(d.error)}</div>`; return; }
+    const mins = (s) => s >= 60 ? `${Math.floor(s / 60)}m ${Math.round(s % 60)}s` : `${Math.round(s)}s`;
+    const cell = (label, v) => `<div class="mcell"><span>${label}</span><b>${v}</b></div>`;
+    const SRC = { '(direct) / (none)': 'Typed or bookmarked', 'google / cpc': 'Google Ads', 'google / organic': 'Google search', 'facebook / paid': 'Facebook ads', 'm.facebook.com / referral': 'Facebook', 'l.facebook.com / referral': 'Facebook' };
+    const DEV = { mobile: 'Phone', desktop: 'Computer', tablet: 'Tablet' };
+    const bars = (rows, key, names, color) => { const max = Math.max(1, ...rows.map((x) => x.users)); return rows.length ? rows.map((x) => barRow(esc(names?.[x[key]] || x[key] || '(not set)'), x.users, max, color, '')).join('') : '<div class="muted">None yet</div>'; };
+    el.innerHTML = `<div class="mgrid">${cell('Visitors', d.users.toLocaleString())}${cell('New visitors', d.new_users.toLocaleString())}${cell('Visits', d.sessions.toLocaleString())}${cell('Page views', d.views.toLocaleString())}${cell('Engaged', Math.round(d.engagement * 100) + '%')}${cell('Avg. visit', mins(d.avg_seconds))}${cell('Ad conversions', d.conversions.toLocaleString())}</div>
+      <div class="hero-chart" id="i-ga-chart" style="margin-top:14px"></div>
+      <div class="grid2" style="margin-top:14px"><div><h4>How they got there</h4>${bars(d.sources, 'source', SRC, '#F76E19')}</div><div><h4>Countries</h4>${bars(d.countries, 'country', null, '#4F8FE0')}</div></div>
+      <div class="grid2" style="margin-top:14px"><div><h4>Devices</h4>${bars(d.devices, 'device', DEV, '#9A7BF0')}</div><div><h4>Top pages</h4>${bars(d.pages, 'page', null, '#2DB46E')}</div></div>
+      <p class="note">From Google Analytics, so it includes Google Ads visits and how long people stay. Your own browsers aren’t counted. <a href="https://analytics.google.com" target="_blank" rel="noopener" style="color:var(--ink-2)">Open Google Analytics ↗</a></p>`;
+    if (d.by_day?.length > 1) drawLines($('#i-ga-chart'), d.by_day, [{ key: 'users', label: 'Visitors', color: '#F76E19', area: true }, { key: 'sessions', label: 'Visits', color: '#9A7BF0', dashed: true }], { height: 170 });
   });
 
   outside('search').then((d) => {
